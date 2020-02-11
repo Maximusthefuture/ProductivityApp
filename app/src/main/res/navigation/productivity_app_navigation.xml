@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/productivity_app_navigation.xml"
+    app:startDestination="@id/apps_dest">
+
+    <fragment
+        android:id="@+id/apps_dest"
+        android:name="com.maximus.productivityappfinalproject.presentation.ui.AppsFragment"
+        android:label="Apps list"
+        tools:layout="@layout/fragment_app_list" />
+
+    <fragment
+        android:id="@+id/statistics_dest"
+        android:name="com.maximus.productivityappfinalproject.presentation.ui.StatisticsFragment"
+        android:label="Statistics"
+        tools:layout="@layout/fragment_statistics" />
+    <fragment
+        android:id="@+id/settings_dest"
+        android:name="com.maximus.productivityappfinalproject.presentation.ui.SettingsFragment"
+        android:label="Settings"
+        tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/app_detail_fragment"
+        android:name="com.maximus.productivityappfinalproject.presentation.ui.AppDetailsFragment"
+        android:label="App details"
+        tools:layout="@layout/fragment_app_details" />
+    <fragment
+        android:id="@+id/ignore_list_fragment"
+        android:name="com.maximus.productivityappfinalproject.presentation.ui.IgnoreListFragment"
+        android:label="Ignore list"
+        tools:layout="@layout/fragment_ignore_list" />
+
+
+</navigation>

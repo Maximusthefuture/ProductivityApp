@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Productivity App Final Project</string>
+    <string name="apps_title_bottom_menu">Apps</string>
+    <string name="habits_title_bottom_menu">Habits</string>
+    <string name="statistics_title_bottom_menu">Statistics</string>
+    <string name="settings_title_bottom_menu">Settings</string>
+    <string name="add_app">Add app</string>
+    <string name="last_time_used">Last time used: %s</string>
+    <string name="save_button">Сохранить</string>
+    <string name="button_next">Дальше</string>
+    <string name="habit_name">Имя</string>
+    <string name="habit_quote">Цитата</string>
+    <string name="something_else_button_label">Что-нибудь другое</string>
+    <string name="pick_day_title">Выберите день</string>
+    <string name="reminder_title">Reminder</string>
+    <string name="save_button_text">Сохранить</string>
+    <string name="total_time">Total Time:</string>
+    <string name="usage_count">Usage count:</string>
+    <string name="cut_usage_time_button">Ограничить время использования</string>
+    <string name="delete_all">Delete all</string>
+    <string-array name="days_statistic_array">
+        <item>Сегодня</item>
+        <item>Вчера</item>
+    </string-array>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/apps_dest"
+        android:icon="@drawable/ic_laptop_black_24dp"
+        android:title="@string/apps_title_bottom_menu"
+        />
+
+
+    <item
+        android:id="@+id/statistics_dest"
+        android:icon="@drawable/ic_equalizer_24dp"
+        android:title="@string/statistics_title_bottom_menu"/>
+
+    <item
+        android:id="@+id/settings_dest"
+        android:icon="@drawable/ic_settings_24dp"
+        android:title="@string/settings_title_bottom_menu"/>
+
+</menu>

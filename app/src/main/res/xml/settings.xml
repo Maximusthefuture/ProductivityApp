@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:key="notification_category"
+        android:title="Notification">
+
+        <SwitchPreferenceCompat
+            android:key="notification"
+            android:title="Enable nofitication"/>
+
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="functions_category"
+        android:title="Functions">
+
+        <Preference
+            android:key="ignore_list"
+            android:title="Ignore list"
+
+            />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
