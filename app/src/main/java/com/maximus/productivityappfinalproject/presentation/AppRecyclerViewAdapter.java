@@ -12,9 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.maximus.productivityappfinalproject.ItemTouchHelperAdapter;
 import com.maximus.productivityappfinalproject.R;
-import com.maximus.productivityappfinalproject.Utils;
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
+import com.maximus.productivityappfinalproject.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;

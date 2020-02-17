@@ -1,4 +1,6 @@
 package com.maximus.productivityappfinalproject.data;
 
-public class AppStatisticsManager {
+public interface AppDataSource {
+
+
 }

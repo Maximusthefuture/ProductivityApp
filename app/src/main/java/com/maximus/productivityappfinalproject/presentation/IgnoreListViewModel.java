@@ -1,25 +1,35 @@
 package com.maximus.productivityappfinalproject.presentation;
 
 import android.app.Application;
+import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.maximus.productivityappfinalproject.data.AppsRepository;
+import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
+import com.maximus.productivityappfinalproject.data.IgnoreAppDataSource;
+import com.maximus.productivityappfinalproject.domain.GetIgnoreListUseCase;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
+import com.maximus.productivityappfinalproject.framework.IgnoreAppDataSourceImp;
 
 import java.util.List;
 
 public class IgnoreListViewModel extends AndroidViewModel {
 
-    private AppsRepository mAppsRepository;
+    private AppsRepositoryImpl mAppsRepositoryImpl;
     private LiveData<List<IgnoreItems>> mAllIgnoreItems;
+    private IgnoreAppDataSource mIgnoreAppDataSourceImp;
+    private Context mContext;
+    private GetIgnoreListUseCase mIgnoreListUseCase;
 
     public IgnoreListViewModel(@NonNull Application application) {
         super(application);
-        mAppsRepository = new AppsRepository(application);
-        mAllIgnoreItems = mAppsRepository.getAllIgnoreItems();
+        mContext = application.getApplicationContext();
+        mIgnoreAppDataSourceImp = new IgnoreAppDataSourceImp(mContext);
+        mAppsRepositoryImpl = new AppsRepositoryImpl(application, mIgnoreAppDataSourceImp);
+        mIgnoreListUseCase = new GetIgnoreListUseCase(mAppsRepositoryImpl);
+        mAllIgnoreItems = mIgnoreListUseCase.getIgnoreList();
     }
 
     public LiveData<List<IgnoreItems>> getAllIgnoreItems() {
@@ -27,6 +37,6 @@ public class IgnoreListViewModel extends AndroidViewModel {
     }
 
     public void deleteAll() {
-        mAppsRepository.deleteAllIgnoreItems();
+        mAppsRepositoryImpl.deleteAllIgnoreList();
     }
  }

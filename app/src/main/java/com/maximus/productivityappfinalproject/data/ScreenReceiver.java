@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import com.maximus.productivityappfinalproject.service.NotificationService;
+
 public class ScreenReceiver extends BroadcastReceiver {
 
     private boolean isScreenOn;
@@ -19,8 +21,8 @@ public class ScreenReceiver extends BroadcastReceiver {
             isScreenOn = true;
         }
 
-//        Intent screenIntent = new Intent(context, NotificationService.class);
-//        screenIntent.putExtra(SCREEN_STATE, isScreenOn);
-//        context.startService(screenIntent);
+        Intent screenIntent = new Intent(context, NotificationService.class);
+        screenIntent.putExtra(SCREEN_STATE, isScreenOn);
+        context.startService(screenIntent);
     }
 }

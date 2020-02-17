@@ -1,4 +1,4 @@
-package com.maximus.productivityappfinalproject.data.db;
+package com.maximus.productivityappfinalproject.framework.db;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
@@ -13,16 +13,14 @@ import java.util.List;
 @Dao
 public interface IgnoreDao {
 
-
     @Query("SELECT * FROM ignore_table")
     List<IgnoreItems> getIgnoreItems();
 
 //    @Insert
 //    void insertIgnoreItem(IgnoreItems ignoreItems);
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAppItem(IgnoreItems appsModel);
+    void insertIgnoreItem(IgnoreItems item);
 
     @Update
     void updateIgnoreItem(IgnoreItems ignoreItems);

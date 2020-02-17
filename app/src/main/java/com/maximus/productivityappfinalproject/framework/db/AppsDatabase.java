@@ -1,4 +1,4 @@
-package com.maximus.productivityappfinalproject.data.db;
+package com.maximus.productivityappfinalproject.framework.db;
 
 import android.content.Context;
 
@@ -45,8 +45,9 @@ public abstract class AppsDatabase extends RoomDatabase {
             super.onCreate(db);
             datatbaseWriterExecutor.execute(() -> {
                 IgnoreItems ignoreItems = new IgnoreItems("com.android.settings","Settings");
+                IgnoreEntity ignoreEntity = new IgnoreEntity(ignoreItems.getPackageName());
                 IgnoreDao dao = INSTANCE.ignoreDao();
-                dao.insertAppItem(ignoreItems);
+                dao.insertIgnoreItem(ignoreItems);
             });
         }
     };

@@ -1,7 +1,6 @@
 package com.maximus.productivityappfinalproject.presentation;
 
 import android.app.usage.UsageEvents;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +38,6 @@ public class AppDetailFragmentRecyclerViewAdapter extends RecyclerView.Adapter<A
         } else if (appsModel.getEventType() == -1) {
             holder.mLinearLayout.setPadding(16, 4, 16, 4);
 //            formatDate = Utils.formatMillisToSeconds(appsModel.getAppUsageTime()); //TODO
-            Log.d(TAG, "onBindViewHolder: " + appsModel.getLastTimeUsed());
         } else if (appsModel.getEventType() == UsageEvents.Event.ACTIVITY_RESUMED) {
             holder.mLinearLayout.setPadding(16, 12, 16, 0);
         }

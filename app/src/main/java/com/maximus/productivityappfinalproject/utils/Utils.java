@@ -1,4 +1,6 @@
-package com.maximus.productivityappfinalproject;
+package com.maximus.productivityappfinalproject.utils;
+
+import com.maximus.productivityappfinalproject.IntervalEnum;
 
 import java.util.Calendar;
 

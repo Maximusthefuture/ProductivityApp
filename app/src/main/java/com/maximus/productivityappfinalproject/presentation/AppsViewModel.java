@@ -9,25 +9,36 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.maximus.productivityappfinalproject.IntervalEnum;
-import com.maximus.productivityappfinalproject.data.AppsRepository;
+import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
+import com.maximus.productivityappfinalproject.data.IgnoreAppDataSource;
+import com.maximus.productivityappfinalproject.domain.AddIgnoreListUseCase;
+import com.maximus.productivityappfinalproject.domain.GetAppsUseCase;
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
+import com.maximus.productivityappfinalproject.framework.IgnoreAppDataSourceImp;
 
 import java.util.List;
 
 public class AppsViewModel extends AndroidViewModel {
-    private AppsRepository mRepository;
+    private AppsRepositoryImpl mRepository;
     private LiveData<List<AppsModel>> mAllApps;
     private Context mContext;
     private MutableLiveData<Integer> mDayInterval = new MutableLiveData<>();
     private IntervalEnum mIntervalEnum = IntervalEnum.TODAY;
+    private GetAppsUseCase mAppsUseCase;
+    private AddIgnoreListUseCase mIgnoreListUseCase;
+
+    private IgnoreAppDataSource mIgnoreAppDataSourceImp;
 
     public AppsViewModel(@NonNull Application application) {
         super(application);
         mContext = application.getApplicationContext();
-        mRepository = new AppsRepository(application);
-        mAllApps = mRepository.getAllApps(true, mDayInterval.getValue());
+        mAppsUseCase = new GetAppsUseCase(mContext);
+        mRepository = new AppsRepositoryImpl(application, mIgnoreAppDataSourceImp);
+        mAllApps = mAppsUseCase.getAllApps(false, 1);
+        mIgnoreAppDataSourceImp = new IgnoreAppDataSourceImp(mContext);
         setFiltering(mIntervalEnum.TODAY);
+        mIgnoreListUseCase = new AddIgnoreListUseCase(mRepository);
         mDayInterval.setValue(0);
     }
 
@@ -36,7 +47,7 @@ public class AppsViewModel extends AndroidViewModel {
     }
 
     public void insert(IgnoreItems appsModel) {
-        mRepository.insert(appsModel);
+        mIgnoreListUseCase.addToIgnoreList(appsModel);
     }
 
     public void setFiltering(IntervalEnum intervalEnum) {
@@ -54,6 +65,14 @@ public class AppsViewModel extends AndroidViewModel {
 
         }
     }
+
+//    public void getApps(int id) {
+//        mGetAppsUseCase.execute(id)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(this::onSuccess, this::OnError);
+//
+//    }
 
 
 }

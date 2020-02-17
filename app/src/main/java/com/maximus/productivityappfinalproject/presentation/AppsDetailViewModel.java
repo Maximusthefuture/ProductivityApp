@@ -9,24 +9,31 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.maximus.productivityappfinalproject.IntervalEnum;
-import com.maximus.productivityappfinalproject.data.AppsRepository;
+import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
+import com.maximus.productivityappfinalproject.domain.GetAppIntervalUseCase;
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
+import com.maximus.productivityappfinalproject.framework.IgnoreAppDataSourceImp;
 
 import java.util.List;
 
 public class AppsDetailViewModel extends AndroidViewModel {
 
     private final MutableLiveData<AppsModel> mApp = new MutableLiveData<>();
-    private final AppsRepository mAppsRepository;
+    private final AppsRepositoryImpl mAppsRepositoryImpl;
     private MutableLiveData<String> mLiveDataPackageName = new MutableLiveData<>();
     private MutableLiveData<Integer> mDayInterval = new MutableLiveData<>();
     private IntervalEnum mIntervalEnum = IntervalEnum.TODAY;
+    private IgnoreAppDataSourceImp mIgnoreAppDataSourceImp;
+    private Context mContext;
+    private GetAppIntervalUseCase mAppIntervalUseCase;
 
 
     public AppsDetailViewModel(@NonNull Application application) {
         super(application);
-//        mContext = application.getApplicationContext();
-        mAppsRepository = new AppsRepository(application);
+        mContext = application.getApplicationContext();
+        mIgnoreAppDataSourceImp = new IgnoreAppDataSourceImp(mContext);
+        mAppsRepositoryImpl = new AppsRepositoryImpl(application, mIgnoreAppDataSourceImp);
+        mAppIntervalUseCase = new GetAppIntervalUseCase(mContext);
         setFiltering(mIntervalEnum);
         mDayInterval.setValue(0);
     }
@@ -34,7 +41,7 @@ public class AppsDetailViewModel extends AndroidViewModel {
 
     public LiveData<List<AppsModel>> intervalList(String packageName) {
         mLiveDataPackageName.setValue(packageName);
-        return mAppsRepository.getUsedInterval(mLiveDataPackageName.getValue(), mDayInterval.getValue());
+        return mAppIntervalUseCase.getAppUsedInterval(mLiveDataPackageName.getValue(), mDayInterval.getValue());
     }
 
     public void setFiltering(IntervalEnum intervalEnum) {

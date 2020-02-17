@@ -8,7 +8,6 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -16,6 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
+import com.maximus.productivityappfinalproject.utils.Utils;
 
 
 public class MyStatisticView extends View {

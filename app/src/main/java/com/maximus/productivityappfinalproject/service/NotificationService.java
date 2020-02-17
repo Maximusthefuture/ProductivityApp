@@ -1,4 +1,4 @@
-package com.maximus.productivityappfinalproject.presentation;
+package com.maximus.productivityappfinalproject.service;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -32,6 +32,7 @@ public class NotificationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         return super.onStartCommand(intent, flags, startId);
     }
 }

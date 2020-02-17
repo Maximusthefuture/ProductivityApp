@@ -19,10 +19,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.maximus.productivityappfinalproject.IntervalEnum;
 import com.maximus.productivityappfinalproject.R;
-import com.maximus.productivityappfinalproject.Utils;
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
 import com.maximus.productivityappfinalproject.presentation.AppDetailFragmentRecyclerViewAdapter;
 import com.maximus.productivityappfinalproject.presentation.AppsDetailViewModel;
+import com.maximus.productivityappfinalproject.utils.Utils;
 
 
 public class AppDetailsFragment extends Fragment {
@@ -89,6 +89,8 @@ public class AppDetailsFragment extends Fragment {
                     case 1:
                         mViewModel.setFiltering(IntervalEnum.YESTERDAY);
                         break;
+                    case 2:
+                        mViewModel.setFiltering(IntervalEnum.THIS_WEEK);
 
                 }
 

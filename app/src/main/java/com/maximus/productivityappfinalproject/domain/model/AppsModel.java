@@ -5,11 +5,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
-import androidx.room.Ignore;
+import androidx.annotation.Nullable;
 
 
 public class AppsModel implements Parcelable {
-
 
     private String mPackageName;
     private String mAppName;
@@ -17,22 +16,8 @@ public class AppsModel implements Parcelable {
     private long mAppUsageTime;
     private long mEventTime;
     private int mEventType;
-
     private String mLastTimeUsed;
     private int mCount;
-
-
-    public static final Creator<AppsModel> CREATOR = new Creator<AppsModel>() {
-        @Override
-        public AppsModel createFromParcel(Parcel in) {
-            return new AppsModel(in);
-        }
-
-        @Override
-        public AppsModel[] newArray(int size) {
-            return new AppsModel[size];
-        }
-    };
 
     public AppsModel(int count) {
         mCount = count;
@@ -68,7 +53,7 @@ public class AppsModel implements Parcelable {
         return mEventType;
     }
 
-    @Ignore
+
     public AppsModel(String packageName) {
         mPackageName = packageName;
     }
@@ -79,7 +64,7 @@ public class AppsModel implements Parcelable {
         mAppName = appName;
     }
 
-    @Ignore
+
     public AppsModel(String packageName, String appName, Drawable appIcon, String lastTimeUsed, long appUsageTime) {
         mAppName = appName;
         mAppIcon = appIcon;
@@ -89,8 +74,6 @@ public class AppsModel implements Parcelable {
     }
 
 
-
-    @Ignore
     protected AppsModel(Parcel in) {
         mAppName = in.readString();
         mAppUsageTime = in.readLong();
@@ -137,6 +120,18 @@ public class AppsModel implements Parcelable {
         dest.writeString(mPackageName);
     }
 
+    public static final Creator<AppsModel> CREATOR = new Creator<AppsModel>() {
+        @Override
+        public AppsModel createFromParcel(Parcel in) {
+            return new AppsModel(in);
+        }
+
+        @Override
+        public AppsModel[] newArray(int size) {
+            return new AppsModel[size];
+        }
+    };
+
     @Override
     public String toString() {
         return "AppsModel{" +
@@ -145,5 +140,15 @@ public class AppsModel implements Parcelable {
                 ", mAppUsageTime=" + mAppUsageTime +
                 ", mLastTimeUsed='" + mLastTimeUsed + '\'' +
                 '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        return super.equals(obj);
     }
 }

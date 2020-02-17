@@ -1,4 +1,4 @@
-package com.maximus.productivityappfinalproject.data.db;
+package com.maximus.productivityappfinalproject.framework.db;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
