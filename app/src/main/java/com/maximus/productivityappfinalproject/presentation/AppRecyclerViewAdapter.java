@@ -40,7 +40,6 @@ public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerView
 
     @Override
     public void onBindViewHolder(@NonNull AddAppViewHolder holder, int position) {
-//        AppsModel appsModel = getDataFromPosition(position);
         holder.bind(mAppsNameList.get(position));
 
     }
@@ -51,7 +50,7 @@ public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerView
     }
 
     public AppsModel getDataFromPosition(int position) {
-        if (mAppsNameList.size() >= position) {
+        if (mAppsNameList.size()  >= position) {
             return mAppsNameList.get(position);
         }
         return null;
@@ -70,13 +69,10 @@ public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerView
 
     @Override
     public void onItemMoveToIgnoreList(int position) {
-        mAppsNameList.remove(position);
         mOnSwipeAppToIgnoreList.onSwiped(position);
+        mAppsNameList.remove(position);
         notifyItemRemoved(position);
-
-
     }
-
 
     public class AddAppViewHolder extends RecyclerView.ViewHolder {
 

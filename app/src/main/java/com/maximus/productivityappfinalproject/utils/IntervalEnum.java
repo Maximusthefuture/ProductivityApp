@@ -1,4 +1,4 @@
-package com.maximus.productivityappfinalproject;
+package com.maximus.productivityappfinalproject.utils;
 
 public enum IntervalEnum {
 

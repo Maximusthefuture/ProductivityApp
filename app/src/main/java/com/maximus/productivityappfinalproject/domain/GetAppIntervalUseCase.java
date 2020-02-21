@@ -13,8 +13,9 @@ public class GetAppIntervalUseCase {
 
     private MyUsageStatsManagerWrapper mMyUsageStats;
 
-    public GetAppIntervalUseCase(Context context) {
-        mMyUsageStats = new MyUsageStatsManagerWrapper(context);
+    public GetAppIntervalUseCase(MyUsageStatsManagerWrapper myUsageStats) {
+        mMyUsageStats = myUsageStats;
+
     }
 
     public LiveData<List<AppsModel>> getAppUsedInterval(String packageName, int sort) {

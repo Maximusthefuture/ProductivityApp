@@ -13,8 +13,8 @@ public class GetAppsUseCase {
 
     private MyUsageStatsManagerWrapper mUsageStats;
 
-    public GetAppsUseCase(Context context) {
-        mUsageStats = new MyUsageStatsManagerWrapper(context);
+    public GetAppsUseCase(MyUsageStatsManagerWrapper mMyUsageStats) {
+        mUsageStats = mMyUsageStats;
     }
 
     public LiveData<List<AppsModel>> getAllApps(boolean isSystem, int sort) {

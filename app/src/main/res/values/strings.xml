@@ -18,9 +18,23 @@
     <string name="usage_count">Usage count:</string>
     <string name="cut_usage_time_button">Ограничить время использования</string>
     <string name="delete_all">Delete all</string>
+    <string name="phone_usage_notification_title">Phone usage:</string>
     <string-array name="days_statistic_array">
         <item>Сегодня</item>
         <item>Вчера</item>
         <item>Неделя</item>
     </string-array>
+    <string name="title_activity_on_boarding">OnBoardingActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="skip_button">Skip</string>
+    <string name="button_finish_on_boarding">Finish</string>
+    <string name="ignore_list_summary">Список блокированных приложений</string>
+    <string name="ignore_list_title">Список блокировки</string>
+    <string name="ignore_list_key">ignore_list</string>
+    <string name="function_title">Функции</string>
+    <string name="notification_title">Уведомнения</string>
+    <string name="show_notification_title">Показывать уведомления</string>
+    <string name="show_notification_summary">Время использования телефона</string>
+    <string name="show_notification_key">notification</string>
 </resources>

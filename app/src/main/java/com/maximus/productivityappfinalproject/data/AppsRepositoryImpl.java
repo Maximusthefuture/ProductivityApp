@@ -1,32 +1,24 @@
 package com.maximus.productivityappfinalproject.data;
 
-import android.app.Application;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
 import com.maximus.productivityappfinalproject.framework.db.AppsDatabase;
-
-import java.util.Calendar;
 import java.util.List;
 
 
-public class AppsRepositoryImpl implements AppsRepository{
+public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
 
     private static final String TAG = "AppsRepositoryImpl";
-    Calendar mCalendar;
-
     private MutableLiveData<List<IgnoreItems>> mIgnoreItems = new MutableLiveData<>();
     private IgnoreAppDataSource mIgnoreAppDataSource;
     private AppsDatabase mAppsDatabase;
 
 
-    public AppsRepositoryImpl(Application application, IgnoreAppDataSource ignoreAppDataSource) {
-
-        mCalendar = Calendar.getInstance();
+    public AppsRepositoryImpl(IgnoreAppDataSource ignoreAppDataSource) {
         mIgnoreAppDataSource = ignoreAppDataSource;
-        mAppsDatabase = AppsDatabase.getInstance(application);
+
     }
 
     @Override
@@ -50,14 +42,15 @@ public class AppsRepositoryImpl implements AppsRepository{
 
     @Override
     public void insertToIgnoreList(IgnoreItems item) {
-        AppsDatabase.datatbaseWriterExecutor.execute(() -> {
-            mIgnoreAppDataSource.add(item);
-        });
+        AppsDatabase.datatbaseWriterExecutor.execute(() ->
+                mIgnoreAppDataSource.add(item));
     }
 
     @Override
-    public void deleteFromIgnoreList(IgnoreItems item) {
-        mIgnoreAppDataSource.removeItem(item);
+    public void deleteFromIgnoreList(String packageName) {
+        AppsDatabase.datatbaseWriterExecutor.execute(() -> {
+            mIgnoreAppDataSource.removeItem(packageName);
+        });
     }
 
     @Override
@@ -68,10 +61,10 @@ public class AppsRepositoryImpl implements AppsRepository{
     }
 
 
-    public void insert(IgnoreItems appsModel) {
-        AppsDatabase.datatbaseWriterExecutor.execute(() -> {
-            mAppsDatabase.ignoreDao().insertIgnoreItem(appsModel);
-        });
+    //TODO RETROFIT
+    @Override
+    public void getPhraseFromApi(String pharse) {
+
     }
 
 

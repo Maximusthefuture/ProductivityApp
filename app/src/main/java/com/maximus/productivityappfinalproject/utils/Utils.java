@@ -1,6 +1,7 @@
 package com.maximus.productivityappfinalproject.utils;
 
-import com.maximus.productivityappfinalproject.IntervalEnum;
+import android.app.AppOpsManager;
+import android.content.Context;
 
 import java.util.Calendar;
 
@@ -82,6 +83,15 @@ public class Utils {
         long start = cal.getTimeInMillis();
         long end = start + 86400 * 1000 > timeNow ? timeNow : start + 86400 * 1000;
         return new long[]{start, end};
+    }
+
+    public static boolean hasPermission(Context context) {
+        AppOpsManager appOpsManager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
+        if (appOpsManager != null) {
+            int mode = appOpsManager.checkOpNoThrow("android:get_usage_stats", android.os.Process.myUid(), context.getPackageName());
+            return mode == AppOpsManager.MODE_ALLOWED;
+        }
+        return false;
     }
 
 

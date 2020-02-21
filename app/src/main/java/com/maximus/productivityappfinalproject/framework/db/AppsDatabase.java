@@ -21,7 +21,7 @@ public abstract class AppsDatabase extends RoomDatabase {
     public abstract HistoryDao appDao();
     public abstract IgnoreDao ignoreDao();
     public static final ExecutorService datatbaseWriterExecutor
-            = Executors.newFixedThreadPool(4);
+            = Executors.newFixedThreadPool(5);
 
     private static final Object sLock = new Object();
 
@@ -30,7 +30,7 @@ public abstract class AppsDatabase extends RoomDatabase {
             if (INSTANCE == null) {
                 INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                         AppsDatabase.class, "Apps.db")
-                        .addCallback(sCallback)
+//                        .addCallback(sCallback)
                         .fallbackToDestructiveMigration()
                         .build();
             }
@@ -45,7 +45,7 @@ public abstract class AppsDatabase extends RoomDatabase {
             super.onCreate(db);
             datatbaseWriterExecutor.execute(() -> {
                 IgnoreItems ignoreItems = new IgnoreItems("com.android.settings","Settings");
-                IgnoreEntity ignoreEntity = new IgnoreEntity(ignoreItems.getPackageName());
+                IgnoreEntity ignoreEntity = new IgnoreEntity(ignoreItems.getPackageName(), ignoreItems.getName());
                 IgnoreDao dao = INSTANCE.ignoreDao();
                 dao.insertIgnoreItem(ignoreItems);
             });

@@ -1,6 +1,9 @@
 package com.maximus.productivityappfinalproject;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -11,8 +14,11 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.maximus.productivityappfinalproject.utils.Utils;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
     private NavController navController;
 
     @Override
@@ -36,13 +42,18 @@ public class MainActivity extends AppCompatActivity {
             } else if (destination.getId() == R.id.ignore_list_fragment){
                 bottomNavigationView.setVisibility(View.GONE);
             } else {
+
                 bottomNavigationView.setVisibility(View.VISIBLE);
             }
         });
 
+        Log.d(TAG, "onCreate: " + Utils.hasPermission(getApplicationContext()));
+        if (!Utils.hasPermission(getApplicationContext())) {
+            Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+            startActivity(intent);
+        }
 //        checkForPermission(this);
-//        Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-//        startActivity(intent);
+
 
     }
 

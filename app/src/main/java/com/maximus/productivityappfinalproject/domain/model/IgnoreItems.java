@@ -24,9 +24,6 @@ public class IgnoreItems {
         mCreated = created;
         mName = name;
     }
-    @Ignore
-    public IgnoreItems() {
-    }
 
     @Ignore
     public IgnoreItems(@NonNull String packageName) {

@@ -17,7 +17,11 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.maximus.productivityappfinalproject.IntervalEnum;
+import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
+import com.maximus.productivityappfinalproject.data.IgnoreAppDataSource;
+import com.maximus.productivityappfinalproject.domain.GetIgnoreListUseCase;
+import com.maximus.productivityappfinalproject.framework.IgnoreAppDataSourceImp;
+import com.maximus.productivityappfinalproject.utils.IntervalEnum;
 import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
@@ -39,6 +43,7 @@ public class MyUsageStatsManagerWrapper {
     private final PackageManager mPackageManager;
     private Context mContext;
     private MutableLiveData<List<AppsModel>> mAppsInterval = new MutableLiveData<>();
+    private IgnoreAppDataSource mIgnoreAppDataSource;
 
 
     public MyUsageStatsManagerWrapper(Context context) {
@@ -47,6 +52,9 @@ public class MyUsageStatsManagerWrapper {
             mUsageStatsManager = (UsageStatsManager) mContext.getSystemService(Context.USAGE_STATS_SERVICE);
         }
         mPackageManager = mContext.getPackageManager();
+        mIgnoreAppDataSource = new IgnoreAppDataSourceImp(mContext);
+
+
     }
 
 
@@ -97,13 +105,14 @@ public class MyUsageStatsManagerWrapper {
                      Если время использования приложения 6с
                   то оно не будет отображаться в списке
                       */
-                if (appsModel.getAppUsageTime() <= 6000) {
+                       //TODO
+                if (appsModel.getAppUsageTime() <= 0) {
                     continue;
                 }
-
-//                if (isIgnoredList(getIgnoreItems(), appsModel.getPackageName())) {
-//                    continue;
-//                }
+                //TODO check is the iteractor? usecase?
+                if (isIgnoredList(mIgnoreAppDataSource.getAll(), appsModel.getPackageName())) {
+                    continue;
+                }
 //                Log.d(TAG, "getAllApps: " + getLastTimeUsed(startMills, System.currentTimeMillis(), packageName));
                 mAppsModelList.add(appsModel);
                 mAllApps.postValue(mAppsModelList);
@@ -135,7 +144,6 @@ public class MyUsageStatsManagerWrapper {
         }
         return null;
     }
-
 
 
     /**
@@ -242,7 +250,7 @@ public class MyUsageStatsManagerWrapper {
         return (String) (applicationInfo != null ? mPackageManager.getApplicationLabel(applicationInfo) : packageName);
     }
 
-    private Drawable getAppIcon(String packageName) {
+    public Drawable getAppIcon(String packageName) {
         Drawable drawable;
         try {
             drawable = mPackageManager.getApplicationIcon(packageName);

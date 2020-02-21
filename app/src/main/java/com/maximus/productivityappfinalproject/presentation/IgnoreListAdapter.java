@@ -1,5 +1,7 @@
 package com.maximus.productivityappfinalproject.presentation;
 
+import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,14 +11,27 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.maximus.productivityappfinalproject.R;
+import com.maximus.productivityappfinalproject.device.MyUsageStatsManagerWrapper;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
 
 import java.util.List;
 
 public class IgnoreListAdapter extends RecyclerView.Adapter<IgnoreListAdapter.IgnoreViewHolder> {
 
+    private static final String TAG = "IgnoreListAdapter";
     private List<IgnoreItems> mIgnoreItems;
+    private MyUsageStatsManagerWrapper mMyUsageStatsManagerWrapper;
+    private Context mContext;
+    private OnIgnoreItemClickListener mItemClickListener;
+
+    public IgnoreListAdapter(Context context, OnIgnoreItemClickListener clickListener) {
+        mContext = context;
+        mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(mContext);
+        mItemClickListener = clickListener;
+    }
 
     @NonNull
     @Override
@@ -28,7 +43,7 @@ public class IgnoreListAdapter extends RecyclerView.Adapter<IgnoreListAdapter.Ig
     @Override
     public void onBindViewHolder(@NonNull IgnoreViewHolder holder, int position) {
         IgnoreItems ignoreItems = mIgnoreItems.get(position);
-        holder.mAppName.setText(ignoreItems.getName());
+        holder.bind(ignoreItems);
     }
 
     public void setList(List<IgnoreItems> list) {
@@ -38,16 +53,35 @@ public class IgnoreListAdapter extends RecyclerView.Adapter<IgnoreListAdapter.Ig
 
     @Override
     public int getItemCount() {
-        return mIgnoreItems.size();
+         return mIgnoreItems.size();
     }
 
     public class IgnoreViewHolder extends RecyclerView.ViewHolder{
         private TextView mAppName;
-//        private ImageView mImageView;
+        private ImageView mIcon;
 
         public IgnoreViewHolder(@NonNull View itemView) {
             super(itemView);
             mAppName = itemView.findViewById(R.id.ignore_item_app_name);
+            mIcon = itemView.findViewById(R.id.app_icon_image_view);
+
+
         }
+
+        public void bind(IgnoreItems item) {
+            mAppName.setText(item.getName());
+            Glide.with(mIcon.getContext())
+                    .load(mMyUsageStatsManagerWrapper.getAppIcon(item.getPackageName()))
+                    .transition(new DrawableTransitionOptions().crossFade())
+                    .into(mIcon);
+
+            itemView.setOnClickListener(v -> {
+                mItemClickListener.onItemClickListener(item.getPackageName());
+                Log.d(TAG, "bind: " + item.getPackageName());
+//                notifyDataSetChanged();
+                notifyItemRemoved(getAdapterPosition());
+            });
+        }
+
     }
 }

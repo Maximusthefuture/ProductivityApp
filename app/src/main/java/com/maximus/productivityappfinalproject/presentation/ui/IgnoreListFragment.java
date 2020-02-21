@@ -20,10 +20,11 @@ import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
 import com.maximus.productivityappfinalproject.presentation.IgnoreListAdapter;
 import com.maximus.productivityappfinalproject.presentation.IgnoreListViewModel;
+import com.maximus.productivityappfinalproject.presentation.OnIgnoreItemClickListener;
 
 import java.util.ArrayList;
 
-public class IgnoreListFragment extends Fragment {
+public class IgnoreListFragment extends Fragment implements OnIgnoreItemClickListener {
 
     private RecyclerView mRecyclerView;
     private IgnoreListAdapter mAdapter;
@@ -40,12 +41,14 @@ public class IgnoreListFragment extends Fragment {
         DividerItemDecoration itemDecoration = new DividerItemDecoration(mRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
         mRecyclerView.addItemDecoration(itemDecoration);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        mAdapter = new IgnoreListAdapter();
+        mAdapter = new IgnoreListAdapter(requireContext(), this);
         mRecyclerView.setAdapter(mAdapter);
 
         mModelView.getAllIgnoreItems().observe(getViewLifecycleOwner(), apps -> {
             mAdapter.setList(apps);
         });
+
+//        mModelView.deleteAll();
 
         setHasOptionsMenu(true);
 
@@ -65,9 +68,21 @@ public class IgnoreListFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.delete_all:
                 mModelView.deleteAll();
+                //TODO
                 //Callback
                 //OnDeleteAll
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    //TODO ?????   refresh() ?
+    @Override
+    public void onItemClickListener(String packageName) {
+        mModelView.deleteIgnoreItem(packageName);
+
+//        mAdapter.notifyDataSetChanged();
+
+
     }
 }

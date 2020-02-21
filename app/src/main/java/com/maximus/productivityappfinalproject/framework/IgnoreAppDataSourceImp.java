@@ -11,16 +11,16 @@ import java.util.List;
 public class IgnoreAppDataSourceImp implements IgnoreAppDataSource {
 
     private Context mContext;
+    private AppsDatabase mAppsDatabase;
 
     public IgnoreAppDataSourceImp(Context context) {
         mContext = context;
+        mAppsDatabase =  AppsDatabase.getInstance(mContext);
     }
 
-    private AppsDatabase mAppsDatabase =  AppsDatabase.getInstance(mContext);
-
     @Override
-    public void add(IgnoreItems ignoreItems) {
-        mAppsDatabase.ignoreDao().insertIgnoreItem(ignoreItems);
+    public void add(IgnoreItems item) {
+        mAppsDatabase.ignoreDao().insertIgnoreItem(item);
 
     }
 
@@ -29,10 +29,10 @@ public class IgnoreAppDataSourceImp implements IgnoreAppDataSource {
         return mAppsDatabase.ignoreDao().getIgnoreItems();
     }
 
-    @Override
-    public void removeItem(IgnoreItems ignoreItems) {
-        mAppsDatabase.ignoreDao().deleteByPackageName(ignoreItems.getPackageName());
-    }
+//    @Override
+//    public void removeItem(IgnoreItems ignoreItems) {
+//        mAppsDatabase.ignoreDao().deleteByPackageName(ignoreItems.getPackageName());
+//    }
 
     @Override
     public void removeItem(String packageName) {

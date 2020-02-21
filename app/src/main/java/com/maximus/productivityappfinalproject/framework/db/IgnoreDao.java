@@ -30,4 +30,6 @@ public interface IgnoreDao {
 
     @Query("DELETE FROM ignore_table WHERE package_name =:packageName")
     int deleteByPackageName(String packageName);
+
+
 }

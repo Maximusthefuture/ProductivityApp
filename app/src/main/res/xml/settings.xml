@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
         android:key="notification_category"
-        android:title="Notification">
+        android:title="@string/notification_title">
 
         <SwitchPreferenceCompat
-            android:key="notification"
-            android:title="Enable nofitication"/>
+            android:key="@string/show_notification_key"
+            android:title="@string/show_notification_title"
+            android:summary="@string/show_notification_summary"/>
 
 
     </PreferenceCategory>
 
     <PreferenceCategory
         android:key="functions_category"
-        android:title="Functions">
+        android:title="@string/function_title">
 
         <Preference
-            android:key="ignore_list"
-            android:title="Ignore list"
-
+            android:key="@string/ignore_list_key"
+            android:title="@string/ignore_list_title"
+            android:summary="@string/ignore_list_summary"
+            app:fragment="com.maximus.productivityappfinalproject.presentation.ui.IgnoreListFragment"
             />
 
     </PreferenceCategory>
