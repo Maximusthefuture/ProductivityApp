@@ -8,18 +8,21 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
 import com.maximus.productivityappfinalproject.domain.model.HistoryItems;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
+import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {HistoryItems.class, IgnoreItems.class}, version = 6, exportSchema = false)
+@Database(entities = {IgnoreItems.class, PhoneUsage.class, AppUsageLimitModel.class}, version = 11, exportSchema = false)
 public abstract class AppsDatabase extends RoomDatabase {
     private static AppsDatabase INSTANCE;
 
-    public abstract HistoryDao appDao();
     public abstract IgnoreDao ignoreDao();
+    public abstract PhoneUsageDao phoneUsageDao();
+    public abstract AppLimitDao appLimitDao();
     public static final ExecutorService datatbaseWriterExecutor
             = Executors.newFixedThreadPool(5);
 
@@ -30,7 +33,7 @@ public abstract class AppsDatabase extends RoomDatabase {
             if (INSTANCE == null) {
                 INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                         AppsDatabase.class, "Apps.db")
-//                        .addCallback(sCallback)
+                        .addCallback(sCallback)
                         .fallbackToDestructiveMigration()
                         .build();
             }

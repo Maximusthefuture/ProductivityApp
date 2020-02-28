@@ -1,5 +1,6 @@
 package com.maximus.productivityappfinalproject.presentation.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ import com.maximus.productivityappfinalproject.presentation.OnSwipeAppToIgnoreLi
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
 import com.maximus.productivityappfinalproject.presentation.AppsViewModel;
+import com.maximus.productivityappfinalproject.service.CheckAppLaunchService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,10 +72,18 @@ public class AppsFragment extends Fragment implements OnAppClickListener, OnSwip
             mAdapter.setList(apps);
         });
         setHasOptionsMenu(true);
+        mViewModel.startService();
 
         return root;
     }
 
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Intent service = new Intent(getContext(), CheckAppLaunchService.class);
+        getContext().startService(service);
+    }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {

@@ -37,4 +37,14 @@
     <string name="show_notification_title">Показывать уведомления</string>
     <string name="show_notification_summary">Время использования телефона</string>
     <string name="show_notification_key">notification</string>
+    <string name="today_chip_label">Today</string>
+    <string name="yesterday_chip_label">Yesterday</string>
+    <string name="this_week_chip_label">This week</string>
+    <string name="set_limit_usage_text_view">Установить ограничение по времени</string>
+    <string name="set_limit">Установить лимит</string>
+    <string name="minutes_hint_edit_text">минуты</string>
+    <string name="hour_hint_edit_text">час</string>
+    <string name="day_24_hours">В дне 24 часа</string>
+    <string name="hour_60_minutes">В часу 60 минут</string>
+    <string name="you_are_not_ready">Вы ничего не ввели</string>
 </resources>

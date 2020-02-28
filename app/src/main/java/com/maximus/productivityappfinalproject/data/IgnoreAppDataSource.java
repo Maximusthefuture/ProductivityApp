@@ -10,8 +10,6 @@ public interface IgnoreAppDataSource {
 
     List<IgnoreItems> getAll();
 
-//    void removeItem(IgnoreItems item);
-
     void removeItem(String packageName);
 
     void removeAll();

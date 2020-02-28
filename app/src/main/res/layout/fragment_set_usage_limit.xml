@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/app_name_usage_limit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:textAppearance="?textAppearanceHeadline4"
+        tools:text="Media Player"/>
+    <TextView
+        android:id="@+id/time_limit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/app_name_usage_limit"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginStart="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:textAppearance="?textAppearanceHeadline6"
+        android:text="@string/set_limit_usage_text_view"/>
+
+    <TextView
+        android:id="@+id/in_hour_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:text="В час"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+        app:layout_constraintTop_toBottomOf="@id/time_limit" />
+
+    <EditText
+        android:id="@+id/edit_text_limit_in_hour"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/in_hour_text_view"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="@id/in_hour_text_view"
+        app:layout_constraintEnd_toEndOf="@id/in_hour_text_view"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:gravity="center_horizontal"
+        android:inputType="number"
+        android:hint="@string/minutes_hint_edit_text"/>
+
+
+    <TextView
+        android:id="@+id/in_day_limit_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:text="В день"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Large"
+        app:layout_constraintTop_toBottomOf="@id/edit_text_limit_in_hour" />
+
+    <EditText
+        android:id="@+id/edit_text_limit_in_day_by_hours"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/in_day_limit_text_view"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:gravity="center_horizontal"
+        android:hint="@string/hour_hint_edit_text"
+        android:inputType="number"/>
+
+
+    <EditText
+        android:id="@+id/edit_text_limit_in_day_by_minutes"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/edit_text_limit_in_day_by_hours"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:inputType="number"
+        android:gravity="center_horizontal"
+        android:hint="@string/minutes_hint_edit_text"/>
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/set_limit_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:text="@string/set_limit"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

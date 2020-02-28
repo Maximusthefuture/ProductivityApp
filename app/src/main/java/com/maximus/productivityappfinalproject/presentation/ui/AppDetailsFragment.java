@@ -19,6 +19,8 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -40,6 +42,7 @@ public class AppDetailsFragment extends Fragment {
     private TextView mAppName;
     private RecyclerView mRecyclerView;
     private int mDay = 0;
+    private NavController mNavController;
     private AppsDetailViewModel mViewModel;
     private AppsModel appsModel;
     private ChipGroup mSelectDay;
@@ -49,6 +52,7 @@ public class AppDetailsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = LayoutInflater.from(container.getContext()).inflate(R.layout.fragment_app_details, container, false);
         appsModel = getArguments().getParcelable(AppsFragment.APP_DETAILS);
+        mNavController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
         mViewModel = new ViewModelProvider(this).get(AppsDetailViewModel.class);
         mRecyclerView = root.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -57,8 +61,11 @@ public class AppDetailsFragment extends Fragment {
 //        mSpinner = root.findViewById(R.id.spinner_days);
         mSelectDay = root.findViewById(R.id.interval_chip_group);
 
-        root.findViewById(R.id.cut_usage_time_button).setOnClickListener(v ->
-                mViewModel.startService());
+        root.findViewById(R.id.cut_usage_time_button).setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("APP_DETAIL_LIMIT", appsModel);
+                mNavController.navigate(R.id.usage_limit_fragment, bundle);
+                });
         initSpinner();
 
         mViewModel.intervalList(appsModel.getPackageName()).observe(getViewLifecycleOwner(), apps -> {
@@ -82,25 +89,8 @@ public class AppDetailsFragment extends Fragment {
 
 
     public void initSpinner() {
-
-
-
         mSelectDay.setOnCheckedChangeListener((chipGroup, i) -> {
             Chip chip = chipGroup.findViewById(i);
-            int [][] states = new int[][] {
-//                    new int[] { android.R.attr.state_enabled}, // enabled
-//                    new int[] {-android.R.attr.state_enabled}, // disabled
-                    new int[] {-android.R.attr.state_checked}, // unchecked
-                    new int[] { android.R.attr.state_pressed}  // pressed
-            };
-            int[] colors = new int[] {
-//                    Color.BLUE,
-//                    Color.YELLOW,
-                    Color.RED,
-                    Color.YELLOW
-            };
-            ColorStateList myState = new ColorStateList(states, colors);
-            chip.setChipBackgroundColor(myState);
             if (chip != null) {
                 switch (i){
                     case R.id.chip_today:

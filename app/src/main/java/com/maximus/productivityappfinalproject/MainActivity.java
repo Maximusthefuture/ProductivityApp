@@ -14,6 +14,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.maximus.productivityappfinalproject.service.CheckAppLaunchService;
 import com.maximus.productivityappfinalproject.utils.Utils;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
 //        NavigationUI.setupWithNavController(toolbar,navController);
 //        NavigationUI.setupActionBarWithNavController(this, navController);
 
+
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
             if (destination.getId() == R.id.fragment_add_app) {
                 bottomNavigationView.setVisibility(View.GONE);
@@ -52,9 +54,6 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
             startActivity(intent);
         }
-//        checkForPermission(this);
-
-
     }
 
     @Override
@@ -64,5 +63,11 @@ public class MainActivity extends AppCompatActivity {
                 navController.popBackStack();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
     }
 }

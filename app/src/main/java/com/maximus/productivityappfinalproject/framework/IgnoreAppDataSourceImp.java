@@ -15,7 +15,7 @@ public class IgnoreAppDataSourceImp implements IgnoreAppDataSource {
 
     public IgnoreAppDataSourceImp(Context context) {
         mContext = context;
-        mAppsDatabase =  AppsDatabase.getInstance(mContext);
+        mAppsDatabase = AppsDatabase.getInstance(mContext);
     }
 
     @Override
@@ -28,11 +28,6 @@ public class IgnoreAppDataSourceImp implements IgnoreAppDataSource {
     public List<IgnoreItems> getAll() {
         return mAppsDatabase.ignoreDao().getIgnoreItems();
     }
-
-//    @Override
-//    public void removeItem(IgnoreItems ignoreItems) {
-//        mAppsDatabase.ignoreDao().deleteByPackageName(ignoreItems.getPackageName());
-//    }
 
     @Override
     public void removeItem(String packageName) {

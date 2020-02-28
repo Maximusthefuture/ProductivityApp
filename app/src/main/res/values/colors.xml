@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#FFFFFF</color>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <color name="colorPrimary">#0E5CD6</color>
+    <color name="colorPrimaryDark">#227A68</color>
+    <color name="colorAccent">#F7F7F7</color>
+    <color name="color">#00BCD4</color>
+<!--    <color name="chip_state_list">-->
+
+<!--    </color>-->
+
 </resources>

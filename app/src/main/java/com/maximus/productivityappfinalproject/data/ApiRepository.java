@@ -2,5 +2,5 @@ package com.maximus.productivityappfinalproject.data;
 
 public interface ApiRepository {
 
-    void getPhraseFromApi(String pharse);
+    void getPhraseFromApi(String phrase);
 }

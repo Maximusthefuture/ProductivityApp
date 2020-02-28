@@ -29,6 +29,7 @@
         </activity>
 
         <service android:name=".service.NotificationService" />
+        <service android:name=".service.CheckAppLaunchService"/>
     </application>
 
 </manifest>

@@ -8,7 +8,7 @@
         <item name="colorAccent">#5A5454</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
+    <style name="AppTheme.NoActionBar" parent="@android:style/Theme.Holo.Light">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>

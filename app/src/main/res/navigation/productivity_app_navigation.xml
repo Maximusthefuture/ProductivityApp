@@ -31,6 +31,10 @@
         android:name="com.maximus.productivityappfinalproject.presentation.ui.IgnoreListFragment"
         android:label="Ignore list"
         tools:layout="@layout/fragment_ignore_list" />
+    <fragment
+        android:id="@+id/usage_limit_fragment"
+        android:name="com.maximus.productivityappfinalproject.presentation.ui.UsageLimitFragment"
+        android:label="UsageLimitFragment" />
 
 
 </navigation>
