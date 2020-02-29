@@ -17,19 +17,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.maximus.productivityappfinalproject.R;
-import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
+import com.maximus.productivityappfinalproject.databinding.FragmentIgnoreListBinding;
 import com.maximus.productivityappfinalproject.presentation.IgnoreListAdapter;
 import com.maximus.productivityappfinalproject.presentation.IgnoreListViewModel;
 import com.maximus.productivityappfinalproject.presentation.OnIgnoreItemClickListener;
-
-import java.util.ArrayList;
 
 public class IgnoreListFragment extends Fragment implements OnIgnoreItemClickListener {
 
     private RecyclerView mRecyclerView;
     private IgnoreListAdapter mAdapter;
     private IgnoreListViewModel mModelView;
-
+    private FragmentIgnoreListBinding mListBinding;
 
     @Nullable
     @Override
@@ -48,11 +46,7 @@ public class IgnoreListFragment extends Fragment implements OnIgnoreItemClickLis
             mAdapter.setList(apps);
         });
 
-//        mModelView.deleteAll();
-
         setHasOptionsMenu(true);
-
-
 
         return root;
     }
@@ -68,6 +62,7 @@ public class IgnoreListFragment extends Fragment implements OnIgnoreItemClickLis
         switch (item.getItemId()) {
             case R.id.delete_all:
                 mModelView.deleteAll();
+
                 //TODO
                 //Callback
                 //OnDeleteAll
@@ -80,9 +75,7 @@ public class IgnoreListFragment extends Fragment implements OnIgnoreItemClickLis
     @Override
     public void onItemClickListener(String packageName) {
         mModelView.deleteIgnoreItem(packageName);
-
-//        mAdapter.notifyDataSetChanged();
-
+        mAdapter.notifyDataSetChanged();
 
     }
 }

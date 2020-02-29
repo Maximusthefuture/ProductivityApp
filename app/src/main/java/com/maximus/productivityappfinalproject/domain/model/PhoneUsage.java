@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
-import androidx.room.Insert;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "phone_usage_table")
@@ -23,9 +22,6 @@ public class PhoneUsage {
     private long timeCompletedInHour;
     @ColumnInfo(name = "time_completed_in_day")
     private long timeCompletedInDay;
-
-    //TODO ADD GETUSAGEDATA!!!!! THIS TABLE USE THAT!!!!
-
 
     public PhoneUsage(String packageName, int usageCount, String usageTime, long timeCompletedInHour, long timeCompletedInDay) {
         this.packageName = packageName;

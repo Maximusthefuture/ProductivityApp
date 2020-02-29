@@ -1,8 +1,12 @@
 apply plugin: 'com.android.application'
+apply plugin: "androidx.navigation.safeargs"
 
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
+    dataBinding {
+        enabled = true
+    }
     defaultConfig {
         applicationId "com.maximus.productivityappfinalproject"
         minSdkVersion 21
@@ -25,6 +29,7 @@ android {
 
 dependencies {
     def preference_version = "1.1.0"
+
 
     // Java language implementation
     implementation "androidx.preference:preference:$preference_version"

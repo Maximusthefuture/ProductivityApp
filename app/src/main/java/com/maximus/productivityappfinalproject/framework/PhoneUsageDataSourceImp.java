@@ -46,4 +46,14 @@ public class PhoneUsageDataSourceImp implements PhoneUsageDataSource {
     public void removePhoneUsage() {
         mAppsDatabase.phoneUsageDao().deletePhoneUsage();
     }
+
+    @Override
+    public void resetHourly() {
+        mAppsDatabase.phoneUsageDao().resetHourly();
+    }
+
+    @Override
+    public void resetDaily() {
+        mAppsDatabase.phoneUsageDao().resetHourly();
+    }
 }

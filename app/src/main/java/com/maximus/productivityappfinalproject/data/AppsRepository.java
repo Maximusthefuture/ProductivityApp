@@ -21,6 +21,8 @@ public interface AppsRepository {
     LiveData<Integer> getUsageCount(int usageCount);
     void insertPhoneUsage(PhoneUsage phoneUsage);
     LiveData<Integer> getUsageCount();
+    void resetHourly();
+    void resetDaily();
     void deletePhoneUsage();
     void updatePhoneUsage(PhoneUsage phoneUsage);
     List<PhoneUsage> getPhoneUsageData();
@@ -28,5 +30,11 @@ public interface AppsRepository {
     List<AppUsageLimitModel> getLimitedItems();
     void addToLimit(AppUsageLimitModel app);
     void removeLimitedApp(String packageName);
+
+    void setClosestHour(long hour);
+    Long getClosestHour();
+    void setClosestDay(long day);
+    Long getClosestDay();
+
 
 }

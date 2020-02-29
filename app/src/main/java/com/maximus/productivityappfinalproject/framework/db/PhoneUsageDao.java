@@ -1,7 +1,6 @@
 package com.maximus.productivityappfinalproject.framework.db;
 
 import androidx.room.Dao;
-import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
@@ -33,6 +32,12 @@ public interface PhoneUsageDao {
     @Update
     void updatePhoneUsage(PhoneUsage phoneUsage);
 
-    @Query("DELETE  FROM phone_usage_table ")
+    @Query("UPDATE phone_usage_table SET time_completed_in_hour=0")
+    void resetHourly();
+
+    @Query("UPDATE phone_usage_table SET time_completed_in_day=0")
+    void resetDaily();
+
+    @Query("DELETE FROM phone_usage_table ")
     void deletePhoneUsage();
 }

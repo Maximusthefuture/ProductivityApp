@@ -4,8 +4,10 @@ import android.app.Application;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.arch.core.util.Function;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
 
 import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
 import com.maximus.productivityappfinalproject.data.IgnoreAppDataSource;
@@ -25,6 +27,17 @@ public class IgnoreListViewModel extends AndroidViewModel {
     private GetIgnoreListUseCase mIgnoreListUseCase;
     private DeleteIgnoreItemUseCase mDeleteIgnoreItemUseCase;
 
+    /**
+     * Используем в data binding
+     */
+    public final LiveData<Boolean> empty = Transformations.map(mAllIgnoreItems,
+            new Function<List<IgnoreItems>, Boolean>() {
+                @Override
+                public Boolean apply(List<IgnoreItems> input) {
+                    return input.isEmpty();
+                }
+            });
+
     public IgnoreListViewModel(@NonNull Application application) {
         super(application);
         mContext = application.getApplicationContext();
@@ -41,6 +54,7 @@ public class IgnoreListViewModel extends AndroidViewModel {
 
     public void deleteAll() {
         mAppsRepository.deleteAllIgnoreList();
+        getAllIgnoreItems();
     }
 
     public void deleteIgnoreItem(String packageName) {

@@ -28,12 +28,8 @@ import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.presentation.SimpleItemTouchHelperCallback;
 import com.maximus.productivityappfinalproject.presentation.OnSwipeAppToIgnoreList;
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
-import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
 import com.maximus.productivityappfinalproject.presentation.AppsViewModel;
 import com.maximus.productivityappfinalproject.service.CheckAppLaunchService;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class AppsFragment extends Fragment implements OnAppClickListener, OnSwipeAppToIgnoreList {
 
@@ -53,7 +49,6 @@ public class AppsFragment extends Fragment implements OnAppClickListener, OnSwip
 
         mViewModel = new ViewModelProvider(this).get(AppsViewModel.class);
 
-
         recyclerView = root.findViewById(R.id.apps_add_recycler_view);
         mNavController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
         DividerItemDecoration itemDecoration = new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL);
@@ -61,8 +56,6 @@ public class AppsFragment extends Fragment implements OnAppClickListener, OnSwip
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false));
         mAdapter = new AppRecyclerViewAdapter(this, this);
         recyclerView.setAdapter(mAdapter);
-
-//        mViewModel.deleteAll();
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
@@ -101,15 +94,8 @@ public class AppsFragment extends Fragment implements OnAppClickListener, OnSwip
     @Override
     public void onSwiped(int position) {
         AppsModel info = mAdapter.getDataFromPosition(position);
-        String packageName = info.getPackageName();
-        String appName = info.getAppName();
-        IgnoreItems ignoreItems = new IgnoreItems(packageName, appName);
-        List<IgnoreItems> list = new ArrayList<>();
-        list.add(ignoreItems);
-        mViewModel.insert(ignoreItems);
+        mViewModel.insert(info);
         Log.d(TAG, "onSwiped: " + info);
-
-
     }
 
     @Override

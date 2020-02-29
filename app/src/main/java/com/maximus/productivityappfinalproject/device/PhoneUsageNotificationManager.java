@@ -29,7 +29,6 @@ public class PhoneUsageNotificationManager {
 
         builder
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("Time: " + phoneUsedTime)
                 .setContentText("Usage count: " + count)
                 .setVibrate(null)
                 .setChannelId(CHANNEL_ID);

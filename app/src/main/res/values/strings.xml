@@ -47,4 +47,7 @@
     <string name="day_24_hours">В дне 24 часа</string>
     <string name="hour_60_minutes">В часу 60 минут</string>
     <string name="you_are_not_ready">Вы ничего не ввели</string>
+    <string name="limit_set">Лимит установлен %s</string>
+    <string name="change_limit">Изменить лимит</string>
+    <string name="nothing">Ничего нет</string>
 </resources>

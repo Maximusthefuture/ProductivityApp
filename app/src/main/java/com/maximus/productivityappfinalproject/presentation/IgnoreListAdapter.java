@@ -1,7 +1,6 @@
 package com.maximus.productivityappfinalproject.presentation;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +42,7 @@ public class IgnoreListAdapter extends RecyclerView.Adapter<IgnoreListAdapter.Ig
     @Override
     public void onBindViewHolder(@NonNull IgnoreViewHolder holder, int position) {
         IgnoreItems ignoreItems = mIgnoreItems.get(position);
-        holder.bind(ignoreItems);
+        holder.bind(ignoreItems, holder);
     }
 
     public void setList(List<IgnoreItems> list) {
@@ -68,7 +67,7 @@ public class IgnoreListAdapter extends RecyclerView.Adapter<IgnoreListAdapter.Ig
 
         }
 
-        public void bind(IgnoreItems item) {
+        public void bind(IgnoreItems item, IgnoreViewHolder holder) {
             mAppName.setText(item.getName());
             Glide.with(mIcon.getContext())
                     .load(mMyUsageStatsManagerWrapper.getAppIcon(item.getPackageName()))
@@ -76,9 +75,8 @@ public class IgnoreListAdapter extends RecyclerView.Adapter<IgnoreListAdapter.Ig
                     .into(mIcon);
 
             itemView.setOnClickListener(v -> {
+                mIgnoreItems.remove(holder.getAdapterPosition());
                 mItemClickListener.onItemClickListener(item.getPackageName());
-                Log.d(TAG, "bind: " + item.getPackageName());
-//                notifyDataSetChanged();
                 notifyItemRemoved(getAdapterPosition());
             });
         }

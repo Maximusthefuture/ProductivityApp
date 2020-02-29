@@ -40,7 +40,7 @@ public class Utils {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         long start = calendar.getTimeInMillis();
-        long end = start + (86400 * 1000) > timeNow ? timeNow : start + (86400 * 1000);
+        long end = Math.min(start + (86400 * 1000), timeNow);
         return new long[]{start, end};
     }
 
@@ -81,8 +81,9 @@ public class Utils {
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);
         long start = cal.getTimeInMillis();
-        long end = start + 86400 * 1000 > timeNow ? timeNow : start + 86400 * 1000;
-        return new long[]{start, end};
+        Utils.formatMillisToSeconds(start);
+        return new long[]{start, timeNow};
+
     }
 
     public static boolean hasPermission(Context context) {
@@ -92,6 +93,28 @@ public class Utils {
             return mode == AppOpsManager.MODE_ALLOWED;
         }
         return false;
+    }
+
+    public static long getComingHour() {
+        Calendar calendar = Calendar.getInstance();
+
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        hour++;
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+
+        return calendar.getTimeInMillis();
+    }
+
+    public static long getComingDay() {
+        Calendar calendar = Calendar.getInstance();
+
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+
+        return calendar.getTimeInMillis();
     }
 
 

@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.maximus.productivityappfinalproject.MyStatisticView;
+import com.maximus.productivityappfinalproject.presentation.MyStatisticView;
 import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
 import com.maximus.productivityappfinalproject.presentation.StatisticsViewModel;

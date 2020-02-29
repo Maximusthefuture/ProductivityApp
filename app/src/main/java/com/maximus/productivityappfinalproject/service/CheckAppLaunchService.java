@@ -8,7 +8,6 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Process;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -17,12 +16,20 @@ import androidx.core.util.Pair;
 import com.maximus.productivityappfinalproject.data.AppLimitDataSource;
 import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
 import com.maximus.productivityappfinalproject.data.PhoneUsageDataSource;
+import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManager;
+import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManagerImpl;
 import com.maximus.productivityappfinalproject.device.MyUsageStatsManagerWrapper;
 import com.maximus.productivityappfinalproject.domain.GetAppWithLimitUseCase;
+import com.maximus.productivityappfinalproject.domain.GetClosestTimeUseCase;
+import com.maximus.productivityappfinalproject.domain.ResetAppUseTimeDbUseCase;
+import com.maximus.productivityappfinalproject.domain.SetClosestTimeUseCase;
+import com.maximus.productivityappfinalproject.domain.UpdateClosestTimeUseCase;
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 import com.maximus.productivityappfinalproject.framework.AppLimitDataSourceImpl;
 import com.maximus.productivityappfinalproject.framework.PhoneUsageDataSourceImp;
+
+import java.util.Calendar;
 
 public class CheckAppLaunchService extends Service {
 
@@ -35,8 +42,14 @@ public class CheckAppLaunchService extends Service {
     private AppsRepositoryImpl mAppsRepository;
     private AppLimitDataSource mAppLimitDataSource;
     private PhoneUsageDataSource mPhoneUsageDataSource;
-    long currentTime;
-    private static final String TAG = "CheckAppLaunchService";
+    private UpdateClosestTimeUseCase mUpdateClosestTimeUseCase;
+    private GetClosestTimeUseCase mGetClosestTimeUseCase;
+    private SetClosestTimeUseCase mSetClosestTimeUseCase;
+    private ResetAppUseTimeDbUseCase mResetAppUseTimeDbUseCase;
+    private SharedPrefManager mSharedPrefManager;
+    private long closestHour;
+    private long closestDay;
+    private long timeNow;
 
 
     @Override
@@ -44,11 +57,16 @@ public class CheckAppLaunchService extends Service {
         super.onCreate();
         mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(getApplicationContext());
         appLaunchThread = new HandlerThread("MyHandlerThread", Process.THREAD_PRIORITY_BACKGROUND);
+        mSharedPrefManager = new SharedPrefManagerImpl(this, "TimePrefs");
         appLaunchThread.start();
         mAppLimitDataSource = new AppLimitDataSourceImpl(getApplicationContext());
         mPhoneUsageDataSource = new PhoneUsageDataSourceImp(getApplicationContext());
-        mAppsRepository = new AppsRepositoryImpl(mPhoneUsageDataSource ,mAppLimitDataSource);
+        mAppsRepository = new AppsRepositoryImpl(mPhoneUsageDataSource ,mAppLimitDataSource, mSharedPrefManager);
         mGetAppWithLimitUseCase = new GetAppWithLimitUseCase(mAppsRepository);
+        mSetClosestTimeUseCase = new SetClosestTimeUseCase(mAppsRepository);
+        mUpdateClosestTimeUseCase = new UpdateClosestTimeUseCase(mSetClosestTimeUseCase);
+        mGetClosestTimeUseCase = new GetClosestTimeUseCase(mAppsRepository);
+        mResetAppUseTimeDbUseCase = new ResetAppUseTimeDbUseCase(mAppsRepository);
         mLooper = appLaunchThread.getLooper();
         mHandler = new Handler(mLooper);
     }
@@ -59,31 +77,62 @@ public class CheckAppLaunchService extends Service {
             @Override
             public void run() {
                 mHandler.postDelayed(this, 2000);
-                String currentForegroundApp = mMyUsageStatsManagerWrapper.getForegroundApp();
-                if (currentForegroundApp != null) {
-                    mGetAppWithLimitUseCase.updateCurrentAppStats(currentForegroundApp);
-                }
-                Log.d(TAG, "currentForegroundApp " + currentForegroundApp);
-                if (mGetAppWithLimitUseCase.isLimitSet(currentForegroundApp)) {
-                    AppUsageLimitModel appUsageLimitModel =  mGetAppWithLimitUseCase.getAppUsageLimitFromDB();
-                    PhoneUsage phoneUsage = mGetAppWithLimitUseCase.getAppUsageData(currentForegroundApp);
-                    Pair<Boolean, String> appAccessAllowed = getStatusAccessAllowedNow(appUsageLimitModel, phoneUsage); // модель с временем использования);
-                    boolean isAppAccessAllowedNow = appAccessAllowed.first;
-                    Log.d(TAG, "PHONE PACKAGE NAEM" + phoneUsage.getPackageName());
-                    Log.d(TAG, "PHONECOMPLETED " + phoneUsage.getTimeCompletedInHour());
-                    Log.d(TAG, "AppLIMITED " + appUsageLimitModel.getTimeLimitPerHour());
-                    String d = appAccessAllowed.second;
+                closestHour = mGetClosestTimeUseCase.getClosestHour();
+                closestDay = mGetClosestTimeUseCase.getClosestDay();
+                timeNow = Calendar.getInstance().getTimeInMillis();
 
-                    if (!isAppAccessAllowedNow) {
-                        showHomeScreen(getApplicationContext());
-                        Toast.makeText(CheckAppLaunchService.this, "You cant use this app today" + d, Toast.LENGTH_LONG).show();
-                    }
-                }
+                checkTimeAndResetDb();
+                checkAppLimitAndUpdateStats();
             }
         };
         mHandler.post(mRunnable);
 
         return START_STICKY;
+    }
+
+    private void checkTimeAndResetDb() {
+        if (closestHour < timeNow) {
+            Runnable hourly = new Runnable() {
+                @Override
+                public void run() {
+                    mResetAppUseTimeDbUseCase.resetHourAppUsage();
+                }
+            };
+            mHandler.postDelayed(hourly, 2000);
+            mUpdateClosestTimeUseCase.updateClosestHour();
+        }
+
+        if (closestDay < timeNow) {
+            mUpdateClosestTimeUseCase.updateClosestHour();
+            Runnable daily = new Runnable() {
+                @Override
+                public void run() {
+                    mResetAppUseTimeDbUseCase.resetDayAppUsage();
+                }
+            };
+            mHandler.postDelayed(daily, 2000);
+            mUpdateClosestTimeUseCase.updateClosestDay();
+        }
+    }
+
+    private void checkAppLimitAndUpdateStats() {
+        String currentForegroundApp = mMyUsageStatsManagerWrapper.getForegroundApp();
+        if (currentForegroundApp != null) {
+            mGetAppWithLimitUseCase.updateCurrentAppStats(currentForegroundApp);
+        }
+
+        if (mGetAppWithLimitUseCase.isLimitSet(currentForegroundApp)) {
+            AppUsageLimitModel appUsageLimitModel =  mGetAppWithLimitUseCase.getAppUsageLimitFromDB();
+            PhoneUsage phoneUsage = mGetAppWithLimitUseCase.getAppUsageData(currentForegroundApp);
+            Pair<Boolean, String> appAccessAllowed = getStatusAccessAllowedNow(appUsageLimitModel, phoneUsage);
+            boolean isAppAccessAllowedNow = appAccessAllowed.first;
+            String d = appAccessAllowed.second;
+
+            if (!isAppAccessAllowedNow) {
+                showHomeScreen(getApplicationContext());
+                Toast.makeText(CheckAppLaunchService.this, "You cant use this app  " + d, Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     @Nullable
@@ -103,12 +152,12 @@ public class CheckAppLaunchService extends Service {
         String msg;
         if (appUsageLimitModel.isAppLimited()) {
             if (appUsageLimitModel.getTimeLimitPerHour() <= phoneUsage.getTimeCompletedInHour()) {
-                msg = "time limit";
+                msg = "in closest hour";
                 return new Pair<>(false, msg);
             }
 
             if (appUsageLimitModel.getTimeLimitPerDay() <= phoneUsage.getTimeCompletedInDay()) {
-                msg = "time limit day";
+                msg = "in this day";
                 return new Pair<>(false, msg);
             }
         }

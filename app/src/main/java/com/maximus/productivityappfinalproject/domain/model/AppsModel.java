@@ -23,6 +23,10 @@ public class AppsModel implements Parcelable {
         mCount = count;
     }
 
+    public AppsModel(long appUsageTime) {
+        mAppUsageTime = appUsageTime;
+    }
+
     public AppsModel() {
     }
 

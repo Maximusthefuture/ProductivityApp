@@ -1,14 +1,11 @@
 package com.maximus.productivityappfinalproject.presentation.ui;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;;
 
 
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceManager;
 
 import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.service.NotificationService;

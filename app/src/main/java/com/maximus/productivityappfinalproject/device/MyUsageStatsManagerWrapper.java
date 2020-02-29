@@ -17,9 +17,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
 import com.maximus.productivityappfinalproject.data.IgnoreAppDataSource;
-import com.maximus.productivityappfinalproject.domain.GetIgnoreListUseCase;
 import com.maximus.productivityappfinalproject.framework.IgnoreAppDataSourceImp;
 import com.maximus.productivityappfinalproject.utils.IntervalEnum;
 import com.maximus.productivityappfinalproject.R;
@@ -159,10 +157,10 @@ public class MyUsageStatsManagerWrapper {
         long[] range = Utils.getInterval(IntervalEnum.getInterval(sort));
         UsageEvents events = mUsageStatsManager.queryEvents(range[0], range[1]);
         UsageEvents.Event event = new UsageEvents.Event();
-        AppsModel appsModel;
+        AppsModel appsModel = null;
         MyEvent myEvent = null;
         long start = 0;
-        long usageTime;
+        long usageTime = 0;
 
         while (events.hasNextEvent()) {
             events.getNextEvent(event);
@@ -171,13 +169,12 @@ public class MyUsageStatsManagerWrapper {
             long eventTime = event.getTimeStamp();
             Log.d("||||------>", currectPackageName + " " + packageName + " " + new SimpleDateFormat(
                     "yyyy/MM/dd HH:mm:ss", Locale.getDefault()).format(new Date(eventTime)) + " " + eventType);
-
             if (currectPackageName.equals(packageName)) {
                 //TODO delete log
-                Log.d("||||||||||>", currectPackageName + " " + packageName + " " + new SimpleDateFormat(
-                        "yyyy/MM/dd HH:mm:ss", Locale.getDefault()).format(new Date(eventTime)) + " " + eventType);
+//                Log.d("||||||||||>", currectPackageName + " " + packageName + " " + new SimpleDateFormat(
+//                        "yyyy/MM/dd HH:mm:ss", Locale.getDefault()).format(new Date(eventTime)) + " " + eventType);
                 if (eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
-                    Log.d("********", "start " + start);
+//                    Log.d("********", "start " + start);
                     if (start == 0) {
                         start = eventTime;
                         appsModel = new AppsModel(0, eventTime, eventType);
@@ -186,18 +183,20 @@ public class MyUsageStatsManagerWrapper {
                 } else if (eventType == UsageEvents.Event.ACTIVITY_PAUSED) {
                     if (start > 0) {
                         myEvent = new MyEvent(event);
+                        myEvent.mEventType = -1;
+
                     }
-                    Log.d("********", "add end " + start);
                 }
             } else {
                 if (myEvent != null && start > 0) {
                     usageTime = myEvent.mTimeStamp - start;
-                    appsModel = new AppsModel(usageTime, myEvent.mTimeStamp, myEvent.mEventType);
-//                    appsModel.setAppUsageTime(usageTime);
-                    if (appsModel.getAppUsageTime() <= 0) {
-                        appsModel.setAppUsageTime(usageTime);
+                    if (usageTime <= 0) {
+                        usageTime = 0;
                     }
-                    Log.d(TAG, "getUsedInterval: " + appsModel.getAppUsageTime());
+                    appsModel = new AppsModel(usageTime, myEvent.mTimeStamp, myEvent.mEventType);
+
+
+
                     if (appsModel.getAppUsageTime() >= 4000) {
                         appsModel.setCount(mCount++);
                     }

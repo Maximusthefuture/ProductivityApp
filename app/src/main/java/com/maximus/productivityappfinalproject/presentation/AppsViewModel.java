@@ -4,7 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,12 +14,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.OnLifecycleEvent;
 
 import com.maximus.productivityappfinalproject.R;
-import com.maximus.productivityappfinalproject.data.AppsRepository;
 import com.maximus.productivityappfinalproject.data.PhoneUsageDataSource;
 import com.maximus.productivityappfinalproject.domain.GetPhoneUsageCountUseCase;
-import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 import com.maximus.productivityappfinalproject.framework.PhoneUsageDataSourceImp;
-import com.maximus.productivityappfinalproject.framework.db.AppsDatabase;
 import com.maximus.productivityappfinalproject.service.NotificationService;
 import com.maximus.productivityappfinalproject.utils.IntervalEnum;
 import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
@@ -35,9 +31,8 @@ import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
 import com.maximus.productivityappfinalproject.framework.IgnoreAppDataSourceImp;
 import com.maximus.productivityappfinalproject.utils.MyPreferenceManager;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import io.reactivex.schedulers.Schedulers;
 
 public class AppsViewModel extends AndroidViewModel {
     private static final String TAG = "AppsViewModel";
@@ -77,15 +72,19 @@ public class AppsViewModel extends AndroidViewModel {
         return mAllApps;
     }
 
-    public void insert(IgnoreItems item) {
-        mIgnoreListUseCase.addToIgnoreList(item);
+    public void insert(AppsModel info) {
+        String packageName = info.getPackageName();
+        String appName = info.getAppName();
+        IgnoreItems ignoreItems = new IgnoreItems(packageName, appName);
+        List<IgnoreItems> list = new ArrayList<>();
+        list.add(ignoreItems);
+        mIgnoreListUseCase.addToIgnoreList(ignoreItems);
     }
 
     //TODO  Create UseCase in these we check is preference on or off, so we can start or stop service again?
     //SAVE USAGE COUNT FROM SERVICE TO DB? OR SHARED PREF?
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void startService() {
-        Toast.makeText(mContext, "Service started", Toast.LENGTH_SHORT).show();
         SharedPreferences sharedPreferences = mContext.getSharedPreferences("notification", Context.MODE_PRIVATE);
         MyPreferenceManager.init(mContext);
         boolean f =  MyPreferenceManager.getInstance().getBoolean(mContext.getString(R.string.show_notification_key));
@@ -113,11 +112,4 @@ public class AppsViewModel extends AndroidViewModel {
         }
     }
 
-//    public void getApps(int id) {
-//        mGetAppsUseCase.execute(id)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(this::onSuccess, this::OnError);
-//
-//    }
 }

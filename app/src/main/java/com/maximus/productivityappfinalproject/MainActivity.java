@@ -14,7 +14,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.maximus.productivityappfinalproject.service.CheckAppLaunchService;
 import com.maximus.productivityappfinalproject.utils.Utils;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,10 +40,11 @@ public class MainActivity extends AppCompatActivity {
                 bottomNavigationView.setVisibility(View.GONE);
             } else if (destination.getId() == R.id.app_detail_fragment) {
                 bottomNavigationView.setVisibility(View.GONE);
-            } else if (destination.getId() == R.id.ignore_list_fragment){
+            } else if (destination.getId() == R.id.ignore_list_fragment) {
+                bottomNavigationView.setVisibility(View.GONE);
+            } else if (destination.getId() == R.id.usage_limit_fragment){
                 bottomNavigationView.setVisibility(View.GONE);
             } else {
-
                 bottomNavigationView.setVisibility(View.VISIBLE);
             }
         });

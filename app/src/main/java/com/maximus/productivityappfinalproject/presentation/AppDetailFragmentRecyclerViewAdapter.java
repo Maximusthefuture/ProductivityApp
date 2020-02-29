@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
+import com.maximus.productivityappfinalproject.utils.Utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,7 +20,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class AppDetailFragmentRecyclerViewAdapter extends RecyclerView.Adapter<AppDetailFragmentRecyclerViewAdapter.AppDetailViewHolder> {
-    private static final String TAG = "AppDetailFragmentRecycl";
     private List<AppsModel> mAppsModelList;
     @NonNull
     @Override
@@ -37,7 +37,7 @@ public class AppDetailFragmentRecyclerViewAdapter extends RecyclerView.Adapter<A
             holder.mLinearLayout.setPadding(16, 9, 16, 4);
         } else if (appsModel.getEventType() == -1) {
             holder.mLinearLayout.setPadding(16, 4, 16, 4);
-//            formatDate = Utils.formatMillisToSeconds(appsModel.getAppUsageTime()); //TODO
+            formatDate = Utils.formatMillisToSeconds(appsModel.getAppUsageTime());
         } else if (appsModel.getEventType() == UsageEvents.Event.ACTIVITY_RESUMED) {
             holder.mLinearLayout.setPadding(16, 12, 16, 0);
         }

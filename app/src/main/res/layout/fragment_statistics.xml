@@ -4,7 +4,7 @@
     android:layout_height="match_parent">
 
 
-    <com.maximus.productivityappfinalproject.MyStatisticView
+    <com.maximus.productivityappfinalproject.presentation.MyStatisticView
         android:id="@+id/my_view"
         android:layout_width="match_parent"
         android:layout_height="300dp"

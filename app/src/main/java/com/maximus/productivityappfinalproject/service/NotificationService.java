@@ -12,7 +12,6 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationManagerCompat;
 
-import com.maximus.productivityappfinalproject.data.AppsRepository;
 import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
 import com.maximus.productivityappfinalproject.data.PhoneUsageDataSource;
 import com.maximus.productivityappfinalproject.data.ScreenReceiver;
@@ -23,9 +22,6 @@ import com.maximus.productivityappfinalproject.domain.GetAppWithLimitUseCase;
 import com.maximus.productivityappfinalproject.domain.GetPhoneUsageCountUseCase;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 import com.maximus.productivityappfinalproject.framework.PhoneUsageDataSourceImp;
-import com.maximus.productivityappfinalproject.framework.db.AppsDatabase;
-
-import java.util.concurrent.BlockingDeque;
 
 
 public class NotificationService extends Service {
@@ -85,18 +81,8 @@ public class NotificationService extends Service {
         isScreenOn = intent.getBooleanExtra(ScreenReceiver.SCREEN_STATE, true);
         if (isScreenOn) {
             count++;
-//           String app =  mMyUsageStatsManagerWrapper.getForegroundApp();
-//            Log.d(TAG, "Foreground app" + app);
-            String currentForegroundApp = mMyUsageStatsManagerWrapper.getForegroundApp();
-            if (currentForegroundApp != null) {
-//                mGetAppWithLimitUseCase.updateCurrentAppStats(currentForegroundApp);
-            }
-            mPhoneUsageUseCase.insertPhoneUsage(mPhoneUsage = new PhoneUsage(count));
 //            getCountFrom Db or sharedPref?
 //            insertCount to Db or sharedPref
-            Log.d(TAG, "onStartCommand: USAGE COUNT FROM DB " + mUsageCountUseCase.getPhoneUsageCount().getValue());
-            Log.d(TAG, "onStartCommand:  PHONEUSAGE MODEL USAGE COUNT " + mPhoneUsage.getUsageCount());
-
             mHandler = new Handler();
         }
         mHandler = null;

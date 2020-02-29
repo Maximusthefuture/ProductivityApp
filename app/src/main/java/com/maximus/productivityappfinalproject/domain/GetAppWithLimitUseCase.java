@@ -1,7 +1,5 @@
 package com.maximus.productivityappfinalproject.domain;
 
-import android.util.Log;
-
 import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
@@ -11,10 +9,10 @@ import java.util.List;
 public class GetAppWithLimitUseCase {
     private AppUsageLimitModel mAppUsageLimitModel;
     private AppsRepositoryImpl mAppsRepository;
-    String prevApp;
-    String noAPP = "NOAPP";
+    private String prevApp;
+    private static final String noAPP = "NO_APP";
     private long currentTime;
-    private static final String TAG = "GetAppWithLimitUseCase";
+
 
     public GetAppWithLimitUseCase(AppsRepositoryImpl appsRepository) {
         mAppsRepository = appsRepository;
@@ -72,7 +70,7 @@ public class GetAppWithLimitUseCase {
         return phoneUsageModel;
     }
 
-    public void updateUsage(String currentAppForeground, long timeCompletedThisUse) {
+    public void updateAppUsage(String currentAppForeground, long timeCompletedThisUse) {
         PhoneUsage phoneUsageModel;
         boolean found = false;
         String currentPackageName;
@@ -106,18 +104,13 @@ public class GetAppWithLimitUseCase {
         long currentTimeForeground = System.currentTimeMillis() - currentTime;
         if (!prevApp.equals(currentAppForeground)) {
             if (!prevApp.equals(noAPP)) {
-                updateUsage(prevApp, currentTimeForeground);
-                Log.d(TAG, "prevApp" + prevApp);
-                Log.d(TAG,  "prevApp " + prevApp + " currentTimeForeground: " +currentTimeForeground);
+                updateAppUsage(prevApp, currentTimeForeground);
             }
             prevApp = currentAppForeground;
             currentTime = System.currentTimeMillis();
         } else if(currentTimeForeground >= 60000) {
-            updateUsage(prevApp, currentTimeForeground);
-            Log.d(TAG, "updateCurrentAppStats: " +  " > " +  600000);
+            updateAppUsage(prevApp, currentTimeForeground);
             currentTime = System.currentTimeMillis();
         }
     }
-
-
 }

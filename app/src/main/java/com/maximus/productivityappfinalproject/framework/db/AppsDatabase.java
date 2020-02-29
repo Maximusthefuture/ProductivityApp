@@ -9,7 +9,6 @@ import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
-import com.maximus.productivityappfinalproject.domain.model.HistoryItems;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 

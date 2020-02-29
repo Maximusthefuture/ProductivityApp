@@ -17,4 +17,8 @@ public interface PhoneUsageDataSource {
     int getUsageCount();
 
     void removePhoneUsage();
+
+    void resetHourly();
+
+    void resetDaily();
 }

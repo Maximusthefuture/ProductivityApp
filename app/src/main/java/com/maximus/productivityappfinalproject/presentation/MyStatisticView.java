@@ -1,4 +1,4 @@
-package com.maximus.productivityappfinalproject;
+package com.maximus.productivityappfinalproject.presentation;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -14,6 +14,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
+import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
 import com.maximus.productivityappfinalproject.utils.Utils;
 

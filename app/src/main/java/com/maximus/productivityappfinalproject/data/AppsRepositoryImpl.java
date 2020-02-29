@@ -1,10 +1,9 @@
 package com.maximus.productivityappfinalproject.data;
 
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManager;
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
@@ -23,11 +22,16 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
     private IgnoreAppDataSource mIgnoreAppDataSource;
     private PhoneUsageDataSource mPhoneUsageDataSource;
     private AppLimitDataSource mAppLimitDataSource;
+    private SharedPrefManager mSharedPrefManager;
 
 
     public AppsRepositoryImpl(IgnoreAppDataSource ignoreAppDataSource) {
         mIgnoreAppDataSource = ignoreAppDataSource;
 
+    }
+
+    public AppsRepositoryImpl(SharedPrefManager sharedPrefManager) {
+        mSharedPrefManager = sharedPrefManager;
     }
 
     public AppsRepositoryImpl(PhoneUsageDataSource phoneUsageDataSource) {
@@ -38,14 +42,16 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
         mAppLimitDataSource = appLimitDataSource;
     }
 
-    public AppsRepositoryImpl() {
-    }
-
     public AppsRepositoryImpl(IgnoreAppDataSource ignoreAppDataSource, PhoneUsageDataSource phoneUsageDataSource) {
         mIgnoreAppDataSource = ignoreAppDataSource;
         mPhoneUsageDataSource = phoneUsageDataSource;
     }
 
+    public AppsRepositoryImpl(PhoneUsageDataSource phoneUsageDataSource, AppLimitDataSource appLimitDataSource, SharedPrefManager prefManager) {
+        mPhoneUsageDataSource = phoneUsageDataSource;
+        mAppLimitDataSource = appLimitDataSource;
+        mSharedPrefManager = prefManager;
+    }
 
     public AppsRepositoryImpl(PhoneUsageDataSource phoneUsageDataSource, AppLimitDataSource appLimitDataSource) {
         mPhoneUsageDataSource = phoneUsageDataSource;
@@ -76,18 +82,6 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
     public void insertToIgnoreList(IgnoreItems item) {
         AppsDatabase.datatbaseWriterExecutor.execute(() ->
                 mIgnoreAppDataSource.add(item));
-    }
-
-    public void getMyLimitedItems() {
-        AppsDatabase.datatbaseWriterExecutor.execute(() -> {
-            List<AppUsageLimitModel> imy = mAppLimitDataSource.getLimitedApps();
-            for (AppUsageLimitModel appUsageLimitModel : imy) {
-                Log.d(TAG, "getMyLimitedItems: " +
-                        appUsageLimitModel.getPackageName() + " perHourLimit " +
-                        appUsageLimitModel.getTimeLimitPerHour() + " perDayLimit " +
-                        appUsageLimitModel.getTimeLimitPerDay() + "isLimited " + appUsageLimitModel.isAppLimited());
-            }
-        });
     }
 
     @Override
@@ -142,6 +136,16 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
     }
 
     @Override
+    public void resetHourly() {
+        mPhoneUsageDataSource.resetHourly();
+    }
+
+    @Override
+    public void resetDaily() {
+        mPhoneUsageDataSource.resetDaily();
+    }
+
+    @Override
     public void deletePhoneUsage() {
         mPhoneUsageDataSource.removePhoneUsage();
     }
@@ -161,6 +165,26 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
     @Override
     public void removeLimitedApp(String packageName) {
         mAppLimitDataSource.removeLimitedApp(packageName);
+    }
+
+    @Override
+    public void setClosestHour(long hour) {
+        mSharedPrefManager.setClosestHour(hour);
+    }
+
+    @Override
+    public Long getClosestHour() {
+        return mSharedPrefManager.getClosestHour();
+    }
+
+    @Override
+    public void setClosestDay(long day) {
+        mSharedPrefManager.setClosestDay(day);
+    }
+
+    @Override
+    public Long getClosestDay() {
+        return mSharedPrefManager.getClosetDay();
     }
 
 
