@@ -60,7 +60,7 @@ public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerView
 
     @Override
     public int getItemCount() {
-        return mAppsNameList.size();
+        return mAppsNameList != null ? mAppsNameList.size() : 0;
 
     }
 

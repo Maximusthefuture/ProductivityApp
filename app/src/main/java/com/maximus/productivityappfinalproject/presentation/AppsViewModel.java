@@ -59,7 +59,7 @@ public class AppsViewModel extends AndroidViewModel {
         mRepository = new AppsRepositoryImpl(mIgnoreAppDataSource, mDataSource);
         mIgnoreListUseCase = new AddIgnoreListUseCase(mRepository);
         mAppsUseCase = new GetAppsUseCase(mMyUsageStatsManagerWrapper);
-        mAllApps = mAppsUseCase.getAllApps(false, 1);
+        mAllApps = mAppsUseCase.getAllApps(false, 0);
         mManager = new PhoneUsageNotificationManager(mContext);
         mShowAppUsageUseCase = new ShowAppUsageUseCase(mManager);
         mUsageCountUseCase = new GetPhoneUsageCountUseCase(mRepository);

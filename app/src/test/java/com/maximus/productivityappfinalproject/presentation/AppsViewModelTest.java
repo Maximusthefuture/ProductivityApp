@@ -29,8 +29,7 @@ public class AppsViewModelTest {
 
     @Test
     public void getAllApps() {
-        mAppsViewModel.getAllApps();
-        verify(mGetAppsUseCase.getAllApps(true, 0));
+
     }
 
     @Test
@@ -40,11 +39,4 @@ public class AppsViewModelTest {
 
     }
 
-    @Test
-    public void startService() {
-    }
-
-    @Test
-    public void setFiltering() {
-    }
 }
