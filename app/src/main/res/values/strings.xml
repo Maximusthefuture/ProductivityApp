@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">Productivity App</string>
-    <string name="apps_title_bottom_menu">Apps</string>
+    <string name="apps_title_bottom_menu">Приложения</string>
     <string name="habits_title_bottom_menu">Habits</string>
-    <string name="statistics_title_bottom_menu">Statistics</string>
-    <string name="settings_title_bottom_menu">Settings</string>
+    <string name="statistics_title_bottom_menu">Статистика</string>
+    <string name="settings_title_bottom_menu">Настройки</string>
     <string name="add_app">Add app</string>
-    <string name="last_time_used">Last time used: %s</string>
+    <string name="last_time_used">Последнее использование: %s</string>
     <string name="save_button">Сохранить</string>
     <string name="button_next">Дальше</string>
     <string name="habit_name">Имя</string>
@@ -14,7 +14,7 @@
     <string name="pick_day_title">Выберите день</string>
     <string name="reminder_title">Reminder</string>
     <string name="save_button_text">Сохранить</string>
-    <string name="total_time">Total Time:</string>
+    <string name="total_time">Общее время:</string>
     <string name="usage_count">Usage count:</string>
     <string name="cut_usage_time_button">Ограничить время использования</string>
     <string name="delete_all">Delete all</string>
@@ -37,9 +37,9 @@
     <string name="show_notification_title">Показывать уведомления</string>
     <string name="show_notification_summary">Время использования телефона</string>
     <string name="show_notification_key">notification</string>
-    <string name="today_chip_label">Today</string>
-    <string name="yesterday_chip_label">Yesterday</string>
-    <string name="this_week_chip_label">This week</string>
+    <string name="today_chip_label">Сегодня</string>
+    <string name="yesterday_chip_label">Вчера</string>
+    <string name="this_week_chip_label">Неделя</string>
     <string name="set_limit_usage_text_view">Установить ограничение по времени</string>
     <string name="set_limit">Установить лимит</string>
     <string name="minutes_hint_edit_text">минуты</string>
@@ -54,6 +54,6 @@
     <string name="in_this_day">в этот день.</string>
     <string name="closest_hour">в ближайший час</string>
     <string name="i_want_to_slack_key">limit_off</string>
-    <string name="i_want_to_slack_title">Хочу прокрастинировать!!!!</string>
+    <string name="i_want_to_slack_title">Хочу прокрастинировать!</string>
     <string name="limit_off_summary">Отключить ограничение на приложения на 30 мин, доступно 1 раз в день</string>
 </resources>

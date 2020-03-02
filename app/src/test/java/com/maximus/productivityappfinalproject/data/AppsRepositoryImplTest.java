@@ -9,7 +9,6 @@ import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 import com.maximus.productivityappfinalproject.framework.AppLimitDataSourceImpl;
 import com.maximus.productivityappfinalproject.framework.IgnoreAppDataSourceImp;
 import com.maximus.productivityappfinalproject.framework.PhoneUsageDataSourceImp;
-import com.maximus.productivityappfinalproject.framework.db.AppsDatabase;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -92,7 +91,9 @@ public class AppsRepositoryImplTest {
     @Test
     public void deleteIgnoreItemFromDb() {
         IgnoreItems ignoreItems = new IgnoreItems("com.example.media", 1000, "Media");
-        mAppsRepository.insertToIgnoreList(ignoreItems);
+        IgnoreItems ignoreItems1 = new IgnoreItems("com.example.Example", 1000, "Example");
+        mIgnoreAppDataSource.add(ignoreItems);
+        mIgnoreAppDataSource.add(ignoreItems1);
         assertThat(mIgnoreAppDataSource.getAll().get(1), is(true));
 //        verify(mIgnoreAppDataSource).removeItem(ignoreItems.getPackageName());
 //        mAppsRepository.deleteFromIgnoreList(ignoreItems.getPackageName());

@@ -117,13 +117,13 @@
         app:layout_constraintTop_toBottomOf="@id/total_time_card_view"
         app:layout_constraintLeft_toLeftOf="parent">
 
-        <TextView
+<!--        <TextView-->
 
-            android:layout_gravity="center_vertical"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/padding_small"
-            android:text="@string/usage_count"/>
+<!--            android:layout_gravity="center_vertical"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginLeft="@dimen/padding_small"-->
+<!--            android:text="@string/usage_count"/>-->
         <TextView
             android:id="@+id/usage_count"
             android:layout_width="wrap_content"
