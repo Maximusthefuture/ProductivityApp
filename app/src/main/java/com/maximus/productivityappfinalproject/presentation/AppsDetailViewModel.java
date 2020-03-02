@@ -3,6 +3,8 @@ package com.maximus.productivityappfinalproject.presentation;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -10,6 +12,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.maximus.productivityappfinalproject.data.IgnoreAppDataSource;
+import com.maximus.productivityappfinalproject.presentation.ui.AppsFragment;
 import com.maximus.productivityappfinalproject.utils.IntervalEnum;
 import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
 import com.maximus.productivityappfinalproject.device.MyUsageStatsManagerWrapper;
@@ -35,6 +38,9 @@ public class AppsDetailViewModel extends AndroidViewModel {
 
     public AppsDetailViewModel(@NonNull Application application) {
         super(application);
+        Bundle bundle = new Bundle();
+        mApp.setValue(bundle.getParcelable(AppsFragment.APP_DETAILS));
+
         mContext = application.getApplicationContext();
         mIgnoreAppDataSourceImp = new IgnoreAppDataSourceImp(mContext);
         mAppsRepositoryImpl = new AppsRepositoryImpl(mIgnoreAppDataSourceImp);
@@ -50,10 +56,6 @@ public class AppsDetailViewModel extends AndroidViewModel {
         return mAppIntervalUseCase.getAppUsedInterval(mLiveDataPackageName.getValue(), mDayInterval.getValue());
     }
 
-    public void startService() {
-        Intent intent = new Intent(getApplication().getApplicationContext(), NotificationService.class);
-        getApplication().getApplicationContext().startService(intent);
-    }
 
     public void setFiltering(IntervalEnum intervalEnum) {
         mIntervalEnum = intervalEnum;
@@ -69,5 +71,9 @@ public class AppsDetailViewModel extends AndroidViewModel {
 
 
         }
+    }
+
+    public LiveData<AppsModel> getAppsModel() {
+        return mApp;
     }
 }

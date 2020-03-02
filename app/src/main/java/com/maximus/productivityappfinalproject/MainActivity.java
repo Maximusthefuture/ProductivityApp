@@ -18,7 +18,6 @@ import com.maximus.productivityappfinalproject.utils.Utils;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
     private NavController navController;
 
     @Override
@@ -49,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Log.d(TAG, "onCreate: " + Utils.hasPermission(getApplicationContext()));
         if (!Utils.hasPermission(getApplicationContext())) {
             Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
             startActivity(intent);
@@ -68,6 +66,5 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
     }
 }

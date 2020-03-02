@@ -63,8 +63,6 @@ public class AppsViewModel extends AndroidViewModel {
         mManager = new PhoneUsageNotificationManager(mContext);
         mShowAppUsageUseCase = new ShowAppUsageUseCase(mManager);
         mUsageCountUseCase = new GetPhoneUsageCountUseCase(mRepository);
-
-//        setFiltering(mIntervalEnum.TODAY);
         mDayInterval.setValue(0);
     }
 
@@ -72,7 +70,7 @@ public class AppsViewModel extends AndroidViewModel {
         return mAllApps;
     }
 
-    public void insert(AppsModel info) {
+    public void insertToIgnoreList(AppsModel info) {
         String packageName = info.getPackageName();
         String appName = info.getAppName();
         IgnoreItems ignoreItems = new IgnoreItems(packageName, appName);
@@ -81,20 +79,13 @@ public class AppsViewModel extends AndroidViewModel {
         mIgnoreListUseCase.addToIgnoreList(ignoreItems);
     }
 
-    //TODO  Create UseCase in these we check is preference on or off, so we can start or stop service again?
-    //SAVE USAGE COUNT FROM SERVICE TO DB? OR SHARED PREF?
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void startService() {
-        SharedPreferences sharedPreferences = mContext.getSharedPreferences("notification", Context.MODE_PRIVATE);
         MyPreferenceManager.init(mContext);
-        boolean f =  MyPreferenceManager.getInstance().getBoolean(mContext.getString(R.string.show_notification_key));
-        if (f) {
-            Toast.makeText(mContext, "Notification ON", Toast.LENGTH_SHORT).show();
+        boolean isNotificationsSwitchOn =  MyPreferenceManager.getInstance().getBoolean(mContext.getString(R.string.show_notification_key));
+        if (isNotificationsSwitchOn) {
             Intent intent = new Intent(mContext, NotificationService.class);
 //            mUsageCountUseCase.getPhoneUsageCount(0);
             mContext.startService(intent);
-        } else {
-            Toast.makeText(mContext, "Notification OFF", Toast.LENGTH_SHORT).show();
         }
     }
 

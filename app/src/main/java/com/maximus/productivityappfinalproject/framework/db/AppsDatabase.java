@@ -46,10 +46,12 @@ public abstract class AppsDatabase extends RoomDatabase {
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
             datatbaseWriterExecutor.execute(() -> {
-                IgnoreItems ignoreItems = new IgnoreItems("com.android.settings","Settings");
-                IgnoreEntity ignoreEntity = new IgnoreEntity(ignoreItems.getPackageName(), ignoreItems.getName());
+                IgnoreItems settings = new IgnoreItems("com.android.settings","Settings");
+                IgnoreItems myApp = new IgnoreItems("com.maximus.productivityappfinalproject","ProductivityApp");
+//                IgnoreEntity ignoreEntity = new IgnoreEntity(ignoreItems.getPackageName(), ignoreItems.getName());
                 IgnoreDao dao = INSTANCE.ignoreDao();
-                dao.insertIgnoreItem(ignoreItems);
+                dao.insertIgnoreItem(settings);
+                dao.insertIgnoreItem(myApp);
             });
         }
     };

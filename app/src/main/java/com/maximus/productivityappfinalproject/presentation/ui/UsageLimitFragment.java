@@ -42,7 +42,7 @@ public class UsageLimitFragment extends Fragment {
         View root = LayoutInflater.from(container.getContext()).inflate(R.layout.fragment_set_usage_limit, container, false);
         mLimitViewModel = new ViewModelProvider(this).get(UsageLimitViewModel.class);
         mNavController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
-        mAppsModel = getArguments().getParcelable("APP_DETAIL_LIMIT");
+        mAppsModel = getArguments().getParcelable(AppDetailsFragment.EXTRA_LIMIT_APP);
 //        mAppName = root.findViewById(R.id.app_name_usage_limit);
         mImageView = root.findViewById(R.id.app_icon_usage);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
@@ -64,7 +64,6 @@ public class UsageLimitFragment extends Fragment {
             int perDayHour = Integer.parseInt("0" + mLimitPerDayInHours.getText().toString());
             int perDayMinutes = Integer.parseInt("0" + mLimitPerDayInMinutes.getText().toString());
             int perHourMinutes = Integer.parseInt("0" + mLimitPerHour.getText().toString());
-
             mLimitViewModel.setLimit(mAppsModel.getPackageName(), mAppsModel.getAppName(), perDayHour, perDayMinutes, perHourMinutes);
             mNavController.navigate(R.id.apps_dest);
         });
@@ -75,8 +74,6 @@ public class UsageLimitFragment extends Fragment {
                 Snackbar.make(getView(), getString(integer, mAppsModel.getAppName()), Snackbar.LENGTH_LONG).show();
             }
         });
-
-
         return root;
     }
 }

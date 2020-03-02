@@ -25,6 +25,12 @@
             app:fragment="com.maximus.productivityappfinalproject.presentation.ui.IgnoreListFragment"
             />
 
+        <SwitchPreferenceCompat
+            android:key="@string/i_want_to_slack_key"
+            android:title="@string/i_want_to_slack_title"
+            android:summary="@string/limit_off_summary"
+            />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

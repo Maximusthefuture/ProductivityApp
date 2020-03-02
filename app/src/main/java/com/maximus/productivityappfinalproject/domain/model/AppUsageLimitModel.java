@@ -37,7 +37,8 @@ public class AppUsageLimitModel {
     }
 
     @Ignore
-    public AppUsageLimitModel(int timeLimitPerDay, int timeLimitPerHour, boolean isAppLimited) {
+    public AppUsageLimitModel(String appName, int timeLimitPerDay, int timeLimitPerHour, boolean isAppLimited) {
+        this.appName = appName;
         this.timeLimitPerDay = timeLimitPerDay;
         this.timeLimitPerHour = timeLimitPerHour;
         this.isAppLimited = isAppLimited;

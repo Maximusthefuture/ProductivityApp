@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 
+import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.data.AppLimitDataSource;
 import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
 import com.maximus.productivityappfinalproject.data.PhoneUsageDataSource;
@@ -130,7 +131,7 @@ public class CheckAppLaunchService extends Service {
 
             if (!isAppAccessAllowedNow) {
                 showHomeScreen(getApplicationContext());
-                Toast.makeText(CheckAppLaunchService.this, "You cant use this app  " + d, Toast.LENGTH_LONG).show();
+                Toast.makeText(CheckAppLaunchService.this, getString(R.string.cannot_use_app, appUsageLimitModel.getAppName(), d), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -152,12 +153,12 @@ public class CheckAppLaunchService extends Service {
         String msg;
         if (appUsageLimitModel.isAppLimited()) {
             if (appUsageLimitModel.getTimeLimitPerHour() <= phoneUsage.getTimeCompletedInHour()) {
-                msg = "in closest hour";
+                msg = getString(R.string.closest_hour);
                 return new Pair<>(false, msg);
             }
 
             if (appUsageLimitModel.getTimeLimitPerDay() <= phoneUsage.getTimeCompletedInDay()) {
-                msg = "in this day";
+                msg = getString(R.string.in_this_day);
                 return new Pair<>(false, msg);
             }
         }

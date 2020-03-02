@@ -5,17 +5,15 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManager;
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
+import com.maximus.productivityappfinalproject.domain.model.AppsModel;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 import com.maximus.productivityappfinalproject.framework.db.AppsDatabase;
-
 import java.util.List;
+import java.util.Map;
 
 
 public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
-
-    private static final String TAG = "AppsRepositoryImpl";
-
 
     private MutableLiveData<List<IgnoreItems>> mIgnoreItems = new MutableLiveData<>();
     private MutableLiveData<Integer> mPhoneUsage = new MutableLiveData<>();
@@ -28,10 +26,6 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
     public AppsRepositoryImpl(IgnoreAppDataSource ignoreAppDataSource) {
         mIgnoreAppDataSource = ignoreAppDataSource;
 
-    }
-
-    public AppsRepositoryImpl(SharedPrefManager sharedPrefManager) {
-        mSharedPrefManager = sharedPrefManager;
     }
 
     public AppsRepositoryImpl(PhoneUsageDataSource phoneUsageDataSource) {
@@ -53,6 +47,13 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
         mSharedPrefManager = prefManager;
     }
 
+    public AppsRepositoryImpl( IgnoreAppDataSource ignoreAppDataSource, PhoneUsageDataSource phoneUsageDataSource, AppLimitDataSource appLimitDataSource, SharedPrefManager sharedPrefManager) {
+        mIgnoreAppDataSource = ignoreAppDataSource;
+        mPhoneUsageDataSource = phoneUsageDataSource;
+        mAppLimitDataSource = appLimitDataSource;
+        mSharedPrefManager = sharedPrefManager;
+    }
+
     public AppsRepositoryImpl(PhoneUsageDataSource phoneUsageDataSource, AppLimitDataSource appLimitDataSource) {
         mPhoneUsageDataSource = phoneUsageDataSource;
         mAppLimitDataSource = appLimitDataSource;
@@ -64,18 +65,6 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
             mIgnoreItems.postValue(mIgnoreAppDataSource.getAll());
         });
         return mIgnoreItems;
-
-        //        List<IgnoreEntity> ignoreA = new ArrayList<>();
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-//            List<IgnoreItems> ignoreB = ignoreA.stream().map(objA -> {
-//                IgnoreItems ignoreItems = new IgnoreItems();
-//                ignoreItems.getPackageName();
-//                ignoreItems.getName();
-//                return ignoreItems;
-//            }).collect(Collectors.toList());
-//            Log.d(TAG, "getIgnoreItems: " + ignoreB);
-//        }
-//        return AppsDatabase.getInstance(mContext).ignoreDao().getIgnoreItems();
     }
 
     @Override

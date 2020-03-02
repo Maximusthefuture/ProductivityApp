@@ -37,7 +37,7 @@ import java.util.Map;
 public class MyUsageStatsManagerWrapper {
     private static final String TAG = "MyUsageStatsManagerWrap";
     private MutableLiveData<List<AppsModel>> mAllApps = new MutableLiveData<>();
-    private  UsageStatsManager mUsageStatsManager;
+    private UsageStatsManager mUsageStatsManager;
     private final PackageManager mPackageManager;
     private Context mContext;
     private MutableLiveData<List<AppsModel>> mAppsInterval = new MutableLiveData<>();
@@ -51,14 +51,14 @@ public class MyUsageStatsManagerWrapper {
         }
         mPackageManager = mContext.getPackageManager();
         mIgnoreAppDataSource = new IgnoreAppDataSourceImp(mContext);
-
-
     }
 
-
+    /**
+     * Проверяем какое сейчас приложение в фоне,
+     * c помощью @UsageEvents.Event.ACTIVITY_RESUMED
+     */
     public String getForegroundApp() {
 
-        //CheckPermission
         String foregroundApp = null;
 
         long time = System.currentTimeMillis();
@@ -67,10 +67,7 @@ public class MyUsageStatsManagerWrapper {
         UsageEvents usageEvents = mUsageStatsManager.queryEvents(time - hour, time);
         UsageEvents.Event event = new UsageEvents.Event();
 
-        /**
-         * Проверяем какое сейчас приложение в фоне,
-         * c помощью @UsageEvents.Event.ACTIVITY_RESUMED
-         */
+
         while (usageEvents.hasNextEvent()) {
             usageEvents.getNextEvent(event);
             if (event.getEventType() == UsageEvents.Event.ACTIVITY_RESUMED) {
@@ -90,7 +87,6 @@ public class MyUsageStatsManagerWrapper {
     public LiveData<List<AppsModel>> getAllApps(boolean isSystem, int sort) {
         List<AppsModel> mAppsModelList = new ArrayList<>();
 
-        //ВСЯ СОРТИРОВКА В ИНТЕРАКТОРЕ ?
         long[] range = Utils.getInterval(IntervalEnum.getInterval(sort));
         AppsDatabase.datatbaseWriterExecutor.execute(() -> {
             for (String packageName : getInstalledPackages(isSystem)) {
@@ -99,11 +95,6 @@ public class MyUsageStatsManagerWrapper {
                         new AppsModel(packageName ,getAppName(packageName), getAppIcon(packageName),
                                 getLastTimeUsed(range[0], System.currentTimeMillis(), packageName),
                                 fetchAppStatsInfo(range[0], range[1], packageName));
-                       /*
-                     Если время использования приложения 6с
-                  то оно не будет отображаться в списке
-                      */
-                       //TODO
                 if (appsModel.getAppUsageTime() <= 0) {
                     continue;
                 }
@@ -149,7 +140,7 @@ public class MyUsageStatsManagerWrapper {
      *
      * @param packageName
      * @param sort
-     * @return
+     * @return List of {@link AppsModel}
      */
     public LiveData<List<AppsModel>> getUsedInterval(String packageName, int sort) {
         List<AppsModel> appsModelList = new ArrayList<>();
@@ -157,7 +148,7 @@ public class MyUsageStatsManagerWrapper {
         long[] range = Utils.getInterval(IntervalEnum.getInterval(sort));
         UsageEvents events = mUsageStatsManager.queryEvents(range[0], range[1]);
         UsageEvents.Event event = new UsageEvents.Event();
-        AppsModel appsModel = null;
+        AppsModel appsModel;
         MyEvent myEvent = null;
         long start = 0;
         long usageTime = 0;
@@ -167,14 +158,8 @@ public class MyUsageStatsManagerWrapper {
             String currectPackageName = event.getPackageName();
             int eventType = event.getEventType();
             long eventTime = event.getTimeStamp();
-            Log.d("||||------>", currectPackageName + " " + packageName + " " + new SimpleDateFormat(
-                    "yyyy/MM/dd HH:mm:ss", Locale.getDefault()).format(new Date(eventTime)) + " " + eventType);
             if (currectPackageName.equals(packageName)) {
-                //TODO delete log
-//                Log.d("||||||||||>", currectPackageName + " " + packageName + " " + new SimpleDateFormat(
-//                        "yyyy/MM/dd HH:mm:ss", Locale.getDefault()).format(new Date(eventTime)) + " " + eventType);
                 if (eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
-//                    Log.d("********", "start " + start);
                     if (start == 0) {
                         start = eventTime;
                         appsModel = new AppsModel(0, eventTime, eventType);
@@ -194,9 +179,6 @@ public class MyUsageStatsManagerWrapper {
                         usageTime = 0;
                     }
                     appsModel = new AppsModel(usageTime, myEvent.mTimeStamp, myEvent.mEventType);
-
-
-
                     if (appsModel.getAppUsageTime() >= 4000) {
                         appsModel.setCount(mCount++);
                     }
@@ -210,6 +192,15 @@ public class MyUsageStatsManagerWrapper {
         return mAppsInterval;
     }
 
+
+    /**
+     * Получаем данные о приложении за указанный период времени
+     *
+     * @param startMillis время начала отсчета
+     * @param endMillis время конца
+     * @param appPkg Имя пакета
+     * @return время использования в фоне
+     */
     private long fetchAppStatsInfo(long startMillis, long endMillis, String appPkg) {
         Map<String, UsageStats> usageStatsMap = mUsageStatsManager
                 .queryAndAggregateUsageStats(startMillis, endMillis);
@@ -271,10 +262,6 @@ public class MyUsageStatsManagerWrapper {
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
         List<ResolveInfo> resolveInfoList = mPackageManager.queryIntentActivities(intent, 0);
         for (ResolveInfo resolveInfo : resolveInfoList) {
-            isSystem = isSystemPackage(resolveInfo);
-//            if (isSystem){
-//                continue;
-//            }
             ActivityInfo activityInfo = resolveInfo.activityInfo;
             packageName.add(activityInfo.applicationInfo.packageName);
 

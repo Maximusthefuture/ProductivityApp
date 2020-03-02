@@ -16,10 +16,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity
-            android:name=".OnBoardingActivity"
-            android:label="@string/title_activity_on_boarding"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".MainActivity"
             android:windowSoftInputMode="adjustResize"  >
             <intent-filter>

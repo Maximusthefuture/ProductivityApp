@@ -40,7 +40,7 @@ public class GetAppWithLimitUseCase {
         for (AppUsageLimitModel usageLimitModel : list) {
             boolean setLimited = usageLimitModel.isAppLimited();
             if (usageLimitModel.isAppLimited()) {
-                appUsageLimitModel = new AppUsageLimitModel(usageLimitModel.getTimeLimitPerDay(), usageLimitModel.getTimeLimitPerHour(), setLimited);
+                appUsageLimitModel = new AppUsageLimitModel(usageLimitModel.getAppName(),usageLimitModel.getTimeLimitPerDay(), usageLimitModel.getTimeLimitPerHour(), setLimited);
             }
         }
         return appUsageLimitModel;

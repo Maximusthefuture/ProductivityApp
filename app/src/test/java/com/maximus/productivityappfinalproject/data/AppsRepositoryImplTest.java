@@ -1,63 +1,105 @@
 package com.maximus.productivityappfinalproject.data;
 
-import com.maximus.productivityappfinalproject.domain.AddIgnoreListUseCase;
-import com.maximus.productivityappfinalproject.domain.GetIgnoreListUseCase;
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+
+import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManagerImpl;
+import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
+import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
+import com.maximus.productivityappfinalproject.framework.AppLimitDataSourceImpl;
 import com.maximus.productivityappfinalproject.framework.IgnoreAppDataSourceImp;
 import com.maximus.productivityappfinalproject.framework.PhoneUsageDataSourceImp;
+import com.maximus.productivityappfinalproject.framework.db.AppsDatabase;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.atLeastOnce;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
 
 public class AppsRepositoryImplTest {
 
-    private AddIgnoreListUseCase mAddIgnoreListUseCase;
-    private GetIgnoreListUseCase mGetIgnoreListUseCase;
-    @Mock
+
     private AppsRepositoryImpl mAppsRepository;
 
-    @Mock
-    private IgnoreAppDataSourceImp mDataSourceImp;
+    @Rule
+    public InstantTaskExecutorRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
 
     @Mock
-    private PhoneUsageDataSource mPhoneUsageDataSource;
+    private IgnoreAppDataSourceImp mIgnoreAppDataSource;
 
+    @Mock
+    private PhoneUsageDataSourceImp mPhoneUsageDataSource;
 
+    @Mock
+    private SharedPrefManagerImpl mSharedPrefManager;
 
-
+    @Mock
+    private AppLimitDataSourceImpl mAppLimitDataSource;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mAddIgnoreListUseCase = new AddIgnoreListUseCase(mAppsRepository);
-        mGetIgnoreListUseCase = new GetIgnoreListUseCase(mAppsRepository);
+        mAppsRepository = new AppsRepositoryImpl(mIgnoreAppDataSource, mPhoneUsageDataSource, mAppLimitDataSource, mSharedPrefManager);
     }
 
     @Test
     public void getIgnoreItems() {
         mAppsRepository.getIgnoreItems();
+        verify(mIgnoreAppDataSource).getAll();
+
     }
 
     @Test
     public void insertIgnoreList() {
-        IgnoreItems ignoreItems = new IgnoreItems("com.example.media", "Media");
-        mAddIgnoreListUseCase.addToIgnoreList(ignoreItems);
-        verify(mAppsRepository).insertToIgnoreList(ignoreItems);
+        IgnoreItems ignoreItems = new IgnoreItems("com.example.f", 1000, "f");
+        mAppsRepository.insertToIgnoreList(ignoreItems);
+        verify(mIgnoreAppDataSource).add(ignoreItems);
 
     }
 
     @Test
     public void getIgnoreItemsFromLocalDataSource() {
-        mGetIgnoreListUseCase.getIgnoreList();
 //       verify(mDataSourceImp).(any(IgnoreAppDataSource.class));
     }
+
+    @Test
+    public void insertPhoneUsageDat() {
+        PhoneUsage phoneUsage = new PhoneUsage("com.example.media", 34, "10", 1000, 2000);
+        mAppsRepository.insertPhoneUsage(phoneUsage);
+        verify(mPhoneUsageDataSource).insertPhoneUsage(phoneUsage);
+    }
+
+    @Test
+    public void insertToAppLimit() {
+        AppUsageLimitModel appUsageLimitModel = new AppUsageLimitModel(
+                "Media", "com.example.media", 4000, 1000, 0, true);
+        mAppsRepository.addToLimit(appUsageLimitModel);
+        verify(mAppLimitDataSource).addToLimit(appUsageLimitModel);
+//            assertThat(mAppLimitDataSource.getLimitedApps().size(), is(1));
+    }
+
+    @Test
+    public void getLimitedItems() {
+        mAppsRepository.getLimitedItems();
+        verify(mAppLimitDataSource).getLimitedApps();
+    }
+
+    @Test
+    public void deleteIgnoreItemFromDb() {
+        IgnoreItems ignoreItems = new IgnoreItems("com.example.media", 1000, "Media");
+        mAppsRepository.insertToIgnoreList(ignoreItems);
+        assertThat(mIgnoreAppDataSource.getAll().get(1), is(true));
+//        verify(mIgnoreAppDataSource).removeItem(ignoreItems.getPackageName());
+//        mAppsRepository.deleteFromIgnoreList(ignoreItems.getPackageName());
+
+    }
+
+
 
 
 }

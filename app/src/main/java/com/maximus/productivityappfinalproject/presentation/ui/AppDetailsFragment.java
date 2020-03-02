@@ -28,6 +28,8 @@ import com.maximus.productivityappfinalproject.utils.Utils;
 
 
 public class AppDetailsFragment extends Fragment {
+
+    public static final String EXTRA_LIMIT_APP = "APP_DETAIL_LIMIT";
     private ImageView mImageView;
     private Spinner mSpinner;
     private TextView mUsageTime;
@@ -39,6 +41,7 @@ public class AppDetailsFragment extends Fragment {
     private AppsDetailViewModel mViewModel;
     private AppsModel appsModel;
     private ChipGroup mSelectDay;
+
     private static final String TAG = "AppDetailsFragment";
     @Nullable
     @Override
@@ -51,32 +54,26 @@ public class AppDetailsFragment extends Fragment {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         AppDetailFragmentRecyclerViewAdapter mAdapter = new AppDetailFragmentRecyclerViewAdapter();
         mRecyclerView.setAdapter(mAdapter);
-//        mSpinner = root.findViewById(R.id.spinner_days);
         mSelectDay = root.findViewById(R.id.interval_chip_group);
 
         root.findViewById(R.id.cut_usage_time_button).setOnClickListener(v -> {
             Bundle bundle = new Bundle();
-            bundle.putParcelable("APP_DETAIL_LIMIT", appsModel);
+            bundle.putParcelable(EXTRA_LIMIT_APP, appsModel);
                 mNavController.navigate(R.id.usage_limit_fragment, bundle);
                 });
         initSpinner();
 
         mViewModel.intervalList(appsModel.getPackageName()).observe(getViewLifecycleOwner(), apps -> {
-//                    Log.d(TAG, "onCreateView: " + mDay);
             mAdapter.setList(apps);
         });
 
 
-        //TODO ЭТО!!!!! Safe ARGS navigation?????
         mImageView = root.findViewById(R.id.app_icon_image_view);
         mImageView.setImageDrawable(appsModel.getAppIcon());
         mUsageTime = root.findViewById(R.id.usage_time_text_view);
         mUsageTime.setText(Utils.formatMillisToSeconds(appsModel.getAppUsageTime()));
-        mUsageCount = root.findViewById(R.id.usage_count);
-        mUsageCount.setText(String.valueOf(appsModel.getCount()));
         mAppName = root.findViewById(R.id.app_name_text_view);
         mAppName.setText(appsModel.getAppName());
-
         return root;
     }
 
@@ -95,7 +92,6 @@ public class AppDetailsFragment extends Fragment {
                     case R.id.chip_this_week:
                         mViewModel.setFiltering(IntervalEnum.THIS_WEEK);
                         break;
-
                 }
                 mViewModel.intervalList(appsModel.getPackageName());
             }

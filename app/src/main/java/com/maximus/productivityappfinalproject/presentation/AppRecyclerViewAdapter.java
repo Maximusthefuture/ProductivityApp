@@ -22,7 +22,6 @@ public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerView
     private static final String TAG = "AddAppRecyclerViewAdapt";
     private List<AppsModel> mAppsNameList = new ArrayList<>();
     private OnAppClickListener mClickListener;
-    private List<IgnoreItems> mIgnoreItemsList;
     OnSwipeAppToIgnoreList mOnSwipeAppToIgnoreList;
 
     public AppRecyclerViewAdapter(OnAppClickListener clickListener, OnSwipeAppToIgnoreList onSwipeAppToIgnoreList) {
@@ -40,7 +39,6 @@ public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerView
     @Override
     public void onBindViewHolder(@NonNull AddAppViewHolder holder, int position) {
         holder.bind(mAppsNameList.get(position));
-
     }
 
     public void setList(List<AppsModel> list) {
@@ -57,7 +55,7 @@ public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerView
 
     @Override
     public long getItemId(int position) {
-        return (long) (position);
+        return (position);
     }
 
     @Override
@@ -88,7 +86,6 @@ public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerView
             mAppLastTimeUsedTextView = itemView.findViewById(R.id.app_last_time_used_text_view);
             mUsageTimeTextView = itemView.findViewById(R.id.usage_time);
 
-
         }
 
         public void bind(@NonNull AppsModel appsModel) {
@@ -97,9 +94,6 @@ public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerView
             mAppLastTimeUsedTextView.setText(itemView.getContext().getString(R.string.last_time_used, appsModel.getLastTimeUsed()));
             mUsageTimeTextView.setText(Utils.formatMillisToSeconds(appsModel.getAppUsageTime()));
 
-//            if (appsModel.getLastTimeUsed() == null) {
-//                mAppLastTimeUsedTextView.setText("");
-//            }
             itemView.setOnClickListener(v -> {
                 mClickListener.onAppClickListener(appsModel);
                 Log.d(TAG, "onClick: " + appsModel);

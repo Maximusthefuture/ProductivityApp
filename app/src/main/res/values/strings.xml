@@ -50,4 +50,10 @@
     <string name="limit_set">Лимит установлен %s</string>
     <string name="change_limit">Изменить лимит</string>
     <string name="nothing">Ничего нет</string>
+    <string name="cannot_use_app">Вы не можете использовать %s в %s </string>
+    <string name="in_this_day">в этот день.</string>
+    <string name="closest_hour">в ближайший час</string>
+    <string name="i_want_to_slack_key">limit_off</string>
+    <string name="i_want_to_slack_title">Хочу прокрастинировать!!!!</string>
+    <string name="limit_off_summary">Отключить ограничение на приложения на 30 мин, доступно 1 раз в день</string>
 </resources>

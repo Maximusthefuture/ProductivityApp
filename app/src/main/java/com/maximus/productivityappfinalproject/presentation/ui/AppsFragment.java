@@ -94,7 +94,7 @@ public class AppsFragment extends Fragment implements OnAppClickListener, OnSwip
     @Override
     public void onSwiped(int position) {
         AppsModel info = mAdapter.getDataFromPosition(position);
-        mViewModel.insert(info);
+        mViewModel.insertToIgnoreList(info);
         Log.d(TAG, "onSwiped: " + info);
     }
 

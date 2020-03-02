@@ -52,7 +52,7 @@ public class IgnoreListAdapter extends RecyclerView.Adapter<IgnoreListAdapter.Ig
 
     @Override
     public int getItemCount() {
-         return mIgnoreItems.size();
+         return mIgnoreItems != null ? mIgnoreItems.size() : 0;
     }
 
     public class IgnoreViewHolder extends RecyclerView.ViewHolder{
@@ -63,8 +63,6 @@ public class IgnoreListAdapter extends RecyclerView.Adapter<IgnoreListAdapter.Ig
             super(itemView);
             mAppName = itemView.findViewById(R.id.ignore_item_app_name);
             mIcon = itemView.findViewById(R.id.app_icon_image_view);
-
-
         }
 
         public void bind(IgnoreItems item, IgnoreViewHolder holder) {
