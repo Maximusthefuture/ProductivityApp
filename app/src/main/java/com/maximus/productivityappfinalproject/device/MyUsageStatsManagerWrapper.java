@@ -95,9 +95,9 @@ public class MyUsageStatsManagerWrapper {
                         new AppsModel(packageName ,getAppName(packageName), getAppIcon(packageName),
                                 getLastTimeUsed(range[0], System.currentTimeMillis(), packageName),
                                 fetchAppStatsInfo(range[0], range[1], packageName));
-                if (appsModel.getAppUsageTime() <= 0) {
-                    continue;
-                }
+//                if (appsModel.getAppUsageTime() <= 0) {
+//                    continue;
+//                }
                 //TODO check is the iteractor? usecase?
                 if (isIgnoredList(mIgnoreAppDataSource.getAll(), appsModel.getPackageName())) {
                     continue;

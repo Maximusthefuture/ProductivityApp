@@ -13,6 +13,22 @@ import java.util.List;
 import java.util.Map;
 
 
+//TODO:
+// All todo's from presentation,
+// todo foreground service?
+// todo look how much battery eat app
+// TODO: customview переделать доделать, random colors
+// TODO: rx java?
+//todo is service recreated when app relaunch? check
+//todo cache?
+//todo tests? unit, ui
+//todo add bottom sheets like in yandex map?
+// settings? bottom navigation? like in yandex map?
+// save statistic to server? and share?
+// change UI
+// onBoarding write about permission and why u need that
+//
+//TODO Separate repository by logic, db, sharedpref, api
 public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
 
     private MutableLiveData<List<IgnoreItems>> mIgnoreItems = new MutableLiveData<>();
