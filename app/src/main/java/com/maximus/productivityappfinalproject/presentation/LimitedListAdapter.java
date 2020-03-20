@@ -15,18 +15,19 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.device.MyUsageStatsManagerWrapper;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
+import com.maximus.productivityappfinalproject.utils.Utils;
 
 import java.util.List;
 
-public class IgnoreListAdapter extends RecyclerView.Adapter<IgnoreListAdapter.IgnoreViewHolder> {
+public class LimitedListAdapter extends RecyclerView.Adapter<LimitedListAdapter.IgnoreViewHolder> {
 
-    private static final String TAG = "IgnoreListAdapter";
+    private static final String TAG = "LimitedListAdapter";
     private List<IgnoreItems> mIgnoreItems;
     private MyUsageStatsManagerWrapper mMyUsageStatsManagerWrapper;
     private Context mContext;
     private OnIgnoreItemClickListener mItemClickListener;
 
-    public IgnoreListAdapter(Context context, OnIgnoreItemClickListener clickListener) {
+    public LimitedListAdapter(Context context, OnIgnoreItemClickListener clickListener) {
         mContext = context;
         mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(mContext);
         mItemClickListener = clickListener;
@@ -35,7 +36,7 @@ public class IgnoreListAdapter extends RecyclerView.Adapter<IgnoreListAdapter.Ig
     @NonNull
     @Override
     public IgnoreViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.ignore_list_items, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.tracking_list_items, parent, false);
         return new IgnoreViewHolder(view);
     }
 
@@ -48,6 +49,7 @@ public class IgnoreListAdapter extends RecyclerView.Adapter<IgnoreListAdapter.Ig
     public void setList(List<IgnoreItems> list) {
         mIgnoreItems = list;
         notifyDataSetChanged();
+
     }
 
     @Override
@@ -57,25 +59,38 @@ public class IgnoreListAdapter extends RecyclerView.Adapter<IgnoreListAdapter.Ig
 
     public class IgnoreViewHolder extends RecyclerView.ViewHolder{
         private TextView mAppName;
+        private TextView mLastTimeUsed;
+        private TextView mTimeUsed;
         private ImageView mIcon;
 
         public IgnoreViewHolder(@NonNull View itemView) {
             super(itemView);
             mAppName = itemView.findViewById(R.id.ignore_item_app_name);
+            mLastTimeUsed = itemView.findViewById(R.id.time);
+            mTimeUsed = itemView.findViewById(R.id.time_used);
             mIcon = itemView.findViewById(R.id.app_icon_image_view);
         }
 
         public void bind(IgnoreItems item, IgnoreViewHolder holder) {
             mAppName.setText(item.getName());
+            mLastTimeUsed.setText(item.getLastTimeUsed());
+            mTimeUsed.setText(Utils.formatMillisToSeconds(item.getTimeUsed()));
+//            for (IgnoreItems ignoreItem : mIgnoreItems) {
+//                if (ignoreItem.getPackageName().equals(appUsageLimitModel.packageName())) {
+//                    //some icon that show item in limit list
+//
+//                }
+//            }
             Glide.with(mIcon.getContext())
                     .load(mMyUsageStatsManagerWrapper.getAppIcon(item.getPackageName()))
                     .transition(new DrawableTransitionOptions().crossFade())
                     .into(mIcon);
 
             itemView.setOnClickListener(v -> {
-                mIgnoreItems.remove(holder.getAdapterPosition());
-                mItemClickListener.onItemClickListener(item.getPackageName());
-                notifyItemRemoved(getAdapterPosition());
+//                mIgnoreItems.remove(holder.getAdapterPosition());
+                //TODO
+                mItemClickListener.onItemClickListener(item);
+//                notifyItemRemoved(getAdapterPosition());
             });
         }
 

@@ -44,10 +44,20 @@ public class UsageLimitViewModel extends AndroidViewModel {
 
     }
 
-    public TextWatcher checkInput(EditText inHour, EditText inDayHour, EditText inDayMinutes, Button materialButton) {
-        return mSetAppWithLimitUseCase.checkInput(inHour, inDayHour, inDayMinutes, materialButton);
-//        mSetAppWithLimitUseCase.checkUserInput(perDayHours, perDayMinutes, perHourMinutes);
+    //TODO
+    public void setDailyLimit() {
+
     }
+    //TODO
+    public void setHourlyLimit() {
+
+    }
+
+    //TODO
+    public LiveData<Integer> getChipText() {
+        return null;
+    }
+
 
     public LiveData<Integer> getSnackBarMessage() {
         return mSnackbarText;

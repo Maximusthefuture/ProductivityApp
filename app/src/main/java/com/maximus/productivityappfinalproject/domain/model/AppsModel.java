@@ -18,6 +18,7 @@ public class AppsModel implements Parcelable {
     private int mEventType;
     private String mLastTimeUsed;
     private int mCount;
+    private boolean mSelected;
 
     public AppsModel(int count) {
         mCount = count;
@@ -30,12 +31,8 @@ public class AppsModel implements Parcelable {
     public AppsModel() {
     }
 
-    public int getCount() {
-        return mCount;
-    }
-
-    public void setAppUsageTime(long appUsageTime) {
-        mAppUsageTime = appUsageTime;
+    public boolean isSelected() {
+        return mSelected;
     }
 
     public AppsModel(long eventTime, long usageTime) {
@@ -47,6 +44,10 @@ public class AppsModel implements Parcelable {
         mAppUsageTime = appUsageTime;
         mEventTime = eventTime;
         mEventType = eventType;
+    }
+
+    public void setSelected(boolean selected) {
+        mSelected = selected;
     }
 
     public long getEventTime() {
@@ -77,6 +78,14 @@ public class AppsModel implements Parcelable {
         mPackageName = packageName;
     }
 
+    public AppsModel(String packageName, String appName, Drawable appIcon, long appUsageTime, String lastTimeUsed, boolean selected) {
+        mPackageName = packageName;
+        mAppName = appName;
+        mAppIcon = appIcon;
+        mAppUsageTime = appUsageTime;
+        mLastTimeUsed = lastTimeUsed;
+        mSelected = selected;
+    }
 
     protected AppsModel(Parcel in) {
         mAppName = in.readString();

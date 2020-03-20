@@ -90,7 +90,6 @@ public class MyUsageStatsManagerWrapper {
         long[] range = Utils.getInterval(IntervalEnum.getInterval(sort));
         AppsDatabase.datatbaseWriterExecutor.execute(() -> {
             for (String packageName : getInstalledPackages(isSystem)) {
-                //TODO when appUsageTime!!! NOT ALL TIME
                 AppsModel appsModel =
                         new AppsModel(packageName ,getAppName(packageName), getAppIcon(packageName),
                                 getLastTimeUsed(range[0], System.currentTimeMillis(), packageName),
@@ -98,6 +97,9 @@ public class MyUsageStatsManagerWrapper {
 //                if (appsModel.getAppUsageTime() <= 0) {
 //                    continue;
 //                }
+                if (isAppSelected(mAppsModelList)) {
+                    continue;
+                }
                 //TODO check is the iteractor? usecase?
                 if (isIgnoredList(mIgnoreAppDataSource.getAll(), appsModel.getPackageName())) {
                     continue;
@@ -106,13 +108,52 @@ public class MyUsageStatsManagerWrapper {
                 mAppsModelList.add(appsModel);
                 mAllApps.postValue(mAppsModelList);
 
-
                 Collections.sort(mAppsModelList, (o1, o2) ->
                         (int) (o2.getAppUsageTime() - o1.getAppUsageTime()));
             }
         });
 
         return mAllApps;
+    }
+
+    public boolean isAppSelected(List<AppsModel> appsModels) {
+        for (AppsModel appsModel : appsModels) {
+            if (appsModel.isSelected()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+//    //UPDATE INTO DB
+//    public IgnoreItems addIgnore(AppsModel info) {
+//        String packageName = info.getPackageName();
+//        String appName = info.getAppName();
+//        long[] range = Utils.getInterval(IntervalEnum.getInterval(0));
+//        String lastTimeUsed = getLastTimeUsed(range[0], System.currentTimeMillis(), packageName);
+//        long usedTime = fetchAppStatsInfo(range[0], 0, packageName);
+//
+//        IgnoreItems ignoreItems = new IgnoreItems(packageName, appName, lastTimeUsed);
+//        List<IgnoreItems> list = new ArrayList<>();
+//        list.add(ignoreItems);
+//        mIgnoreAppDataSource.update(ignoreItems);
+//        return ignoreItems;
+//    }
+
+    //TODO UPDATE ONLY USEDTIME AND LASTTIMEUSED!!!
+    public void refreshIgnoreList(IgnoreItems ignoreItems) {
+        AppsDatabase.datatbaseWriterExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                long[] range = Utils.getInterval(IntervalEnum.getInterval(0));
+                String lastTimeUsed = getLastTimeUsed(range[0], System.currentTimeMillis(), ignoreItems.getPackageName());
+                long usedTime = fetchAppStatsInfo(range[0], range[1], ignoreItems.getPackageName());
+                IgnoreItems items = new IgnoreItems(ignoreItems.getPackageName(),ignoreItems.getName(), lastTimeUsed, usedTime);
+                List<IgnoreItems> list = new ArrayList<>();
+                list.add(items);
+                mIgnoreAppDataSource.update(items);
+            }
+        });
     }
 
     private boolean isIgnoredList(List<IgnoreItems> itemsList, String packageName) {
@@ -124,7 +165,6 @@ public class MyUsageStatsManagerWrapper {
         return false;
     }
 
-
     private AppsModel equalsPackages(List<AppsModel> list, String packageName) {
         for (AppsModel appsModel : list) {
             if (appsModel.getPackageName().equals(packageName)) {
@@ -133,7 +173,6 @@ public class MyUsageStatsManagerWrapper {
         }
         return null;
     }
-
 
     /**
      * Получаем интервал использования приложений
@@ -199,7 +238,7 @@ public class MyUsageStatsManagerWrapper {
      * @param startMillis время начала отсчета
      * @param endMillis время конца
      * @param appPkg Имя пакета
-     * @return время использования в фоне
+     * @return время использования в foreground
      */
     private long fetchAppStatsInfo(long startMillis, long endMillis, String appPkg) {
         Map<String, UsageStats> usageStatsMap = mUsageStatsManager

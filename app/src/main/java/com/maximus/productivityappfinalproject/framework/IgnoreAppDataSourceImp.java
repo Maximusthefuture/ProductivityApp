@@ -38,4 +38,9 @@ public class IgnoreAppDataSourceImp implements IgnoreAppDataSource {
     public void removeAll() {
         mAppsDatabase.ignoreDao().deleteAllItems();
     }
+
+    @Override
+    public void update(IgnoreItems items) {
+        mAppsDatabase.ignoreDao().updateIgnoreItem(items);
+    }
 }

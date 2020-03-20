@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/productivity_app_navigation.xml"
-    app:startDestination="@id/apps_dest">
+    app:startDestination="@id/ignore_list_fragment">
 
     <fragment
         android:id="@+id/apps_dest"
@@ -28,9 +28,9 @@
         tools:layout="@layout/fragment_app_details" />
     <fragment
         android:id="@+id/ignore_list_fragment"
-        android:name="com.maximus.productivityappfinalproject.presentation.ui.IgnoreListFragment"
+        android:name="com.maximus.productivityappfinalproject.presentation.ui.TrackingListFragment"
         android:label="Ignore list"
-        tools:layout="@layout/fragment_ignore_list" />
+        tools:layout="@layout/fragment_tracking_list" />
     <fragment
         android:id="@+id/usage_limit_fragment"
         android:name="com.maximus.productivityappfinalproject.presentation.ui.UsageLimitFragment"

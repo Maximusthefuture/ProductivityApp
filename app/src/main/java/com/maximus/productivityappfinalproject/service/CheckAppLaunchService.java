@@ -8,6 +8,7 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Process;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -35,6 +36,7 @@ import java.util.Calendar;
 public class CheckAppLaunchService extends Service {
 
     private HandlerThread appLaunchThread;
+    private static final String TAG = "CheckAppLaunchService";
     private Handler mHandler;
     private Looper mLooper;
     private Runnable mRunnable;
@@ -123,6 +125,7 @@ public class CheckAppLaunchService extends Service {
         }
 
         if (mGetAppWithLimitUseCase.isLimitSet(currentForegroundApp)) {
+            Log.d(TAG, "checkAppLimitAndUpdateStats: " + mGetAppWithLimitUseCase.isLimitSet(currentForegroundApp));
             AppUsageLimitModel appUsageLimitModel =  mGetAppWithLimitUseCase.getAppUsageLimitFromDB();
             PhoneUsage phoneUsage = mGetAppWithLimitUseCase.getAppUsageData(currentForegroundApp);
             Pair<Boolean, String> appAccessAllowed = getStatusAccessAllowedNow(appUsageLimitModel, phoneUsage);

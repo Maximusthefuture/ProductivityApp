@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:title="@string/add_app"
-        android:id="@+id/fragment_add_app"
-        android:icon="@drawable/ic_add_black_24dp"
-        app:showAsAction="always"/>
+        android:title="Системные приложения"
+        android:id="@+id/show_system_app"
+        android:checkable="true"
+        app:showAsAction="never"/>
 
 </menu>

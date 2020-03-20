@@ -8,8 +8,13 @@
 
         <SwitchPreferenceCompat
             android:key="@string/show_notification_key"
-            android:title="@string/show_notification_title"
-            android:summary="@string/show_notification_summary"/>
+            android:title="Отслеживать постоянно"
+            android:summary="Если опция включена, проверка будет происходить постоянно"/>
+
+        <SwitchPreferenceCompat
+            android:title="Напоминания"
+            android:summary="Напоминать если нет не одного отслеживамого приложения"
+            />
 
 
     </PreferenceCategory>
@@ -30,6 +35,26 @@
             android:title="@string/i_want_to_slack_title"
             android:summary="@string/limit_off_summary"
             />
+
+        <SwitchPreferenceCompat
+            android:title="Темная тема"
+            android:summary="Либо выбор темы?"/>
+
+        <Preference
+            android:title="Время"
+            android:summary="Просмотр оставшегося времени приложений"/>
+
+        <ListPreference
+            android:key="fdsf"
+            android:entryValues="@array/days_statistic_array"
+            android:entries="@array/days_statistic_array"
+            android:title="Напоминание"
+            android:summary="Напоминать об завершении времени за "/>
+
+        <Preference
+            android:title="Об приложении"/>
+
+
 
     </PreferenceCategory>
 

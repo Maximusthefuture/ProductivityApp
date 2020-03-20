@@ -27,7 +27,6 @@ public class AppsDetailViewModel extends AndroidViewModel {
 
     private final MutableLiveData<AppsModel> mApp = new MutableLiveData<>();
     private final AppsRepositoryImpl mAppsRepositoryImpl;
-    private MutableLiveData<String> mLiveDataPackageName = new MutableLiveData<>();
     private MutableLiveData<Integer> mDayInterval = new MutableLiveData<>();
     private IntervalEnum mIntervalEnum = IntervalEnum.TODAY;
     private IgnoreAppDataSource mIgnoreAppDataSourceImp;
@@ -52,8 +51,7 @@ public class AppsDetailViewModel extends AndroidViewModel {
 
 
     public LiveData<List<AppsModel>> intervalList(String packageName) {
-        mLiveDataPackageName.setValue(packageName);
-        return mAppIntervalUseCase.getAppUsedInterval(mLiveDataPackageName.getValue(), mDayInterval.getValue());
+        return mAppIntervalUseCase.getAppUsedInterval(packageName, mDayInterval.getValue());
     }
 
 

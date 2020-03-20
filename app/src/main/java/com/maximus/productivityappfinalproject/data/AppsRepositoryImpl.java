@@ -27,7 +27,7 @@ import java.util.Map;
 // save statistic to server? and share?
 // change UI
 // onBoarding write about permission and why u need that
-//
+// reminder if no one app isLimited
 //TODO Separate repository by logic, db, sharedpref, api
 public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
 
@@ -68,6 +68,11 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
         mPhoneUsageDataSource = phoneUsageDataSource;
         mAppLimitDataSource = appLimitDataSource;
         mSharedPrefManager = sharedPrefManager;
+    }
+
+    public AppsRepositoryImpl(IgnoreAppDataSource ignoreAppDataSource, AppLimitDataSource appLimitDataSource) {
+        mIgnoreAppDataSource = ignoreAppDataSource;
+        mAppLimitDataSource = appLimitDataSource;
     }
 
     public AppsRepositoryImpl(PhoneUsageDataSource phoneUsageDataSource, AppLimitDataSource appLimitDataSource) {

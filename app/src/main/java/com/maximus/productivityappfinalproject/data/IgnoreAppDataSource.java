@@ -14,4 +14,6 @@ public interface IgnoreAppDataSource {
 
     void removeAll();
 
+    void update(IgnoreItems items);
+
 }

@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.OnLifecycleEvent;
+import androidx.room.Ignore;
 
 import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.data.PhoneUsageDataSource;
@@ -49,6 +50,8 @@ public class AppsViewModel extends AndroidViewModel {
     private IgnoreAppDataSource mIgnoreAppDataSource;
     private GetPhoneUsageCountUseCase mUsageCountUseCase;
     private PhoneUsageDataSource mDataSource;
+    //TODO
+    private boolean isSystemAppMenuChecked;
 
     public AppsViewModel(@NonNull Application application) {
         super(application);
@@ -73,11 +76,16 @@ public class AppsViewModel extends AndroidViewModel {
     public void insertToIgnoreList(AppsModel info) {
         String packageName = info.getPackageName();
         String appName = info.getAppName();
+        String lastTimeUsed = info.getLastTimeUsed();
+        info.setSelected(true);
         IgnoreItems ignoreItems = new IgnoreItems(packageName, appName);
         List<IgnoreItems> list = new ArrayList<>();
         list.add(ignoreItems);
+//        IgnoreItems f = mMyUsageStatsManagerWrapper.addIgnore(info);
         mIgnoreListUseCase.addToIgnoreList(ignoreItems);
     }
+
+
 
     public void startService() {
         MyPreferenceManager.init(mContext);

@@ -31,5 +31,9 @@ public interface IgnoreDao {
     @Query("DELETE FROM ignore_table WHERE package_name =:packageName")
     int deleteByPackageName(String packageName);
 
+    //TODO
+    @Query("UPDATE ignore_table SET name=:usageTime")
+    void updateUsageTimeAndLastUsed(long usageTime);
+
 
 }

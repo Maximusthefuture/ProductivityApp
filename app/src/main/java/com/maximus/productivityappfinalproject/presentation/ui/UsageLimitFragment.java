@@ -56,10 +56,6 @@ public class UsageLimitFragment extends Fragment {
         mSetLimitButton = root.findViewById(R.id.set_limit_button);
 
 
-        mLimitPerHour.addTextChangedListener(mLimitViewModel.checkInput(mLimitPerHour, mLimitPerDayInHours, mLimitPerDayInMinutes, mSetLimitButton));
-        mLimitPerDayInMinutes.addTextChangedListener(mLimitViewModel.checkInput(mLimitPerHour, mLimitPerDayInHours, mLimitPerDayInMinutes, mSetLimitButton));
-        mLimitPerDayInHours.addTextChangedListener(mLimitViewModel.checkInput(mLimitPerHour, mLimitPerDayInHours, mLimitPerDayInMinutes, mSetLimitButton));
-
         mSetLimitButton.setOnClickListener(v -> {
             int perDayHour = Integer.parseInt("0" + mLimitPerDayInHours.getText().toString());
             int perDayMinutes = Integer.parseInt("0" + mLimitPerDayInMinutes.getText().toString());

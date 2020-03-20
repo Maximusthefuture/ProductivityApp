@@ -9,14 +9,17 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.maximus.productivityappfinalproject.presentation.ui.MinutesLimitDialogFragment;
+import com.maximus.productivityappfinalproject.service.CheckAppLaunchService;
 import com.maximus.productivityappfinalproject.utils.Utils;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  {
 
     private NavController navController;
 
@@ -24,34 +27,36 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav_menu);
+//        final BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav_menu);
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 //        AppBarConfiguration appBarConfiguration =
 //                new AppBarConfiguration.Builder(navController.getGraph()).build();
 //        Toolbar toolbar = findViewById(R.id.toolbar);
-        NavigationUI.setupWithNavController(bottomNavigationView, navController);
+//        NavigationUI.setupWithNavController(bottomNavigationView, navController);
 //        NavigationUI.setupWithNavController(toolbar,navController);
 //        NavigationUI.setupActionBarWithNavController(this, navController);
 
 
-        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            if (destination.getId() == R.id.fragment_add_app) {
-                bottomNavigationView.setVisibility(View.GONE);
-            } else if (destination.getId() == R.id.app_detail_fragment) {
-                bottomNavigationView.setVisibility(View.GONE);
-            } else if (destination.getId() == R.id.ignore_list_fragment) {
-                bottomNavigationView.setVisibility(View.GONE);
-            } else if (destination.getId() == R.id.usage_limit_fragment){
-                bottomNavigationView.setVisibility(View.GONE);
-            } else {
-                bottomNavigationView.setVisibility(View.VISIBLE);
-            }
-        });
+//        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+//            if (destination.getId() == R.id.fragment_add_app) {
+//                bottomNavigationView.setVisibility(View.GONE);
+//            } else if (destination.getId() == R.id.app_detail_fragment) {
+//                bottomNavigationView.setVisibility(View.GONE);
+//            } else if (destination.getId() == R.id.ignore_list_fragment) {
+//                bottomNavigationView.setVisibility(View.GONE);
+//            } else if (destination.getId() == R.id.usage_limit_fragment){
+//                bottomNavigationView.setVisibility(View.GONE);
+//            } else {
+//                bottomNavigationView.setVisibility(View.VISIBLE);
+//            }
+//        });
 
         if (!Utils.hasPermission(getApplicationContext())) {
             Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
             startActivity(intent);
         }
+        Intent intent = new Intent(this, CheckAppLaunchService.class);
+        startService(intent);
     }
 
     @Override
@@ -67,4 +72,5 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
     }
+
 }

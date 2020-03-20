@@ -40,8 +40,6 @@ public class AppsFragment extends Fragment implements OnAppClickListener, OnSwip
     private NavController mNavController;
     public static final String APP_DETAILS = "APP_DETAIL";
 
-
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -78,30 +76,39 @@ public class AppsFragment extends Fragment implements OnAppClickListener, OnSwip
         getContext().startService(service);
     }
 
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.ignore_list_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
+
 
     @Override
     public void onAppClickListener(AppsModel appsModel) {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(APP_DETAILS ,appsModel);
-        mNavController.navigate(R.id.app_detail_fragment, bundle);
+//        Bundle bundle = new Bundle();
+//        bundle.putParcelable(APP_DETAILS ,appsModel);
+//        mNavController.navigate(R.id.app_detail_fragment, bundle);
     }
 
     @Override
     public void onSwiped(int position) {
         AppsModel info = mAdapter.getDataFromPosition(position);
         mViewModel.insertToIgnoreList(info);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("APPSMODEL", info);
         Log.d(TAG, "onSwiped: " + info);
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        NavigationUI.onNavDestinationSelected(item, mNavController);
-        return super.onOptionsItemSelected(item);
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.add_app_menu, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.show_system_app:
+                item.setChecked(true);
+                if (item.isChecked()) {
+                    item.setChecked(false);
+                }
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

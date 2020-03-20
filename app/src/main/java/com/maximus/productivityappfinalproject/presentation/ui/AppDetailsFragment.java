@@ -50,17 +50,17 @@ public class AppDetailsFragment extends Fragment {
         appsModel = getArguments().getParcelable(AppsFragment.APP_DETAILS);
         mNavController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
         mViewModel = new ViewModelProvider(this).get(AppsDetailViewModel.class);
-        mRecyclerView = root.findViewById(R.id.recycler_view);
+        mRecyclerView = root.findViewById(R.id.app_limit_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         AppDetailFragmentRecyclerViewAdapter mAdapter = new AppDetailFragmentRecyclerViewAdapter();
         mRecyclerView.setAdapter(mAdapter);
         mSelectDay = root.findViewById(R.id.interval_chip_group);
 
-        root.findViewById(R.id.cut_usage_time_button).setOnClickListener(v -> {
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(EXTRA_LIMIT_APP, appsModel);
-                mNavController.navigate(R.id.usage_limit_fragment, bundle);
-                });
+//        root.findViewById(R.id.cut_usage_time_button).setOnClickListener(v -> {
+//            Bundle bundle = new Bundle();
+//            bundle.putParcelable(EXTRA_LIMIT_APP, appsModel);
+//                mNavController.navigate(R.id.usage_limit_fragment, bundle);
+//                });
         initSpinner();
 
         mViewModel.intervalList(appsModel.getPackageName()).observe(getViewLifecycleOwner(), apps -> {
@@ -72,7 +72,7 @@ public class AppDetailsFragment extends Fragment {
         mImageView.setImageDrawable(appsModel.getAppIcon());
         mUsageTime = root.findViewById(R.id.usage_time_text_view);
         mUsageTime.setText(Utils.formatMillisToSeconds(appsModel.getAppUsageTime()));
-        mAppName = root.findViewById(R.id.app_name_text_view);
+//        mAppName = root.findViewById(R.id.app_name_text_view);
         mAppName.setText(appsModel.getAppName());
         return root;
     }

@@ -17,7 +17,7 @@
     <string name="total_time">Общее время:</string>
     <string name="usage_count">Usage count:</string>
     <string name="cut_usage_time_button">Ограничить время использования</string>
-    <string name="delete_all">Delete all</string>
+    <string name="delete_all">Удалить все</string>
     <string name="phone_usage_notification_title">Phone usage:</string>
     <string-array name="days_statistic_array">
         <item>Сегодня</item>
@@ -47,7 +47,7 @@
     <string name="day_24_hours">В дне 24 часа</string>
     <string name="hour_60_minutes">В часу 60 минут</string>
     <string name="you_are_not_ready">Вы ничего не ввели</string>
-    <string name="limit_set">Лимит установлен %s</string>
+    <string name="limit_set">Лимит установлен для %s</string>
     <string name="change_limit">Изменить лимит</string>
     <string name="nothing">Ничего нет</string>
     <string name="cannot_use_app">Вы не можете использовать %s в %s </string>
@@ -56,4 +56,13 @@
     <string name="i_want_to_slack_key">limit_off</string>
     <string name="i_want_to_slack_title">Хочу прокрастинировать!</string>
     <string name="limit_off_summary">Отключить ограничение на приложения на 30 мин, доступно 1 раз в день</string>
+    <string name="limit_in_day_chip">Лимит в день</string>
+    <string name="limit_in_day_chip_with_args">Лимит в день %s</string>
+    <string name="set_hourly_limit">Установите часовой лимит</string>
+    <string name="positive_button_title">OK</string>
+    <string name="negative_button_title">Закрыть</string>
+    <string name="hourly_limit_set_to">Часовой лимит установлен на %d минут</string>
+    <string name="sort_by_usage_time_menu">По времени использования</string>
+    <string name="sort_by_limited_time_menu">По времени блокировки</string>
+    <string name="last_used_text">Последнее использование: </string>
 </resources>

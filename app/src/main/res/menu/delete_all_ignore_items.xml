@@ -1,8 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:title="@string/delete_all"
         android:id="@+id/delete_all"/>
+
+    <item
+        android:title="@string/sort_by_usage_time_menu"
+        android:checkable="true"
+        android:checked="true"
+        android:id="@+id/sort_by_usage_time"/>
+
+    <item
+        android:title="@string/sort_by_limited_time_menu"
+        android:checkable="true"
+        android:id="@+id/sort_by_limited_time"/>
+
+    <item
+        android:title="Settings"
+        android:icon="@drawable/ic_settings_24dp"
+        app:showAsAction="ifRoom"
+        android:id="@+id/settings_dest"
+        />
 
 </menu>

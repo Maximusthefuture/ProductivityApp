@@ -22,7 +22,7 @@ public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerView
     private static final String TAG = "AddAppRecyclerViewAdapt";
     private List<AppsModel> mAppsNameList = new ArrayList<>();
     private OnAppClickListener mClickListener;
-    OnSwipeAppToIgnoreList mOnSwipeAppToIgnoreList;
+    private OnSwipeAppToIgnoreList mOnSwipeAppToIgnoreList;
 
     public AppRecyclerViewAdapter(OnAppClickListener clickListener, OnSwipeAppToIgnoreList onSwipeAppToIgnoreList) {
         mClickListener = clickListener;
@@ -83,16 +83,16 @@ public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerView
 
             mAppNameTextView = itemView.findViewById(R.id.add_app_name_text_view);
             mAppIconImageView = itemView.findViewById(R.id.app_icon_image_view);
-            mAppLastTimeUsedTextView = itemView.findViewById(R.id.app_last_time_used_text_view);
-            mUsageTimeTextView = itemView.findViewById(R.id.usage_time);
+//            mAppLastTimeUsedTextView = itemView.findViewById(R.id.app_last_time_used_text_view);
+//            mUsageTimeTextView = itemView.findViewById(R.id.usage_time);
 
         }
 
         public void bind(@NonNull AppsModel appsModel) {
             mAppNameTextView.setText(appsModel.getAppName());
             mAppIconImageView.setImageDrawable(appsModel.getAppIcon());
-            mAppLastTimeUsedTextView.setText(itemView.getContext().getString(R.string.last_time_used, appsModel.getLastTimeUsed()));
-            mUsageTimeTextView.setText(Utils.formatMillisToSeconds(appsModel.getAppUsageTime()));
+//            mAppLastTimeUsedTextView.setText(itemView.getContext().getString(R.string.last_time_used, appsModel.getLastTimeUsed()));
+//            mUsageTimeTextView.setText(Utils.formatMillisToSeconds(appsModel.getAppUsageTime()));
 
             itemView.setOnClickListener(v -> {
                 mClickListener.onAppClickListener(appsModel);

@@ -7,48 +7,47 @@
     android:layout_height="match_parent"
     >
 
+<!--    <ImageView-->
+<!--        android:id="@+id/app_icon_image_view"-->
+<!--        android:layout_width="50dp"-->
+<!--        android:layout_height="50dp"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        tool:src="@mipmap/ic_launcher"-->
+<!--        app:layout_constraintTop_toTopOf="parent"/>-->
 
-    <ImageView
-        android:id="@+id/app_icon_image_view"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        tool:src="@mipmap/ic_launcher"
-        app:layout_constraintTop_toTopOf="parent"/>
 
+<!--    <TextView-->
+<!--        android:id="@+id/app_name_text_view"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/app_icon_image_view"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        android:textAppearance="?textAppearanceBody1"-->
+<!--        tool:text="Telegram"/>-->
 
-    <TextView
-        android:id="@+id/app_name_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/app_icon_image_view"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:textAppearance="?textAppearanceBody1"
-        tool:text="Telegram"/>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/spinner_card_view"
-        android:layout_margin="@dimen/padding_small"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/app_name_text_view"
-        app:layout_constraintLeft_toLeftOf="parent">
+<!--    <androidx.cardview.widget.CardView-->
+<!--        android:id="@+id/spinner_card_view"-->
+<!--        android:layout_margin="@dimen/padding_small"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/app_name_text_view"-->
+<!--        app:layout_constraintLeft_toLeftOf="parent">-->
 
 <!--        <Spinner-->
 <!--            android:id="@+id/spinner_days"-->
 <!--            android:layout_width="match_parent"-->
 <!--            android:layout_height="wrap_content"-->
 <!--            />-->
-    </androidx.cardview.widget.CardView>
+<!--    </androidx.cardview.widget.CardView>-->
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/interval_chip_group"
         android:layout_margin="@dimen/padding_small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/spinner_card_view"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:singleSelection="true">
@@ -112,7 +111,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/usage_count_card_view"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_margin="@dimen/padding_small"
         app:layout_constraintTop_toBottomOf="@id/total_time_card_view"
         app:layout_constraintLeft_toLeftOf="parent">
@@ -124,36 +123,44 @@
 <!--            android:layout_height="wrap_content"-->
 <!--            android:layout_marginLeft="@dimen/padding_small"-->
 <!--            android:text="@string/usage_count"/>-->
-        <TextView
-            android:id="@+id/usage_count"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center_vertical"
-            tool:text="100"/>
+<!--        <TextView-->
+<!--            android:id="@+id/usage_count"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="end|center_vertical"-->
+<!--            tool:text="100"/>-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_gravity="center"
+            android:id="@+id/app_limit_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="@dimen/padding_small"
+            android:layout_marginBottom="60dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/usage_count_card_view"
+            tool:listitem="@layout/recycler_view_item_1" />
+        </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@id/cut_usage_time_button"
-        android:layout_marginTop="@dimen/padding_small"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/usage_count_card_view"
-        android:layout_marginBottom="60dp"/>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/cut_usage_time_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/padding_small"
-        android:layout_marginTop="685dp"
-        android:text="@string/cut_usage_time_button"
-        app:layout_constraintTop_toBottomOf="@+id/recycler_view"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+
+<!--    <com.google.android.material.button.MaterialButton-->
+<!--        android:id="@+id/cut_usage_time_button"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_margin="@dimen/padding_small"-->
+<!--        android:layout_marginTop="685dp"-->
+<!--        android:text="@string/cut_usage_time_button"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/recycler_view"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"/>-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,7 +15,7 @@ import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {IgnoreItems.class, PhoneUsage.class, AppUsageLimitModel.class}, version = 11, exportSchema = false)
+@Database(entities = {IgnoreItems.class, PhoneUsage.class, AppUsageLimitModel.class}, version = 14, exportSchema = false)
 public abstract class AppsDatabase extends RoomDatabase {
     private static AppsDatabase INSTANCE;
 

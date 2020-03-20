@@ -1,75 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottom_sheet"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fff"
+    android:background="@drawable/rounded_dialog"
     android:orientation="vertical"
     android:padding="8dp"
-    app:behavior_peekHeight="100dp"
+    app:behavior_peekHeight="16dp"
     app:behavior_hideable="true"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_gravity="center_vertical"
+        android:orientation="horizontal"
         android:weightSum="3">
 
         <TextView
+            android:id="@+id/app_name_bottom_sheet"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_weight="2"
-            android:text="Order Details"
+            android:text="AppName"
             android:textColor="#444"
             android:textSize="18dp"
             android:textStyle="bold" />
 
         <TextView
-            android:layout_width="0dp"
-            android:gravity="right"
+            android:id="@+id/time_used_bottom_sheet"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:gravity="right"
+            android:textSize="15sp"
             android:textStyle="bold"
-            android:textSize="15dp"
-            android:text="₹435.00"></TextView>
+            tools:text="13m 10s" />
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Chicken Fried Rice 1x1" />
+        android:text="@string/last_used_text" />
 
     <TextView
+        android:id="@+id/last_used_bottom_sheet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Paneer Tikka 1x2" />
+        tools:text="March 3th "/>
+    </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Delivery Address"
-        android:textColor="#444"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Flat No 404, Skyline Apartments, Vizag - 500576" />
-
-    <Button
-        android:id="@+id/button"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:background="#000"
-        android:foreground="?attr/selectableItemBackground"
-        android:text="PROCEED PAYMENT"
-        android:textColor="#fff" />
+        android:orientation="horizontal">
+
+
+<!--        <TextView-->
+<!--            android:layout_gravity="center_vertical"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_weight="2"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Установить лимит в день: "-->
+<!--            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>-->
+
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/limit_in_day"
+            style="@style/Widget.MaterialComponents.Chip.Action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/limit_in_day_chip"
+            app:chipBackgroundColor="@drawable/time_chip_selector"
+            app:chipIcon="@drawable/ic_access_time_black_24dp"
+            />
+
+
+<!--    <Button-->
+<!--        android:id="@+id/button"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="#000"-->
+<!--        android:layout_gravity=""-->
+<!--        android:text="0"-->
+<!--        android:textColor="#fff" />-->
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/limit_in_hour"
+            style="@style/Widget.MaterialComponents.Chip.Action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Лимит в час"
+            app:chipBackgroundColor="@drawable/time_chip_selector"
+            app:chipIcon="@drawable/ic_access_time_black_24dp"
+            />
+
+<!--        <TextView-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="2"-->
+<!--            android:layout_gravity="center_vertical"-->
+<!--            android:text="Установить лимит в час: "-->
+<!--            android:textAppearance="@style/TextAppearance.AppCompat.Medium"/>-->
+
+
+<!--        <Button-->
+<!--            android:id="@+id/button2"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="#000"-->
+<!--            android:layout_gravity="center_vertical"-->
+<!--            android:foreground="?attr/selectableItemBackground"-->
+<!--            android:text="0"-->
+<!--            android:textColor="#fff" />-->
+    </LinearLayout>
+
+    <include layout="@layout/fragment_app_details"/>
 
 </LinearLayout>
