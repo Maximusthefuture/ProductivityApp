@@ -77,6 +77,7 @@ public class MyUsageStatsManagerWrapper {
         return foregroundApp;
     }
 
+
     /**
      * Получаем все приложения, и сортируем их
      *

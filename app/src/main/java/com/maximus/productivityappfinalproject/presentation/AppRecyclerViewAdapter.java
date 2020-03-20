@@ -12,8 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
-import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
-import com.maximus.productivityappfinalproject.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +19,11 @@ import java.util.List;
 public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerViewAdapter.AddAppViewHolder> implements ItemTouchHelperAdapter {
     private static final String TAG = "AddAppRecyclerViewAdapt";
     private List<AppsModel> mAppsNameList = new ArrayList<>();
-    private OnAppClickListener mClickListener;
-    private OnSwipeAppToIgnoreList mOnSwipeAppToIgnoreList;
+    private OnSwipeAppToLimitedList mOnSwipeAppToLimitedList;
 
-    public AppRecyclerViewAdapter(OnAppClickListener clickListener, OnSwipeAppToIgnoreList onSwipeAppToIgnoreList) {
-        mClickListener = clickListener;
-        mOnSwipeAppToIgnoreList = onSwipeAppToIgnoreList;
+    public AppRecyclerViewAdapter( OnSwipeAppToLimitedList onSwipeAppToLimitedList) {
+
+        mOnSwipeAppToLimitedList = onSwipeAppToLimitedList;
     }
 
     @NonNull
@@ -66,7 +63,7 @@ public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerView
 
     @Override
     public void onItemMoveToIgnoreList(int position) {
-        mOnSwipeAppToIgnoreList.onSwiped(position);
+        mOnSwipeAppToLimitedList.onSwiped(position);
         mAppsNameList.remove(position);
         notifyItemRemoved(position);
     }
@@ -94,10 +91,6 @@ public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerView
 //            mAppLastTimeUsedTextView.setText(itemView.getContext().getString(R.string.last_time_used, appsModel.getLastTimeUsed()));
 //            mUsageTimeTextView.setText(Utils.formatMillisToSeconds(appsModel.getAppUsageTime()));
 
-            itemView.setOnClickListener(v -> {
-                mClickListener.onAppClickListener(appsModel);
-                Log.d(TAG, "onClick: " + appsModel);
-            });
         }
     }
 

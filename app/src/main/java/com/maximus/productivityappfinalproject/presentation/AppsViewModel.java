@@ -97,18 +97,4 @@ public class AppsViewModel extends AndroidViewModel {
         }
     }
 
-    public void setFiltering(IntervalEnum intervalEnum) {
-        mIntervalEnum = intervalEnum;
-        switch (intervalEnum) {
-            case TODAY:
-                mDayInterval.setValue(0);
-                break;
-            case YESTERDAY:
-                mDayInterval.setValue(1);
-                break;
-            case THIS_WEEK:
-                mDayInterval.setValue(2);
-        }
-    }
-
 }

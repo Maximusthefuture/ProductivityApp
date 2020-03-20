@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,10 +28,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.maximus.productivityappfinalproject.R;
-import com.maximus.productivityappfinalproject.domain.model.AppsModel;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
 import com.maximus.productivityappfinalproject.presentation.AppDetailFragmentRecyclerViewAdapter;
 import com.maximus.productivityappfinalproject.presentation.AppsDetailViewModel;
@@ -42,14 +41,13 @@ import com.maximus.productivityappfinalproject.presentation.OnIgnoreItemClickLis
 import com.maximus.productivityappfinalproject.presentation.UsageLimitViewModel;
 import com.maximus.productivityappfinalproject.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
+import static com.maximus.productivityappfinalproject.utils.IntervalEnum.*;
 
 public class TrackingListFragment extends Fragment implements OnIgnoreItemClickListener, MinutesLimitDialogFragment.MinutesLimitDialogListener {
 
     private static final String TAG = "TrackingListFragment";
-    private RecyclerView mRecyclerView;
-    private LimitedListAdapter mAdapter;
+    private RecyclerView mLimitedRecyclerView;
+    private LimitedListAdapter mLimitedListAdapter;
     private LimitedListViewModel mModelView;
     private FloatingActionButton mActionButton;
     private NavController mNavController;
@@ -67,6 +65,8 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     private RecyclerView mTimeUsedRecyclerView;
     private AppsDetailViewModel mAppsDetailViewModel;
     private AppDetailFragmentRecyclerViewAdapter mDetailFragmentAdapter;
+    private ChipGroup mSelectDay;
+
 
     @Nullable
     @Override
@@ -79,66 +79,32 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         mLimitHourlyChip = root.findViewById(R.id.limit_in_hour);
         mTimeUsedRecyclerView = root.findViewById(R.id.app_limit_recycler_view);
         mDetailFragmentAdapter = new AppDetailFragmentRecyclerViewAdapter();
-
-
-        mTimeUsedRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        mTimeUsedRecyclerView.setAdapter(mDetailFragmentAdapter);
-        ArrayList<AppsModel> models = new ArrayList<>();
-        models.add(new AppsModel(0, 30, 1));
-        models.add(new AppsModel(0, 30, 1));
-        models.add(new AppsModel(0, 30, 1));
-        models.add(new AppsModel(0, 30, 1));
-        models.add(new AppsModel(0, 30, 1));
-        models.add(new AppsModel(0, 30, 1));
-        models.add(new AppsModel(0, 30, 1));
-        models.add(new AppsModel(0, 30, 1));
-        models.add(new AppsModel(0, 30, 2));
-        models.add(new AppsModel(0, 30, 2));
-        models.add(new AppsModel(0, 30, 1));
-        models.add(new AppsModel(0, 30, 1));
-        models.add(new AppsModel(0, 30, 1));
-        models.add(new AppsModel(0, 30, 1));
-        models.add(new AppsModel(0, 30, 2));
-        models.add(new AppsModel(0, 30, 1));
-        models.add(new AppsModel(0, 30, 1));
-        models.add(new AppsModel(0, 30, 1));
-        models.add(new AppsModel(0, 30, 2));
-        models.add(new AppsModel(0, 30, 1));
-        mDetailFragmentAdapter.setList(models);
+        mSelectDay = root.findViewById(R.id.interval_chip_group);
 
         mLimitViewModel = new ViewModelProvider(this).get(UsageLimitViewModel.class);
         mMinutesLimitDialogFragment = new MinutesLimitDialogFragment();
         mAppsDetailViewModel = new ViewModelProvider(this).get(AppsDetailViewModel.class);
 
-
         mModelView = new ViewModelProvider(this).get(LimitedListViewModel.class);
         mActionButton = root.findViewById(R.id.fab_add_app);
         mNavController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
-        mRecyclerView = root.findViewById(R.id.limited_list_recycler_view);
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(mRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
-        mRecyclerView.addItemDecoration(itemDecoration);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        mAdapter = new LimitedListAdapter(requireContext(), this);
-        mRecyclerView.setAdapter(mAdapter);
+        mLimitedRecyclerView = root.findViewById(R.id.limited_list_recycler_view);
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(mLimitedRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        mLimitedRecyclerView.addItemDecoration(itemDecoration);
+        mLimitedRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        mLimitedListAdapter = new LimitedListAdapter(requireContext(), this);
+        mLimitedRecyclerView.setAdapter(mLimitedListAdapter);
 
         mActionButton.setOnClickListener(view -> {
             mNavController.navigate(R.id.apps_dest);
         });
 
-
         setHasOptionsMenu(true);
-
         mLinearLayout = root.findViewById(R.id.bottom_sheet);
         bottomSheetBehaviorInit();
-        initChips(root);
-
-
+        initChips();
         mModelView.getAllIgnoreItems().observe(getViewLifecycleOwner(), apps -> {
-//            mAdapter.notifyDataSetChanged();
-            mAdapter.setList(apps);
-//            for (IgnoreItems app : apps) {
-//                mModelView.refresh(app);
-//            }
+            mLimitedListAdapter.setList(apps);
         });
         return root;
     }
@@ -162,14 +128,33 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                mRecyclerView.setPadding(0, 0, 0, (int) (bottomSheet.getHeight() * slideOffset));
-                mRecyclerView.invalidate();
+                mLimitedRecyclerView.setPadding(0, 0, 0, (int) (bottomSheet.getHeight() * slideOffset));
+                mLimitedRecyclerView.invalidate();
             }
         });
     }
 
+    private void sortSelectedDays() {
+        mSelectDay.setOnCheckedChangeListener((chipGroup, i) -> {
+            Chip chip = chipGroup.findViewById(i);
+            if (chip != null) {
+                switch (i){
+                    case R.id.chip_today:
+                        mAppsDetailViewModel.setFiltering(TODAY);
+                        break;
+                    case R.id.chip_yesterday:
+                        mAppsDetailViewModel.setFiltering(YESTERDAY);
+                        break;
+                    case R.id.chip_this_week:
+                        mAppsDetailViewModel.setFiltering(THIS_WEEK);
+                        break;
+                }
+                mAppsDetailViewModel.intervalList(mPackageName);
+            }
+        });
+    }
 
-    private void initChips(View root) {
+    private void initChips() {
         mLimitDailyChip.setOnClickListener(view -> {
             mLimitDailyChip.setSelected(true);
             TimePickerDialog.OnTimeSetListener t =
@@ -187,10 +172,6 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
             TimePickerDialog f = new TimePickerDialog(requireContext(), t, 0, 0, true);
             f.setTitle("Установить ограничение в день");
             f.show();
-
-//
-
-
         });
 
         mLimitHourlyChip.setOnClickListener(hourlyView -> {
@@ -209,16 +190,19 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume() called");
-        mAdapter.notifyDataSetChanged();
+    }
 
+    private void initAppsModelList() {
+        mTimeUsedRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        mTimeUsedRecyclerView.setAdapter(mDetailFragmentAdapter);
     }
 
     @Override
     public void onStart() {
         super.onStart();
         Log.d(TAG, "onStart() called");
-        mAdapter.notifyDataSetChanged();
     }
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -234,7 +218,6 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         return super.onOptionsItemSelected(item);
     }
 
-
     @Override
     public void onItemClickListener(IgnoreItems items) {
         mPackageName = items.getPackageName();
@@ -244,9 +227,11 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         mAppname.setText(items.getName());
         mLastUsed.setText(items.getLastTimeUsed());
         //TODO EMPTY LIST
-//        mAppsDetailViewModel.intervalList(mPackageName).observe(getViewLifecycleOwner(), apps -> {
-//            mDetailFragmentAdapter.setList(apps);
-//        });
+        sortSelectedDays();
+        initAppsModelList();
+        mAppsDetailViewModel.intervalList(mPackageName).observe(getViewLifecycleOwner(), apps -> {
+            mDetailFragmentAdapter.setList(apps);
+        });
         //TODO this method call error on view thread
         //todo Animators may only be run on Looper threads
 //        AppsDatabase.datatbaseWriterExecutor.execute(new Runnable() {
@@ -269,11 +254,12 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, NumberPicker p) {
-            mLimitHourlyChip.setText(getString(R.string.hourly_limit_set_to, p.getValue()));
+        mLimitHourlyChip.setText(getString(R.string.hourly_limit_set_to, p.getValue()));
     }
 
     @Override
     public void onDialogNegativeClick(DialogFragment dialog, NumberPicker picker) {
 
     }
+
 }

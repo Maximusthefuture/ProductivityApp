@@ -1,5 +1,5 @@
 package com.maximus.productivityappfinalproject.presentation;
 
-public interface OnSwipeAppToIgnoreList {
+public interface OnSwipeAppToLimitedList {
     void onSwiped(int position);
 }
