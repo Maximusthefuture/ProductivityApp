@@ -5,12 +5,14 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManager;
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
-import com.maximus.productivityappfinalproject.domain.model.AppsModel;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 import com.maximus.productivityappfinalproject.framework.db.AppsDatabase;
 import java.util.List;
-import java.util.Map;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 
 
 //TODO:
@@ -88,6 +90,24 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
         return mIgnoreItems;
     }
 
+    public Observable<List<IgnoreItems>> getIgnoreList() {
+        return Observable.create(new ObservableOnSubscribe<List<IgnoreItems>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<IgnoreItems>> emitter) throws Exception {
+                emitter.onNext(mIgnoreAppDataSource.getAll());
+                emitter.onComplete();
+            }
+        });
+    }
+
+    public Observable<List<AppUsageLimitModel>> getLimited() {
+        return Observable.create(new ObservableOnSubscribe<List<AppUsageLimitModel>>() {
+            @Override
+            public void subscribe(ObservableEmitter<List<AppUsageLimitModel>> emitter) throws Exception {
+                emitter.onNext(mAppLimitDataSource.getLimitedApps());
+            }
+        });
+    }
     @Override
     public void insertToIgnoreList(IgnoreItems item) {
         AppsDatabase.datatbaseWriterExecutor.execute(() ->
@@ -194,7 +214,7 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
 
     @Override
     public Long getClosestDay() {
-        return mSharedPrefManager.getClosetDay();
+        return mSharedPrefManager.getClosestDay();
     }
 
 

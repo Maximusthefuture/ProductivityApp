@@ -61,8 +61,9 @@
     <string name="set_hourly_limit">Установите часовой лимит</string>
     <string name="positive_button_title">OK</string>
     <string name="negative_button_title">Закрыть</string>
-    <string name="hourly_limit_set_to">Часовой лимит установлен на %d минут</string>
+    <string name="hourly_limit_set_to">Часовой лимит установлен на %s минут</string>
     <string name="sort_by_usage_time_menu">По времени использования</string>
     <string name="sort_by_limited_time_menu">По времени блокировки</string>
     <string name="last_used_text">Последнее использование: </string>
+    <string name="limit_in_hour_chip_with_args">Лимит в час %s</string>
 </resources>

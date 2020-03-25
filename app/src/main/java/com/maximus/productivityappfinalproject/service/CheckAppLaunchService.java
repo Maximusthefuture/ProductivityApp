@@ -30,9 +30,10 @@ import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 import com.maximus.productivityappfinalproject.framework.AppLimitDataSourceImpl;
 import com.maximus.productivityappfinalproject.framework.PhoneUsageDataSourceImp;
+import com.maximus.productivityappfinalproject.utils.Utils;
 
 import java.util.Calendar;
-
+//TODO ForegroundService
 public class CheckAppLaunchService extends Service {
 
     private HandlerThread appLaunchThread;
@@ -60,7 +61,7 @@ public class CheckAppLaunchService extends Service {
         super.onCreate();
         mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(getApplicationContext());
         appLaunchThread = new HandlerThread("MyHandlerThread", Process.THREAD_PRIORITY_BACKGROUND);
-        mSharedPrefManager = new SharedPrefManagerImpl(this, "TimePrefs");
+        mSharedPrefManager =  new SharedPrefManagerImpl(this, "TimePrefs");
         appLaunchThread.start();
         mAppLimitDataSource = new AppLimitDataSourceImpl(getApplicationContext());
         mPhoneUsageDataSource = new PhoneUsageDataSourceImp(getApplicationContext());
@@ -83,36 +84,26 @@ public class CheckAppLaunchService extends Service {
                 closestHour = mGetClosestTimeUseCase.getClosestHour();
                 closestDay = mGetClosestTimeUseCase.getClosestDay();
                 timeNow = Calendar.getInstance().getTimeInMillis();
-
                 checkTimeAndResetDb();
                 checkAppLimitAndUpdateStats();
             }
         };
         mHandler.post(mRunnable);
 
+
         return START_STICKY;
     }
 
     private void checkTimeAndResetDb() {
         if (closestHour < timeNow) {
-            Runnable hourly = new Runnable() {
-                @Override
-                public void run() {
-                    mResetAppUseTimeDbUseCase.resetHourAppUsage();
-                }
-            };
+            Runnable hourly = () -> mResetAppUseTimeDbUseCase.resetHourAppUsage();
             mHandler.postDelayed(hourly, 2000);
             mUpdateClosestTimeUseCase.updateClosestHour();
         }
 
         if (closestDay < timeNow) {
             mUpdateClosestTimeUseCase.updateClosestHour();
-            Runnable daily = new Runnable() {
-                @Override
-                public void run() {
-                    mResetAppUseTimeDbUseCase.resetDayAppUsage();
-                }
-            };
+            Runnable daily = () -> mResetAppUseTimeDbUseCase.resetDayAppUsage();
             mHandler.postDelayed(daily, 2000);
             mUpdateClosestTimeUseCase.updateClosestDay();
         }
@@ -120,22 +111,31 @@ public class CheckAppLaunchService extends Service {
 
     private void checkAppLimitAndUpdateStats() {
         String currentForegroundApp = mMyUsageStatsManagerWrapper.getForegroundApp();
-        if (currentForegroundApp != null) {
-            mGetAppWithLimitUseCase.updateCurrentAppStats(currentForegroundApp);
-        }
+
 
         if (mGetAppWithLimitUseCase.isLimitSet(currentForegroundApp)) {
-            Log.d(TAG, "checkAppLimitAndUpdateStats: " + mGetAppWithLimitUseCase.isLimitSet(currentForegroundApp));
-            AppUsageLimitModel appUsageLimitModel =  mGetAppWithLimitUseCase.getAppUsageLimitFromDB();
+            Log.d(TAG, "currentForegroundApp: " + currentForegroundApp);
+//            Log.d(TAG, "checkAppLimitAndUpdateStats: " + mGetAppWithLimitUseCase.isLimitSet(currentForegroundApp));
+            AppUsageLimitModel appUsageLimitModel =  mGetAppWithLimitUseCase.getAppUsageLimitFromDB(currentForegroundApp);
+            Log.d(TAG, "appLimitModel: " + appUsageLimitModel.getAppName()
+                    + "         "
+                    + Utils.formatMillisToSeconds(appUsageLimitModel.getTimeLimitPerHour())
+                    + "       " + Utils.formatMillisToSeconds(appUsageLimitModel.getTimeLimitPerDay()));
+            //TODO баг который складывает время приложений в фоне
             PhoneUsage phoneUsage = mGetAppWithLimitUseCase.getAppUsageData(currentForegroundApp);
+            Log.d(TAG, "phoneUsage: " + phoneUsage.getPackageName() + "   " + Utils.formatMillisToSeconds(phoneUsage.getTimeCompletedInHour()));
             Pair<Boolean, String> appAccessAllowed = getStatusAccessAllowedNow(appUsageLimitModel, phoneUsage);
             boolean isAppAccessAllowedNow = appAccessAllowed.first;
             String d = appAccessAllowed.second;
+
 
             if (!isAppAccessAllowedNow) {
                 showHomeScreen(getApplicationContext());
                 Toast.makeText(CheckAppLaunchService.this, getString(R.string.cannot_use_app, appUsageLimitModel.getAppName(), d), Toast.LENGTH_LONG).show();
             }
+                    if (currentForegroundApp != null) {
+            mGetAppWithLimitUseCase.updateCurrentAppStats(currentForegroundApp);
+        }
         }
     }
 

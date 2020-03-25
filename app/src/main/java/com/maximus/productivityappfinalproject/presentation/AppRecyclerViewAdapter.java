@@ -21,8 +21,7 @@ public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerView
     private List<AppsModel> mAppsNameList = new ArrayList<>();
     private OnSwipeAppToLimitedList mOnSwipeAppToLimitedList;
 
-    public AppRecyclerViewAdapter( OnSwipeAppToLimitedList onSwipeAppToLimitedList) {
-
+    public AppRecyclerViewAdapter(OnSwipeAppToLimitedList onSwipeAppToLimitedList) {
         mOnSwipeAppToLimitedList = onSwipeAppToLimitedList;
     }
 

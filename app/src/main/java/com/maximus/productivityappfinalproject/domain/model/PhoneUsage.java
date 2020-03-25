@@ -65,10 +65,6 @@ public class PhoneUsage {
         return timeCompletedInDay;
     }
 
-    public void setUsageCount(int usageCount) {
-        this.usageCount = usageCount;
-    }
-
     public int getUsageCount() {
         return usageCount;
     }

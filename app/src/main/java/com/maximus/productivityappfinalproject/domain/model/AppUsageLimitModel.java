@@ -13,11 +13,11 @@ public class AppUsageLimitModel {
 
 
     @ColumnInfo
-    private String appName;
-    @ColumnInfo
     @NonNull
     @PrimaryKey
     private String packageName;
+    @ColumnInfo
+    private String appName;
     @ColumnInfo
     private int timeLimitPerDay;
     @ColumnInfo

@@ -40,4 +40,8 @@ public interface PhoneUsageDao {
 
     @Query("DELETE FROM phone_usage_table ")
     void deletePhoneUsage();
+
+    @Query("UPDATE phone_usage_table SET package_name = :packageName, time_completed_in_day = :usedPerDay,"
+    + "  time_completed_in_hour= :usedPerHour")
+    void updateUsageTime(String packageName, long usedPerDay, long usedPerHour);
 }

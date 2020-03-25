@@ -1,6 +1,7 @@
 package com.maximus.productivityappfinalproject.presentation;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,15 +20,16 @@ import com.maximus.productivityappfinalproject.utils.Utils;
 
 import java.util.List;
 
-public class LimitedListAdapter extends RecyclerView.Adapter<LimitedListAdapter.IgnoreViewHolder> {
+public class TrackingListAdapter extends RecyclerView.Adapter<TrackingListAdapter.IgnoreViewHolder> {
 
     private static final String TAG = "LimitedListAdapter";
     private List<IgnoreItems> mIgnoreItems;
     private MyUsageStatsManagerWrapper mMyUsageStatsManagerWrapper;
     private Context mContext;
     private OnIgnoreItemClickListener mItemClickListener;
+    private OnTrackingItemLongClickListener mLongClickListener;
 
-    public LimitedListAdapter(Context context, OnIgnoreItemClickListener clickListener) {
+    public TrackingListAdapter(Context context, OnIgnoreItemClickListener clickListener) {
         mContext = context;
         mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(mContext);
         mItemClickListener = clickListener;
@@ -91,6 +93,13 @@ public class LimitedListAdapter extends RecyclerView.Adapter<LimitedListAdapter.
                 //TODO
                 mItemClickListener.onItemClickListener(item);
 //                notifyItemRemoved(getAdapterPosition());
+            });
+
+            itemView.setOnLongClickListener(v -> {
+                mIgnoreItems.remove(holder.getAdapterPosition());
+                mLongClickListener.onItemDelete(item.getPackageName());
+                notifyDataSetChanged();
+                return true;
             });
         }
 

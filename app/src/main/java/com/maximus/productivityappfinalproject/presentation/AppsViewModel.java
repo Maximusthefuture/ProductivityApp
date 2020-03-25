@@ -41,7 +41,6 @@ public class AppsViewModel extends AndroidViewModel {
     private LiveData<List<AppsModel>> mAllApps;
     private Context mContext;
     private MutableLiveData<Integer> mDayInterval = new MutableLiveData<>();
-    private IntervalEnum mIntervalEnum = IntervalEnum.TODAY;
     private GetAppsUseCase mAppsUseCase;
     private AddIgnoreListUseCase mIgnoreListUseCase;
     private MyUsageStatsManagerWrapper mMyUsageStatsManagerWrapper;

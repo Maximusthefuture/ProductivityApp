@@ -1,8 +1,11 @@
 package com.maximus.productivityappfinalproject.domain;
 
+import android.util.Log;
+
 import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
+import com.maximus.productivityappfinalproject.framework.db.AppsDatabase;
 
 import java.util.List;
 
@@ -12,6 +15,7 @@ public class GetAppWithLimitUseCase {
     private String prevApp;
     private static final String noAPP = "NO_APP";
     private long currentTime;
+    private static final String TAG = "GetAppWithLimitUseCase";
 
 
     public GetAppWithLimitUseCase(AppsRepositoryImpl appsRepository) {
@@ -22,26 +26,24 @@ public class GetAppWithLimitUseCase {
 
     public boolean isLimitSet(String packageName) {
         String currentPackageName;
-        AppUsageLimitModel appUsageLimitModel;
         List<AppUsageLimitModel> list = mAppsRepository.getLimitedItems();
         for (AppUsageLimitModel usageLimitModel : list) {
             currentPackageName = usageLimitModel.getPackageName();
             if (currentPackageName.equals(packageName)) {
-                mAppUsageLimitModel = getAppUsageLimitFromDB();
                 return true;
             }
         }
         return false;
     }
 
-    public AppUsageLimitModel getAppUsageLimitFromDB() {
+    public AppUsageLimitModel getAppUsageLimitFromDB(String packageName) {
         AppUsageLimitModel appUsageLimitModel = null;
         List<AppUsageLimitModel> list = mAppsRepository.getLimitedItems();
         for (AppUsageLimitModel usageLimitModel : list) {
-            boolean setLimited = usageLimitModel.isAppLimited();
-            if (usageLimitModel.isAppLimited()) {
-                appUsageLimitModel = new AppUsageLimitModel(usageLimitModel.getAppName(),usageLimitModel.getTimeLimitPerDay(), usageLimitModel.getTimeLimitPerHour(), setLimited);
-            }
+                boolean setLimited = usageLimitModel.isAppLimited();
+                if (usageLimitModel.isAppLimited() && usageLimitModel.getPackageName().equals(packageName)) {
+                    appUsageLimitModel = new AppUsageLimitModel(usageLimitModel.getAppName(), usageLimitModel.getTimeLimitPerDay(), usageLimitModel.getTimeLimitPerHour(), setLimited);
+                }
         }
         return appUsageLimitModel;
     }
@@ -71,32 +73,34 @@ public class GetAppWithLimitUseCase {
     }
 
     public void updateAppUsage(String currentAppForeground, long timeCompletedThisUse) {
+
         PhoneUsage phoneUsageModel;
         boolean found = false;
-        String currentPackageName;
+        String currentPackageName = "";
         long getTimeDay = 0;
         long getTimeHour = 0;
+        //TODO ещё одна проверка? если isLimit установлен?
+
         List<PhoneUsage> list = mAppsRepository.getPhoneUsageData();
-            for (PhoneUsage phoneUsage : list) {
-                currentPackageName = phoneUsage.getPackageName();
-                if (currentPackageName.equals(currentAppForeground)) {
-                    found = true;
-                }
+        for (PhoneUsage phoneUsage : list) {
+            Log.d(TAG, "updateAppUsage: " + phoneUsage.getPackageName() + "  in hour:  " + phoneUsage.getTimeCompletedInHour() + " in day: " + phoneUsage.getTimeCompletedInDay());
+            currentPackageName = phoneUsage.getPackageName();
+            if (currentPackageName.equals(currentAppForeground)) {
+                found = true;
                 getTimeDay = phoneUsage.getTimeCompletedInDay();
                 getTimeHour = phoneUsage.getTimeCompletedInHour();
-
             }
-        if (!found) {
-            phoneUsageModel = new PhoneUsage(currentAppForeground, timeCompletedThisUse, timeCompletedThisUse);
-            mAppsRepository.insertPhoneUsage(phoneUsageModel);
-
-        } else {
-            long timeCompletedThisHour = getTimeHour;
-            timeCompletedThisHour += timeCompletedThisUse;
-            long timeCompletedThisDay = getTimeDay;
-            timeCompletedThisDay += timeCompletedThisUse;
-            phoneUsageModel = new PhoneUsage(currentAppForeground, timeCompletedThisHour, timeCompletedThisDay);
-            mAppsRepository.insertPhoneUsage(phoneUsageModel);
+            if (!found) {
+                phoneUsageModel = new PhoneUsage(currentAppForeground, getTimeHour, getTimeDay);
+                mAppsRepository.insertPhoneUsage(phoneUsageModel);
+            } else {
+                long timeCompletedThisHour = getTimeHour;
+                timeCompletedThisHour += timeCompletedThisUse;
+                long timeCompletedThisDay = getTimeDay;
+                timeCompletedThisDay += timeCompletedThisUse;
+                phoneUsageModel = new PhoneUsage(currentAppForeground, timeCompletedThisHour, timeCompletedThisDay);
+                mAppsRepository.insertPhoneUsage(phoneUsageModel);
+            }
         }
     }
 

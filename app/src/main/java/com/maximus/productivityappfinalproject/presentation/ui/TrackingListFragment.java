@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,22 +33,31 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.maximus.productivityappfinalproject.R;
+import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
 import com.maximus.productivityappfinalproject.presentation.AppDetailFragmentRecyclerViewAdapter;
 import com.maximus.productivityappfinalproject.presentation.AppsDetailViewModel;
-import com.maximus.productivityappfinalproject.presentation.LimitedListAdapter;
 import com.maximus.productivityappfinalproject.presentation.LimitedListViewModel;
 import com.maximus.productivityappfinalproject.presentation.OnIgnoreItemClickListener;
+import com.maximus.productivityappfinalproject.presentation.OnTrackingItemLongClickListener;
+import com.maximus.productivityappfinalproject.presentation.TrackingListAdapter;
 import com.maximus.productivityappfinalproject.presentation.UsageLimitViewModel;
 import com.maximus.productivityappfinalproject.utils.Utils;
 
-import static com.maximus.productivityappfinalproject.utils.IntervalEnum.*;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
-public class TrackingListFragment extends Fragment implements OnIgnoreItemClickListener, MinutesLimitDialogFragment.MinutesLimitDialogListener {
+import static com.maximus.productivityappfinalproject.utils.IntervalEnum.THIS_WEEK;
+import static com.maximus.productivityappfinalproject.utils.IntervalEnum.TODAY;
+import static com.maximus.productivityappfinalproject.utils.IntervalEnum.YESTERDAY;
+
+public class TrackingListFragment extends Fragment implements OnIgnoreItemClickListener, MinutesLimitDialogFragment.MinutesLimitDialogListener, OnTrackingItemLongClickListener {
 
     private static final String TAG = "TrackingListFragment";
+    Disposable disposable;
     private RecyclerView mLimitedRecyclerView;
-    private LimitedListAdapter mLimitedListAdapter;
+    private TrackingListAdapter mTrackingListAdapter;
     private LimitedListViewModel mModelView;
     private FloatingActionButton mActionButton;
     private NavController mNavController;
@@ -67,7 +77,6 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     private AppDetailFragmentRecyclerViewAdapter mDetailFragmentAdapter;
     private ChipGroup mSelectDay;
 
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -81,6 +90,7 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         mDetailFragmentAdapter = new AppDetailFragmentRecyclerViewAdapter();
         mSelectDay = root.findViewById(R.id.interval_chip_group);
 
+
         mLimitViewModel = new ViewModelProvider(this).get(UsageLimitViewModel.class);
         mMinutesLimitDialogFragment = new MinutesLimitDialogFragment();
         mAppsDetailViewModel = new ViewModelProvider(this).get(AppsDetailViewModel.class);
@@ -92,8 +102,9 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         DividerItemDecoration itemDecoration = new DividerItemDecoration(mLimitedRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
         mLimitedRecyclerView.addItemDecoration(itemDecoration);
         mLimitedRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        mLimitedListAdapter = new LimitedListAdapter(requireContext(), this);
-        mLimitedRecyclerView.setAdapter(mLimitedListAdapter);
+        mTrackingListAdapter = new TrackingListAdapter(requireContext(), this);
+        mLimitedRecyclerView.setAdapter(mTrackingListAdapter);
+
 
         mActionButton.setOnClickListener(view -> {
             mNavController.navigate(R.id.apps_dest);
@@ -104,8 +115,9 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         bottomSheetBehaviorInit();
         initChips();
         mModelView.getAllIgnoreItems().observe(getViewLifecycleOwner(), apps -> {
-            mLimitedListAdapter.setList(apps);
+            mTrackingListAdapter.setList(apps);
         });
+
         return root;
     }
 
@@ -138,7 +150,7 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         mSelectDay.setOnCheckedChangeListener((chipGroup, i) -> {
             Chip chip = chipGroup.findViewById(i);
             if (chip != null) {
-                switch (i){
+                switch (i) {
                     case R.id.chip_today:
                         mAppsDetailViewModel.setFiltering(TODAY);
                         break;
@@ -159,7 +171,7 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
             mLimitDailyChip.setSelected(true);
             TimePickerDialog.OnTimeSetListener t =
                     (view1, hourOfDay, minute) -> {
-                        mLimitViewModel.setLimit(mPackageName, appName, hourOfDay, 0, minute);
+                        mLimitViewModel.setDailyLimit(mPackageName, appName, hourOfDay, minute);
                         mLimitViewModel.getSnackBarMessage().observe(getViewLifecycleOwner(), new Observer<Integer>() {
                             @Override
                             public void onChanged(Integer integer) {
@@ -226,35 +238,58 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         mLinearLayout.setVisibility(View.VISIBLE);
         mAppname.setText(items.getName());
         mLastUsed.setText(items.getLastTimeUsed());
-        //TODO EMPTY LIST
         sortSelectedDays();
         initAppsModelList();
         mAppsDetailViewModel.intervalList(mPackageName).observe(getViewLifecycleOwner(), apps -> {
             mDetailFragmentAdapter.setList(apps);
         });
+//        mModelView.getLimitedItems();
         //TODO this method call error on view thread
         //todo Animators may only be run on Looper threads
-//        AppsDatabase.datatbaseWriterExecutor.execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (mModelView.isLimit(mPackageName)) {
-////                    mChip.setSelected(true);
-//                    String time = mModelView.getLimitTimePerDay(mPackageName);
-////                    mChip.setPressed(true);
-//                    mChip.setText(getString(R.string.limit_in_day_chip_with_args, time));
-//                } else {
-//                    mChip.setText("Лимит не установлен");
-//                }
-//            }
-//        });
-
-//        Log.d(TAG, "onItemClickListener: " + mModelView.isLimit(mPackageName));
+        rxjavasomething();
         mTimeUsed.setText(Utils.formatMillisToSeconds(items.getTimeUsed()));
+    }
+
+    private void rxjavasomething() {
+        disposable = mModelView.getLimited()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(list -> {
+                    for (AppUsageLimitModel appUsageLimitModel : list) {
+                        if (appUsageLimitModel.getPackageName().equals(mPackageName)) {
+                            int timeLimitPerDay = appUsageLimitModel.getTimeLimitPerDay();
+                            int timeLimitPerHour = appUsageLimitModel.getTimeLimitPerHour();
+                            int timeCompleted = appUsageLimitModel.getTimeCompleted();
+                            if (timeLimitPerDay >= 90000000) {
+                                mLimitHourlyChip.setText("Лимит не установлен");
+                            } else {
+                                mLimitDailyChip.setText(getString(R.string.limit_in_day_chip_with_args, Utils.formatMillisToSeconds(timeLimitPerDay)));
+                            }
+                            if (timeLimitPerHour >= 90000000) {
+                                mLimitHourlyChip.setText("Лимит не установлен");
+                            } else {
+                                mLimitHourlyChip.setText(getString(R.string.hourly_limit_set_to, Utils.formatMillisToSeconds(timeLimitPerHour)));
+                            }
+                            Toast.makeText(requireContext(), Utils.formatMillisToSeconds(timeCompleted), Toast.LENGTH_SHORT).show();
+                        } else {
+                            mLimitDailyChip.setText("Лимит не установлен");
+                            mLimitHourlyChip.setText("Лимит не установлен");
+                        }
+                    }
+                }, e -> {
+                    Log.d(TAG, "rxjavasomething: " + e);
+                });
+
+
     }
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, NumberPicker p) {
-        mLimitHourlyChip.setText(getString(R.string.hourly_limit_set_to, p.getValue()));
+        mLimitHourlyChip.setText(getString(R.string.hourly_limit_set_to, String.valueOf(p.getValue())));
+        mLimitViewModel.setHourlyLimit(mPackageName, appName, p.getValue());
+        mLimitViewModel.getSnackBarMessage().observe(getViewLifecycleOwner(),
+                integer ->
+                        Snackbar.make(getView(), getString(integer, appName), Snackbar.LENGTH_LONG).show());
     }
 
     @Override
@@ -262,4 +297,24 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
 
     }
 
+    @Override
+    public void onItemDelete(String ignoreItems) {
+        //Call dialog before delete
+        mModelView.deleteIgnoreItem(ignoreItems);
+        mTrackingListAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+//        if (!disposable.isDisposed()) {
+//            disposable.dispose();
+//        }
+    }
 }

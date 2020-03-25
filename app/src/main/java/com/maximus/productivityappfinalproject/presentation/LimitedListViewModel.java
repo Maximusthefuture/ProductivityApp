@@ -22,9 +22,13 @@ import com.maximus.productivityappfinalproject.domain.model.AppsModel;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
 import com.maximus.productivityappfinalproject.framework.AppLimitDataSourceImpl;
 import com.maximus.productivityappfinalproject.framework.IgnoreAppDataSourceImp;
+import com.maximus.productivityappfinalproject.framework.db.AppsDatabase;
 import com.maximus.productivityappfinalproject.utils.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.Observable;
 
 public class LimitedListViewModel extends AndroidViewModel {
 
@@ -76,6 +80,18 @@ public class LimitedListViewModel extends AndroidViewModel {
         getAllIgnoreItems();
     }
 
+   public Observable<List<AppUsageLimitModel>> getLimited() {
+        return mAppsRepository.getLimited();
+   }
+
+   public boolean isLimit(String packageName) {
+        return mAppWithLimitUseCase.isLimitSet(packageName);
+   }
+
+    public Observable<List<IgnoreItems>> getIgnoreItems() {
+        return mAppsRepository.getIgnoreList();
+    }
+
     public void refresh(IgnoreItems ignoreItems) {
         mMyUsageStatsManagerWrapper.refreshIgnoreList(ignoreItems);
     }
@@ -83,12 +99,17 @@ public class LimitedListViewModel extends AndroidViewModel {
     public void deleteIgnoreItem(String packageName) {
         mDeleteIgnoreItemUseCase.deleteIgnoreItem(packageName);
     }
-
-    public boolean isLimit(String packageName) {
-        return mAppWithLimitUseCase.isLimitSet(packageName);
-    }
+//
+//    public void getLimitedItems() {
+//        AppsDatabase.datatbaseWriterExecutor.execute(() -> {
+//            List<AppUsageLimitModel> f  = mAppsRepository.getLimitedItems();
+//            Log.d(TAG, "getLimitedItems: " + f);
+//        });
+//
+//    }
 
     //TODO move to usecase?
+    //TODO rx?
     public String getLimitTimePerDay(String packageName) {
         int time = 0;
         List<AppUsageLimitModel> models = mAppsRepository.getLimitedItems();
