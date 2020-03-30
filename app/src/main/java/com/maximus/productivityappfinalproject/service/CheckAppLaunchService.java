@@ -21,6 +21,7 @@ import com.maximus.productivityappfinalproject.data.PhoneUsageDataSource;
 import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManager;
 import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManagerImpl;
 import com.maximus.productivityappfinalproject.device.MyUsageStatsManagerWrapper;
+import com.maximus.productivityappfinalproject.device.PhoneUsageNotificationManager;
 import com.maximus.productivityappfinalproject.domain.GetAppWithLimitUseCase;
 import com.maximus.productivityappfinalproject.domain.GetClosestTimeUseCase;
 import com.maximus.productivityappfinalproject.domain.ResetAppUseTimeDbUseCase;
@@ -88,9 +89,14 @@ public class CheckAppLaunchService extends Service {
                 checkAppLimitAndUpdateStats();
             }
         };
+
+        //TODO
+//        if (mSharedPrefManager.getNotificationOn) {
+//            startForeground(1, PhoneUsageNotificationManager.);
+//        } else {
+//            stopForeground(true);
+//        }
         mHandler.post(mRunnable);
-
-
         return START_STICKY;
     }
 
@@ -115,15 +121,10 @@ public class CheckAppLaunchService extends Service {
 
         if (mGetAppWithLimitUseCase.isLimitSet(currentForegroundApp)) {
             Log.d(TAG, "currentForegroundApp: " + currentForegroundApp);
-//            Log.d(TAG, "checkAppLimitAndUpdateStats: " + mGetAppWithLimitUseCase.isLimitSet(currentForegroundApp));
             AppUsageLimitModel appUsageLimitModel =  mGetAppWithLimitUseCase.getAppUsageLimitFromDB(currentForegroundApp);
-            Log.d(TAG, "appLimitModel: " + appUsageLimitModel.getAppName()
-                    + "         "
-                    + Utils.formatMillisToSeconds(appUsageLimitModel.getTimeLimitPerHour())
-                    + "       " + Utils.formatMillisToSeconds(appUsageLimitModel.getTimeLimitPerDay()));
-            //TODO баг который складывает время приложений в фоне
+            //TODO баг который складывает время приложений в фоне?
             PhoneUsage phoneUsage = mGetAppWithLimitUseCase.getAppUsageData(currentForegroundApp);
-            Log.d(TAG, "phoneUsage: " + phoneUsage.getPackageName() + "   " + Utils.formatMillisToSeconds(phoneUsage.getTimeCompletedInHour()));
+            Log.d(TAG, "phoneUsage: " + phoneUsage.getPackageName() + "   " + Utils.formatMillisToSeconds(phoneUsage.getTimeCompletedInHour()) + "    " + appUsageLimitModel.getPackageName());
             Pair<Boolean, String> appAccessAllowed = getStatusAccessAllowedNow(appUsageLimitModel, phoneUsage);
             boolean isAppAccessAllowedNow = appAccessAllowed.first;
             String d = appAccessAllowed.second;
@@ -133,9 +134,9 @@ public class CheckAppLaunchService extends Service {
                 showHomeScreen(getApplicationContext());
                 Toast.makeText(CheckAppLaunchService.this, getString(R.string.cannot_use_app, appUsageLimitModel.getAppName(), d), Toast.LENGTH_LONG).show();
             }
-                    if (currentForegroundApp != null) {
-            mGetAppWithLimitUseCase.updateCurrentAppStats(currentForegroundApp);
-        }
+            if (currentForegroundApp != null) {
+                mGetAppWithLimitUseCase.updateCurrentAppStats(currentForegroundApp);
+            }
         }
     }
 
@@ -153,18 +154,18 @@ public class CheckAppLaunchService extends Service {
     }
 
     public Pair<Boolean, String> getStatusAccessAllowedNow(AppUsageLimitModel appUsageLimitModel, PhoneUsage phoneUsage) {
-        String msg;
+        String msg = null;
         if (appUsageLimitModel.isAppLimited()) {
-            if (appUsageLimitModel.getTimeLimitPerHour() <= phoneUsage.getTimeCompletedInHour()) {
+            if (phoneUsage.getTimeCompletedInHour() >= appUsageLimitModel.getTimeLimitPerHour()) {
                 msg = getString(R.string.closest_hour);
                 return new Pair<>(false, msg);
             }
 
-            if (appUsageLimitModel.getTimeLimitPerDay() <= phoneUsage.getTimeCompletedInDay()) {
+            if (phoneUsage.getTimeCompletedInDay() >=appUsageLimitModel.getTimeLimitPerDay()) {
                 msg = getString(R.string.in_this_day);
                 return new Pair<>(false, msg);
             }
         }
-        return new Pair<>(true, "");
+        return new Pair<>(true, msg);
     }
 }

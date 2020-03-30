@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,7 +32,6 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.maximus.productivityappfinalproject.R;
-import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
 import com.maximus.productivityappfinalproject.presentation.AppDetailFragmentRecyclerViewAdapter;
 import com.maximus.productivityappfinalproject.presentation.AppsDetailViewModel;
@@ -44,9 +42,7 @@ import com.maximus.productivityappfinalproject.presentation.TrackingListAdapter;
 import com.maximus.productivityappfinalproject.presentation.UsageLimitViewModel;
 import com.maximus.productivityappfinalproject.utils.Utils;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
 
 import static com.maximus.productivityappfinalproject.utils.IntervalEnum.THIS_WEEK;
 import static com.maximus.productivityappfinalproject.utils.IntervalEnum.TODAY;
@@ -76,6 +72,7 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     private AppsDetailViewModel mAppsDetailViewModel;
     private AppDetailFragmentRecyclerViewAdapter mDetailFragmentAdapter;
     private ChipGroup mSelectDay;
+    private LimitedAppDetailSheet mLimitedAppDetailSheet;
 
     @Nullable
     @Override
@@ -113,7 +110,7 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         setHasOptionsMenu(true);
         mLinearLayout = root.findViewById(R.id.bottom_sheet);
         bottomSheetBehaviorInit();
-        initChips();
+
         mModelView.getAllIgnoreItems().observe(getViewLifecycleOwner(), apps -> {
             mTrackingListAdapter.setList(apps);
         });
@@ -221,10 +218,17 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         switch (item.getItemId()) {
             case R.id.delete_all:
                 mModelView.deleteAll();
+                break;
+            case R.id.sort_by_usage_time:
+            case R.id.sort_by_limited_time:
+                if (item.isChecked()) {
+//                    mModelView.sortByUsageTime();
+                    item.setChecked(false);
 
-                //TODO
-                //Callback
-                //OnDeleteAll
+                } else {
+                    item.setChecked(true);
+                }
+                break;
         }
         NavigationUI.onNavDestinationSelected(item, mNavController);
         return super.onOptionsItemSelected(item);
@@ -235,53 +239,29 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         mPackageName = items.getPackageName();
         appName = items.getName();
         mBottomSheetBehavior.setPeekHeight(getView().getHeight() / 4, true);
+        mBottomSheetBehavior.setFitToContents(true);
+
         mLinearLayout.setVisibility(View.VISIBLE);
         mAppname.setText(items.getName());
         mLastUsed.setText(items.getLastTimeUsed());
+        initChips();
         sortSelectedDays();
         initAppsModelList();
+        showLimitedTime();
+        //TODO
+        /// TODO: add this data when add? and when onPause?
+        mModelView.refresh(items);
         mAppsDetailViewModel.intervalList(mPackageName).observe(getViewLifecycleOwner(), apps -> {
             mDetailFragmentAdapter.setList(apps);
         });
-//        mModelView.getLimitedItems();
-        //TODO this method call error on view thread
-        //todo Animators may only be run on Looper threads
-        rxjavasomething();
+
         mTimeUsed.setText(Utils.formatMillisToSeconds(items.getTimeUsed()));
     }
 
-    private void rxjavasomething() {
-        disposable = mModelView.getLimited()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(list -> {
-                    for (AppUsageLimitModel appUsageLimitModel : list) {
-                        if (appUsageLimitModel.getPackageName().equals(mPackageName)) {
-                            int timeLimitPerDay = appUsageLimitModel.getTimeLimitPerDay();
-                            int timeLimitPerHour = appUsageLimitModel.getTimeLimitPerHour();
-                            int timeCompleted = appUsageLimitModel.getTimeCompleted();
-                            if (timeLimitPerDay >= 90000000) {
-                                mLimitHourlyChip.setText("Лимит не установлен");
-                            } else {
-                                mLimitDailyChip.setText(getString(R.string.limit_in_day_chip_with_args, Utils.formatMillisToSeconds(timeLimitPerDay)));
-                            }
-                            if (timeLimitPerHour >= 90000000) {
-                                mLimitHourlyChip.setText("Лимит не установлен");
-                            } else {
-                                mLimitHourlyChip.setText(getString(R.string.hourly_limit_set_to, Utils.formatMillisToSeconds(timeLimitPerHour)));
-                            }
-                            Toast.makeText(requireContext(), Utils.formatMillisToSeconds(timeCompleted), Toast.LENGTH_SHORT).show();
-                        } else {
-                            mLimitDailyChip.setText("Лимит не установлен");
-                            mLimitHourlyChip.setText("Лимит не установлен");
-                        }
-                    }
-                }, e -> {
-                    Log.d(TAG, "rxjavasomething: " + e);
-                });
-
-
+    private void showLimitedTime() {
+        mModelView.showLimitedTimeOnChips(mPackageName, mLimitHourlyChip, mLimitDailyChip);
     }
+
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, NumberPicker p) {
@@ -300,21 +280,26 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     @Override
     public void onItemDelete(String ignoreItems) {
         //Call dialog before delete
-        mModelView.deleteIgnoreItem(ignoreItems);
+        mModelView.deleteItem(ignoreItems);
         mTrackingListAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
     }
 
     @Override
     public void onStop() {
         super.onStop();
-//        if (!disposable.isDisposed()) {
-//            disposable.dispose();
-//        }
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (!disposable.isDisposed()) {
+            disposable.dispose();
+        }
     }
 }

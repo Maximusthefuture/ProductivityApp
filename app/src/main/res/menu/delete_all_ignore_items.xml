@@ -2,26 +2,25 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:title="@string/delete_all"
-        android:id="@+id/delete_all"/>
 
     <item
-        android:title="@string/sort_by_usage_time_menu"
+        android:id="@+id/sort_by_usage_time"
         android:checkable="true"
-        android:checked="true"
-        android:id="@+id/sort_by_usage_time"/>
+        android:title="@string/sort_by_usage_time_menu" />
 
     <item
-        android:title="@string/sort_by_limited_time_menu"
+        android:id="@+id/sort_by_limited_time"
         android:checkable="true"
-        android:id="@+id/sort_by_limited_time"/>
+        android:title="@string/sort_by_limited_time_menu" />
 
     <item
-        android:title="Settings"
-        android:icon="@drawable/ic_settings_24dp"
-        app:showAsAction="ifRoom"
         android:id="@+id/settings_dest"
-        />
+        android:icon="@drawable/ic_settings_24dp"
+        android:title="Settings"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/delete_all"
+        android:title="@string/delete_all" />
+
 
 </menu>

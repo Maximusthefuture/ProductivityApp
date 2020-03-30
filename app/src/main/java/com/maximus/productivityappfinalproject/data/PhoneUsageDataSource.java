@@ -22,5 +22,5 @@ public interface PhoneUsageDataSource {
 
     void resetDaily();
 
-    void updateUsageTime(String packageName, long perDay, long perHour);
+    void updateUsageTime(long perDay, long perHour);
 }

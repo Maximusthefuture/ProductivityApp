@@ -19,7 +19,7 @@ import com.maximus.productivityappfinalproject.device.MyUsageStatsManagerWrapper
 import com.maximus.productivityappfinalproject.device.PhoneUsageNotificationManager;
 import com.maximus.productivityappfinalproject.domain.AddPhoneUsageUseCase;
 import com.maximus.productivityappfinalproject.domain.GetAppWithLimitUseCase;
-import com.maximus.productivityappfinalproject.domain.GetPhoneUsageCountUseCase;
+
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 import com.maximus.productivityappfinalproject.framework.PhoneUsageDataSourceImp;
 
@@ -35,7 +35,7 @@ public class NotificationService extends Service {
     private int seconds = 0;
     private BroadcastReceiver receiver;
     private AddPhoneUsageUseCase mPhoneUsageUseCase;
-    private GetPhoneUsageCountUseCase mUsageCountUseCase;
+
     private AppsRepositoryImpl mAppsRepository;
     private PhoneUsageDataSource mDataSource;
     private PhoneUsage mPhoneUsage;
@@ -51,7 +51,7 @@ public class NotificationService extends Service {
         mDataSource = new PhoneUsageDataSourceImp(this);
         mAppsRepository = new AppsRepositoryImpl(mDataSource);
         mPhoneUsageUseCase = new AddPhoneUsageUseCase(mAppsRepository);
-        mUsageCountUseCase = new GetPhoneUsageCountUseCase(mAppsRepository);
+
         mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(getApplicationContext());
 
 
@@ -75,18 +75,9 @@ public class NotificationService extends Service {
     }
 
 
-    //TODO insert to database!!
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        isScreenOn = intent.getBooleanExtra(ScreenReceiver.SCREEN_STATE, true);
-        if (isScreenOn) {
-            count++;
-//            getCountFrom Db or sharedPref?
-//            insertCount to Db or sharedPref
-            mHandler = new Handler();
-        }
-        mHandler = null;
-        Log.d(TAG, "onStartCommand: " + isScreenOn + " usage count:  " + count);
         updateNotification(mNotificationManager.createNotification(time, count));
         startForeground(PhoneUsageNotificationManager.NOTIFICATION_ID, mNotificationManager.createNotification(time, count));
         return START_STICKY;
@@ -98,27 +89,6 @@ public class NotificationService extends Service {
         notificationManagerCompat.notify(PhoneUsageNotificationManager.NOTIFICATION_ID, notification);
     }
 
-    //TODO, or start timer with remote views
-    private void startPhoneUsageTimer() {
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                int hours = seconds / 3600;
-                int minutes = (seconds % 3600) / 60;
-                int sec = seconds % 60;
-                time = String.format("%d:%02d:%02d", hours, minutes, sec);
-                Log.d(TAG, "run: " + time);
-                seconds++;
-                updateNotification(mNotificationManager.createNotification(time, count));
-                mHandler.postDelayed(this, 1000);
-            }
-        });
-
-    }
-
-    private void pauseTimer(Runnable runnable) {
-        mHandler.removeCallbacks(runnable);
-    }
 
     @Override
     public void onDestroy() {

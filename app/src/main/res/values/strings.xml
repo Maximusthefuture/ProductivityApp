@@ -24,6 +24,16 @@
         <item>Вчера</item>
         <item>Неделя</item>
     </string-array>
+
+    <string-array name="notification_before_end_array_entries">
+        <item>@string/five_minutes</item>
+        <item>@string/ten_minutes</item>
+        <item>@string/fifteen_minutes</item>
+    </string-array><string-array name="notification_before_end_array_entriesValues">
+        <item>5</item>
+        <item>10</item>
+        <item>15</item>
+    </string-array>
     <string name="title_activity_on_boarding">OnBoardingActivity</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
@@ -66,4 +76,7 @@
     <string name="sort_by_limited_time_menu">По времени блокировки</string>
     <string name="last_used_text">Последнее использование: </string>
     <string name="limit_in_hour_chip_with_args">Лимит в час %s</string>
+    <string name="ten_minutes">10 минут</string>
+    <string name="fifteen_minutes">15 минут</string>
+    <string name="five_minutes">5 минут</string>
 </resources>

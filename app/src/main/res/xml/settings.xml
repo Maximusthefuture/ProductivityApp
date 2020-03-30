@@ -23,13 +23,6 @@
         android:key="functions_category"
         android:title="@string/function_title">
 
-        <Preference
-            android:key="@string/ignore_list_key"
-            android:title="@string/ignore_list_title"
-            android:summary="@string/ignore_list_summary"
-            app:fragment="com.maximus.productivityappfinalproject.presentation.ui.IgnoreListFragment"
-            />
-
         <SwitchPreferenceCompat
             android:key="@string/i_want_to_slack_key"
             android:title="@string/i_want_to_slack_title"
@@ -46,8 +39,8 @@
 
         <ListPreference
             android:key="fdsf"
-            android:entryValues="@array/days_statistic_array"
-            android:entries="@array/days_statistic_array"
+            android:entryValues="@array/notification_before_end_array_entriesValues"
+            android:entries="@array/notification_before_end_array_entries"
             android:title="Напоминание"
             android:summary="Напоминать об завершении времени за "/>
 

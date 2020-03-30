@@ -8,6 +8,7 @@ import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 import com.maximus.productivityappfinalproject.framework.db.AppsDatabase;
+
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -17,6 +18,8 @@ import io.reactivex.ObservableOnSubscribe;
 
 //TODO:
 // All todo's from presentation,
+//todo viewModelFactory?
+//todo dagger2?
 // todo foreground service?
 // todo look how much battery eat app
 // TODO: customview переделать доделать, random colors
@@ -31,6 +34,7 @@ import io.reactivex.ObservableOnSubscribe;
 // onBoarding write about permission and why u need that
 // reminder if no one app isLimited
 //TODO Separate repository by logic, db, sharedpref, api
+//todo pattern builder????
 public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
 
     private MutableLiveData<List<IgnoreItems>> mIgnoreItems = new MutableLiveData<>();
@@ -65,7 +69,7 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
         mSharedPrefManager = prefManager;
     }
 
-    public AppsRepositoryImpl( IgnoreAppDataSource ignoreAppDataSource, PhoneUsageDataSource phoneUsageDataSource, AppLimitDataSource appLimitDataSource, SharedPrefManager sharedPrefManager) {
+    public AppsRepositoryImpl(IgnoreAppDataSource ignoreAppDataSource, PhoneUsageDataSource phoneUsageDataSource, AppLimitDataSource appLimitDataSource, SharedPrefManager sharedPrefManager) {
         mIgnoreAppDataSource = ignoreAppDataSource;
         mPhoneUsageDataSource = phoneUsageDataSource;
         mAppLimitDataSource = appLimitDataSource;
@@ -91,23 +95,19 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
     }
 
     public Observable<List<IgnoreItems>> getIgnoreList() {
-        return Observable.create(new ObservableOnSubscribe<List<IgnoreItems>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<IgnoreItems>> emitter) throws Exception {
-                emitter.onNext(mIgnoreAppDataSource.getAll());
-                emitter.onComplete();
-            }
+        return Observable.create(emitter -> {
+            emitter.onNext(mIgnoreAppDataSource.getAll());
+            emitter.onComplete();
         });
     }
 
     public Observable<List<AppUsageLimitModel>> getLimited() {
-        return Observable.create(new ObservableOnSubscribe<List<AppUsageLimitModel>>() {
-            @Override
-            public void subscribe(ObservableEmitter<List<AppUsageLimitModel>> emitter) throws Exception {
-                emitter.onNext(mAppLimitDataSource.getLimitedApps());
-            }
+        return Observable.create(emitter -> {
+            emitter.onNext(mAppLimitDataSource.getLimitedApps());
+            emitter.onComplete();
         });
     }
+
     @Override
     public void insertToIgnoreList(IgnoreItems item) {
         AppsDatabase.datatbaseWriterExecutor.execute(() ->
@@ -145,7 +145,15 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
 
     @Override
     public List<PhoneUsage> getPhoneUsageData() {
-       return mPhoneUsageDataSource.getPhoneUsageData();
+        return mPhoneUsageDataSource.getPhoneUsageData();
+    }
+
+    public Observable<List<PhoneUsage>> getPhoneUsageAsync() {
+        return Observable.create(emitter -> {
+            emitter.onNext(mPhoneUsageDataSource.getPhoneUsageData());
+            emitter.onComplete();
+//            emitter.onError(new Throwable("Can't get PhoneUsageData"));//????
+        });
     }
 
 
@@ -185,6 +193,13 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
         return mAppLimitDataSource.getLimitedApps();
     }
 
+    public Observable<List<AppUsageLimitModel>> getLimitObservable() {
+        return Observable.create(emmiter-> {
+            emmiter.onNext(mAppLimitDataSource.getLimitedApps());
+            emmiter.onComplete();
+        });
+    }
+
     @Override
     public void addToLimit(AppUsageLimitModel app) {
         AppsDatabase.datatbaseWriterExecutor.execute(() -> {
@@ -198,18 +213,13 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
     }
 
     @Override
-    public void setClosestHour(long hour) {
-        mSharedPrefManager.setClosestHour(hour);
-    }
-
-    @Override
     public Long getClosestHour() {
         return mSharedPrefManager.getClosestHour();
     }
 
     @Override
-    public void setClosestDay(long day) {
-        mSharedPrefManager.setClosestDay(day);
+    public void setClosestHour(long hour) {
+        mSharedPrefManager.setClosestHour(hour);
     }
 
     @Override
@@ -217,6 +227,10 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
         return mSharedPrefManager.getClosestDay();
     }
 
+    @Override
+    public void setClosestDay(long day) {
+        mSharedPrefManager.setClosestDay(day);
+    }
 
     //TODO RETROFIT
     @Override

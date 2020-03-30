@@ -16,9 +16,6 @@ public interface IgnoreDao {
     @Query("SELECT * FROM ignore_table")
     List<IgnoreItems> getIgnoreItems();
 
-//    @Insert
-//    void insertIgnoreItem(IgnoreItems ignoreItems);
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertIgnoreItem(IgnoreItems item);
 

@@ -2,8 +2,7 @@ package com.maximus.productivityappfinalproject.presentation;
 
 import androidx.lifecycle.Observer;
 
-import com.maximus.productivityappfinalproject.domain.AddIgnoreListUseCase;
-import com.maximus.productivityappfinalproject.domain.GetIgnoreListUseCase;
+import com.maximus.productivityappfinalproject.domain.LimitedListUseCase;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
 
 import org.junit.Before;
@@ -11,7 +10,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Collections;
 import java.util.List;
 
 import static org.mockito.Mockito.verify;
@@ -20,11 +18,9 @@ public class IgnoreListViewModelTest {
 
     private LimitedListViewModel mLimitedListViewModel;
 
-    @Mock
-    private GetIgnoreListUseCase mGetIgnoreListUseCase;
 
     @Mock
-    private AddIgnoreListUseCase mAddIgnoreListUseCase;
+    private LimitedListUseCase mLimitedListUseCase;
 
     @Mock
     private Observer<List<IgnoreItems>> mObserver;

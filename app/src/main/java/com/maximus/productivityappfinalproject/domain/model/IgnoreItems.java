@@ -1,5 +1,8 @@
 package com.maximus.productivityappfinalproject.domain.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
@@ -8,7 +11,7 @@ import androidx.room.Insert;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "ignore_table")
-public class IgnoreItems {
+public class IgnoreItems implements Parcelable {
 
     @PrimaryKey
     @NonNull
@@ -61,6 +64,26 @@ public class IgnoreItems {
 //        mTimeUsed = timeUsed;
 //    }
 
+    protected IgnoreItems(Parcel in) {
+        mPackageName = in.readString();
+        mCreated = in.readLong();
+        mName = in.readString();
+        mLastTimeUsed = in.readString();
+        mTimeUsed = in.readLong();
+    }
+
+    public static final Creator<IgnoreItems> CREATOR = new Creator<IgnoreItems>() {
+        @Override
+        public IgnoreItems createFromParcel(Parcel in) {
+            return new IgnoreItems(in);
+        }
+
+        @Override
+        public IgnoreItems[] newArray(int size) {
+            return new IgnoreItems[size];
+        }
+    };
+
     public String getPackageName() {
         return mPackageName;
     }
@@ -79,5 +102,19 @@ public class IgnoreItems {
 
     public long getTimeUsed() {
         return mTimeUsed;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mPackageName);
+        dest.writeLong(mCreated);
+        dest.writeString(mName);
+        dest.writeString(mLastTimeUsed);
+        dest.writeLong(mTimeUsed);
     }
 }

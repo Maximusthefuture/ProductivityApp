@@ -58,8 +58,8 @@ public class PhoneUsageDataSourceImp implements PhoneUsageDataSource {
     }
 
     @Override
-    public void updateUsageTime(String packageName, long perDay, long perHour) {
-        mAppsDatabase.phoneUsageDao().updateUsageTime(packageName, perDay, perHour);
+    public void updateUsageTime(long perDay, long perHour) {
+        mAppsDatabase.phoneUsageDao().updateUsageTime( perDay, perHour);
     }
 
 }
