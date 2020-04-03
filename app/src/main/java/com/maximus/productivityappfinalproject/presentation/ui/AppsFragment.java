@@ -8,9 +8,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -27,6 +29,20 @@ import com.maximus.productivityappfinalproject.presentation.AppsViewModel;
 import com.maximus.productivityappfinalproject.presentation.OnSwipeAppToLimitedList;
 import com.maximus.productivityappfinalproject.presentation.SimpleItemTouchHelperCallback;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
+
 public class AppsFragment extends Fragment implements OnSwipeAppToLimitedList {
 
     public static final String APP_DETAILS = "APP_DETAIL";
@@ -36,12 +52,13 @@ public class AppsFragment extends Fragment implements OnSwipeAppToLimitedList {
     private RecyclerView recyclerView;
     private NavController mNavController;
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = LayoutInflater.from(container.getContext()).inflate(R.layout.fragment_app_list, container, false);
 
-
+//        mCompositeDisposable = new CompositeDisposable();
         mViewModel = new ViewModelProvider(this).get(AppsViewModel.class);
 
         recyclerView = root.findViewById(R.id.apps_add_recycler_view);
@@ -75,6 +92,33 @@ public class AppsFragment extends Fragment implements OnSwipeAppToLimitedList {
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.add_app_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        Flowable<String> search = Flowable.create(emitter -> {
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    emitter.onNext(query);
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    emitter.onNext(newText);
+                    return false;
+                }
+            });
+        }, BackpressureStrategy.BUFFER);
+        mViewModel.searchWithSearchView(search, mAdapter);
+
+        searchView.setOnCloseListener(() -> {
+            mViewModel.getAllApps().observe(getViewLifecycleOwner(),
+                    appsModels -> mAdapter.setList(appsModels));
+            return true;
+        });
+
+        Log.d(TAG, "onCreateOptionsMenu: " + searchView.getQuery());
         super.onCreateOptionsMenu(menu, inflater);
     }
 
