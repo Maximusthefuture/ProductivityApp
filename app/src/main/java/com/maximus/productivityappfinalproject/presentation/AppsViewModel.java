@@ -3,7 +3,6 @@ package com.maximus.productivityappfinalproject.presentation;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -11,23 +10,33 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.maximus.productivityappfinalproject.R;
-import com.maximus.productivityappfinalproject.data.PhoneUsageDataSource;
-import com.maximus.productivityappfinalproject.framework.PhoneUsageDataSourceImp;
-import com.maximus.productivityappfinalproject.service.NotificationService;
 import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
 import com.maximus.productivityappfinalproject.data.IgnoreAppDataSource;
+import com.maximus.productivityappfinalproject.data.PhoneUsageDataSource;
 import com.maximus.productivityappfinalproject.device.MyUsageStatsManagerWrapper;
 import com.maximus.productivityappfinalproject.device.PhoneUsageNotificationManager;
-import com.maximus.productivityappfinalproject.domain.LimitedListUseCase;
 import com.maximus.productivityappfinalproject.domain.GetAppsUseCase;
+import com.maximus.productivityappfinalproject.domain.LimitedListUseCase;
 import com.maximus.productivityappfinalproject.domain.ShowAppUsageUseCase;
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
 import com.maximus.productivityappfinalproject.framework.IgnoreAppDataSourceImp;
+import com.maximus.productivityappfinalproject.framework.PhoneUsageDataSourceImp;
+import com.maximus.productivityappfinalproject.service.NotificationService;
 import com.maximus.productivityappfinalproject.utils.MyPreferenceManager;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Flowable;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 
 public class AppsViewModel extends AndroidViewModel {
     private static final String TAG = "AppsViewModel";
@@ -64,6 +73,43 @@ public class AppsViewModel extends AndroidViewModel {
         return mAllApps;
     }
 
+
+    //TODO MOVE TO USECASE
+    public List<AppsModel> searchLogic(String query) {
+        List<AppsModel> list = mMyUsageStatsManagerWrapper.getAllAppsObservable(false, 0);
+        List<AppsModel> list2 = new ArrayList<>();
+        for (AppsModel appsModel : list) {
+            if (appsModel.getAppName().toLowerCase().contains(query)) {
+                list2.add(new AppsModel(appsModel.getPackageName(), appsModel.getAppName(), appsModel.getAppIcon(), appsModel.getLastTimeUsed(), appsModel.getAppUsageTime()));
+                return list2;
+            }
+        }
+        return list;
+    }
+
+    @NotNull
+    public Disposable searchWithSearchView(Flowable<String> search, AppRecyclerViewAdapter mAdapter) {
+        return search
+//                        .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.computation())
+//                        .subscribeOn(Schedulers.computation())
+                .filter(s -> s.length() >= 3)
+                .map(new Function<String, List<AppsModel>>() {
+                    @Override
+                    public List<AppsModel> apply(String s) throws Exception {
+                        return searchLogic(s.toLowerCase());
+                    }
+                })
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(list -> {
+                    mAdapter.setList(list);
+                }, e -> {
+
+                });
+    }
+
+
     public void insertToIgnoreList(AppsModel info) {
         String packageName = info.getPackageName();
         String appName = info.getAppName();
@@ -84,6 +130,10 @@ public class AppsViewModel extends AndroidViewModel {
 //            mUsageCountUseCase.getPhoneUsageCount(0);
             mContext.startService(intent);
         }
+    }
+
+    public Observable<List<AppsModel>> getAllAppsObservable() {
+        return mAppsUseCase.getAllAppsObservable(false, 0);
     }
 
 }
