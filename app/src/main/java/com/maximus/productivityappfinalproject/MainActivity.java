@@ -92,9 +92,7 @@ public class MainActivity extends AppCompatActivity  {
         //todo через коллбэк?
         ImageView imageView = new ImageView(this);
         imageView.setImageResource(R.drawable.ic_star_24px);
-
         imageView.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT));
-//        imageView.setPadding(20, 0, 20, 0);
         mLinearLayout.addView(imageView);
     }
 
