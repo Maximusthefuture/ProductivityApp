@@ -34,11 +34,12 @@
             android:summary="Либо выбор темы?"/>
 
         <Preference
+            android:key="@string/show_time_preference_key"
             android:title="Время"
             android:summary="Просмотр оставшегося времени приложений"/>
 
         <ListPreference
-            android:key="fdsf"
+            android:key="@string/notification_before_lock_key"
             android:entryValues="@array/notification_before_end_array_entriesValues"
             android:entries="@array/notification_before_end_array_entries"
             android:title="Напоминание"

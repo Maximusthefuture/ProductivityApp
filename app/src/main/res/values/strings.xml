@@ -79,4 +79,6 @@
     <string name="ten_minutes">10 минут</string>
     <string name="fifteen_minutes">15 минут</string>
     <string name="five_minutes">5 минут</string>
+    <string name="show_time_preference_key">show_time</string>
+    <string name="notification_before_lock_key">notification_before_lock</string>
 </resources>

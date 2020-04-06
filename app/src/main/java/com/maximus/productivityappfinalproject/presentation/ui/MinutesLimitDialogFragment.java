@@ -19,13 +19,13 @@ import com.maximus.productivityappfinalproject.R;
 public class MinutesLimitDialogFragment extends DialogFragment {
 
     private NumberPicker mNumberPicker;
+    private MinutesLimitDialogListener mListener;
 
 
     public interface MinutesLimitDialogListener {
-         void onDialogPositiveClick(DialogFragment dialog, NumberPicker numberPicker);
-         void onDialogNegativeClick(DialogFragment dialog, NumberPicker numberPicker);
+        void onDialogPositiveClick(DialogFragment dialog, NumberPicker numberPicker);
+        void onDialogNegativeClick(DialogFragment dialog, NumberPicker numberPicker);
     }
-    MinutesLimitDialogListener mListener;
 
     @NonNull
     @Override

@@ -77,22 +77,14 @@ public class TrackingListAdapter extends RecyclerView.Adapter<TrackingListAdapte
             mAppName.setText(item.getName());
             mLastTimeUsed.setText(item.getLastTimeUsed());
             mTimeUsed.setText(Utils.formatMillisToSeconds(item.getTimeUsed()));
-//            for (IgnoreItems ignoreItem : mIgnoreItems) {
-//                if (ignoreItem.getPackageName().equals(appUsageLimitModel.packageName())) {
-//                    //some icon that show item in limit list
-//
-//                }
-//            }
             Glide.with(mIcon.getContext())
                     .load(mMyUsageStatsManagerWrapper.getAppIcon(item.getPackageName()))
                     .transition(new DrawableTransitionOptions().crossFade())
                     .into(mIcon);
 
             itemView.setOnClickListener(v -> {
-//                mIgnoreItems.remove(holder.getAdapterPosition());
-                //TODO
                 mItemClickListener.onItemClickListener(item);
-//                notifyItemRemoved(getAdapterPosition());
+
             });
 
             itemView.setOnLongClickListener(v -> {

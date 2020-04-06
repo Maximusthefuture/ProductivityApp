@@ -39,6 +39,7 @@ import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
@@ -51,6 +52,7 @@ public class AppsFragment extends Fragment implements OnSwipeAppToLimitedList {
     private AppRecyclerViewAdapter mAdapter;
     private RecyclerView recyclerView;
     private NavController mNavController;
+    private CompositeDisposable mCompositeDisposable;
 
 
     @Nullable
@@ -58,7 +60,7 @@ public class AppsFragment extends Fragment implements OnSwipeAppToLimitedList {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = LayoutInflater.from(container.getContext()).inflate(R.layout.fragment_app_list, container, false);
 
-//        mCompositeDisposable = new CompositeDisposable();
+        mCompositeDisposable = new CompositeDisposable();
         mViewModel = new ViewModelProvider(this).get(AppsViewModel.class);
 
         recyclerView = root.findViewById(R.id.apps_add_recycler_view);
@@ -110,7 +112,8 @@ public class AppsFragment extends Fragment implements OnSwipeAppToLimitedList {
                 }
             });
         }, BackpressureStrategy.BUFFER);
-        mViewModel.searchWithSearchView(search, mAdapter);
+
+        mCompositeDisposable.add(mViewModel.searchWithSearchView(search, mAdapter));
 
         searchView.setOnCloseListener(() -> {
             mViewModel.getAllApps().observe(getViewLifecycleOwner(),

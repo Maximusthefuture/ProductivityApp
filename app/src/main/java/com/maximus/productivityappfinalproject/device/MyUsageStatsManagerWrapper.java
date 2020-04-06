@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import io.reactivex.Observable;
+
 public class MyUsageStatsManagerWrapper {
     private static final String TAG = "MyUsageStatsManagerWrap";
     private MutableLiveData<List<AppsModel>> mAllApps = new MutableLiveData<>();
@@ -115,6 +117,32 @@ public class MyUsageStatsManagerWrapper {
         });
 
         return mAllApps;
+    }
+
+    public List<AppsModel> getAllAppsObservable(boolean isSystem, int sort) {
+        List<AppsModel> mAppsModelList = new ArrayList<>();
+
+        long[] range = Utils.getInterval(IntervalEnum.getInterval(sort));
+            for (String packageName : getInstalledPackages(isSystem)) {
+                AppsModel appsModel =
+                        new AppsModel(packageName ,getAppName(packageName), getAppIcon(packageName),
+                                getLastTimeUsed(range[0], System.currentTimeMillis(), packageName),
+                                fetchAppStatsInfo(range[0], range[1], packageName));
+
+                if (isAppSelected(mAppsModelList)) {
+                    continue;
+                }
+                //TODO check is the iteractor? usecase?
+                if (isIgnoredList(mIgnoreAppDataSource.getAll(), appsModel.getPackageName())) {
+                    continue;
+                }
+//                Log.d(TAG, "getAllApps: " + getLastTimeUsed(startMills, System.currentTimeMillis(), packageName));
+                mAppsModelList.add(appsModel);
+                Collections.sort(mAppsModelList, (o1, o2) ->
+                        (int) (o2.getAppUsageTime() - o1.getAppUsageTime()));
+            }
+
+        return mAppsModelList;
     }
 
     public boolean isAppSelected(List<AppsModel> appsModels) {

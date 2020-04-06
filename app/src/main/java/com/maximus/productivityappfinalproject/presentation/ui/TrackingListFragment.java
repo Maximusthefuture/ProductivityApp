@@ -73,6 +73,8 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     private AppDetailFragmentRecyclerViewAdapter mDetailFragmentAdapter;
     private ChipGroup mSelectDay;
     private LimitedAppDetailSheet mLimitedAppDetailSheet;
+    private LinearLayout mLineaLVL;
+    private TextView mNothingTextView;
 
     @Nullable
     @Override
@@ -87,12 +89,16 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         mDetailFragmentAdapter = new AppDetailFragmentRecyclerViewAdapter();
         mSelectDay = root.findViewById(R.id.interval_chip_group);
 
+        mNothingTextView = root.findViewById(R.id.nothing);
+
+
 
         mLimitViewModel = new ViewModelProvider(this).get(UsageLimitViewModel.class);
-        mMinutesLimitDialogFragment = new MinutesLimitDialogFragment();
         mAppsDetailViewModel = new ViewModelProvider(this).get(AppsDetailViewModel.class);
-
         mModelView = new ViewModelProvider(this).get(LimitedListViewModel.class);
+
+        mMinutesLimitDialogFragment = new MinutesLimitDialogFragment();
+
         mActionButton = root.findViewById(R.id.fab_add_app);
         mNavController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
         mLimitedRecyclerView = root.findViewById(R.id.limited_list_recycler_view);
@@ -150,12 +156,15 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
                 switch (i) {
                     case R.id.chip_today:
                         mAppsDetailViewModel.setFiltering(TODAY);
+                        mTimeUsedRecyclerView.scrollToPosition(0);
                         break;
                     case R.id.chip_yesterday:
                         mAppsDetailViewModel.setFiltering(YESTERDAY);
+                        mTimeUsedRecyclerView.scrollToPosition(0);
                         break;
                     case R.id.chip_this_week:
                         mAppsDetailViewModel.setFiltering(THIS_WEEK);
+                        mTimeUsedRecyclerView.scrollToPosition(0);
                         break;
                 }
                 mAppsDetailViewModel.intervalList(mPackageName);
@@ -248,6 +257,8 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         sortSelectedDays();
         initAppsModelList();
         showLimitedTime();
+
+
         //TODO
         /// TODO: add this data when add? and when onPause?
         mModelView.refresh(items);
@@ -298,8 +309,8 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (!disposable.isDisposed()) {
-            disposable.dispose();
-        }
+//        if (!disposable.isDisposed()) {
+//            disposable.dispose();
+//        }
     }
 }

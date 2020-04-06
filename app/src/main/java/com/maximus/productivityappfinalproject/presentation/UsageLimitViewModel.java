@@ -38,18 +38,11 @@ public class UsageLimitViewModel extends AndroidViewModel {
         mSetAppWithLimitUseCase = new SetAppWithLimitUseCase(mAppsRepository, application.getApplicationContext());
     }
 
-    public void setLimit(String appPackageName, String appName, int perDayHours, int perDayMinutes, int perHourMinutes) {
-        mSetAppWithLimitUseCase.setLimit(appPackageName, appName, perDayHours, perDayMinutes, perHourMinutes);
-        mSnackbarText.setValue(R.string.limit_set);
-
-    }
-
-    //TODO
     public void setDailyLimit(String appPackageName, String appName, int perDayHours, int perDayMinutes) {
         mSetAppWithLimitUseCase.setLimit(appPackageName, appName, perDayHours, perDayMinutes, 0);
         mSnackbarText.setValue(R.string.limit_set);
     }
-    //TODO
+
     public void setHourlyLimit(String appPackageName, String appName, int perHourMinutes) {
         mSetAppWithLimitUseCase.setLimit(appPackageName, appName, 0, 0, perHourMinutes);
         mSnackbarText.setValue(R.string.limit_set);

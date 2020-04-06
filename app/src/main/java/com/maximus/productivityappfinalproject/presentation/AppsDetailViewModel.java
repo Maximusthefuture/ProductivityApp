@@ -66,8 +66,6 @@ public class AppsDetailViewModel extends AndroidViewModel {
                 break;
             case THIS_WEEK:
                 mDayInterval.setValue(2);
-
-
         }
     }
 

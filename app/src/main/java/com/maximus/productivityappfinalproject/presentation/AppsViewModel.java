@@ -28,6 +28,7 @@ import com.maximus.productivityappfinalproject.utils.MyPreferenceManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -84,15 +85,13 @@ public class AppsViewModel extends AndroidViewModel {
                 return list2;
             }
         }
-        return list;
+        return Collections.emptyList();
     }
 
     @NotNull
     public Disposable searchWithSearchView(Flowable<String> search, AppRecyclerViewAdapter mAdapter) {
         return search
-//                        .observeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.computation())
-//                        .subscribeOn(Schedulers.computation())
                 .filter(s -> s.length() >= 3)
                 .map(new Function<String, List<AppsModel>>() {
                     @Override
@@ -105,10 +104,8 @@ public class AppsViewModel extends AndroidViewModel {
                 .subscribe(list -> {
                     mAdapter.setList(list);
                 }, e -> {
-
                 });
     }
-
 
     public void insertToIgnoreList(AppsModel info) {
         String packageName = info.getPackageName();
@@ -120,11 +117,9 @@ public class AppsViewModel extends AndroidViewModel {
         mIgnoreListUseCase.addToIgnoreList(ignoreItems);
     }
 
-
-
     public void startService() {
         MyPreferenceManager.init(mContext);
-        boolean isNotificationsSwitchOn =  MyPreferenceManager.getInstance().getBoolean(mContext.getString(R.string.show_notification_key));
+        boolean isNotificationsSwitchOn = MyPreferenceManager.getInstance().getBoolean(mContext.getString(R.string.show_notification_key));
         if (isNotificationsSwitchOn) {
             Intent intent = new Intent(mContext, NotificationService.class);
 //            mUsageCountUseCase.getPhoneUsageCount(0);

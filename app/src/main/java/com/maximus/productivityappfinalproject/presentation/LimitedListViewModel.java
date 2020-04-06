@@ -37,6 +37,7 @@ public class LimitedListViewModel extends AndroidViewModel {
     private static final String TAG = "IgnoreListViewModel";
     private AppsRepositoryImpl mAppsRepository;
     private LiveData<List<IgnoreItems>> mAllIgnoreItems;
+
     /**
      * Используем в data binding
      */
@@ -47,6 +48,8 @@ public class LimitedListViewModel extends AndroidViewModel {
                     return input.isEmpty();
                 }
             });
+
+
     private IgnoreAppDataSource mIgnoreAppDataSourceImp;
     private Context mContext;
     private LimitedListUseCase mLimitedListUseCase;
@@ -57,6 +60,7 @@ public class LimitedListViewModel extends AndroidViewModel {
 
     public LimitedListViewModel(@NonNull Application application) {
         super(application);
+
 
         mContext = application.getApplicationContext();
         mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(mContext);
@@ -116,6 +120,7 @@ public class LimitedListViewModel extends AndroidViewModel {
                 } else {
                     mLimitHourlyChip.setText(mContext.getString(R.string.hourly_limit_set_to, Utils.formatMillisToSeconds(timeLimitPerHour)));
                 }
+
                 Toast.makeText(mContext, Utils.formatMillisToSeconds(timeCompleted), Toast.LENGTH_SHORT).show();
             }
 //            else {
@@ -135,14 +140,6 @@ public class LimitedListViewModel extends AndroidViewModel {
                     Log.d(TAG, "rxjavasomething: " + e);
                 });
     }
-//
-//    public void getLimitedItems() {
-//        AppsDatabase.datatbaseWriterExecutor.execute(() -> {
-//            List<AppUsageLimitModel> f  = mAppsRepository.getLimitedItems();
-//            Log.d(TAG, "getLimitedItems: " + f);
-//        });
-//
-//    }
 
     //TODO move to usecase?
     //TODO rx?

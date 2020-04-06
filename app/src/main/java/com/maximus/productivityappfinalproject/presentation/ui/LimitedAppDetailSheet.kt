@@ -13,14 +13,11 @@ import kotlinx.android.synthetic.main.fragment_app_details.view.*
 
 class LimitedAppDetailSheet: BottomSheetDialogFragment(){
 
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view: View = inflater.inflate(R.layout.bottom_sheet, container, false)
         view.limit_in_hour.setOnClickListener {
             Toast.makeText(requireContext(), "THIS IS CHIP", Toast.LENGTH_LONG).show()
         }
-
-
         return view
     }
 

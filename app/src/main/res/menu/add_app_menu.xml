@@ -7,4 +7,10 @@
         android:checkable="true"
         app:showAsAction="never"/>
 
+    <item
+        android:id="@+id/action_search"
+        android:title="search"
+        app:showAsAction="ifRoom"
+        app:actionViewClass="androidx.appcompat.widget.SearchView" />
+
 </menu>

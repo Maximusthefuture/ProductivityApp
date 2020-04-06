@@ -12,6 +12,6 @@ public class ShowAppUsageUseCase {
     }
 
     public void showNotifications(String phoneUsedTime, int count) {
-        mManager.createNotification(phoneUsedTime, count);
+//        mManager.createNotification(phoneUsedTime, count);
     }
 }

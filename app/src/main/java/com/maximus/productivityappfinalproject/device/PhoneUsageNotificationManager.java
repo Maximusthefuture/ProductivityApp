@@ -3,11 +3,15 @@ package com.maximus.productivityappfinalproject.device;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 
 import androidx.core.app.NotificationCompat;
 
+import com.maximus.productivityappfinalproject.MainActivity;
 import com.maximus.productivityappfinalproject.R;
+import com.maximus.productivityappfinalproject.presentation.ui.TrackingListFragment;
 
 public class PhoneUsageNotificationManager {
 
@@ -20,17 +24,20 @@ public class PhoneUsageNotificationManager {
     }
 
     /**
-     * @param phoneUsedTime Время использования телефоном
-     * @param count         Количество разблокирований телефона
+     * @param
      * @return {@link Notification}
      */
-    public Notification createNotification(String phoneUsedTime, int count) {
+    public Notification createNotification(Context context) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, CHANNEL_ID);
+        Intent intent = new Intent(context, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
 
         builder
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentText("Usage count: " + count)
+                .setSmallIcon(R.mipmap.ic_launcher_mine)
+                .setContentText("Так держать!")
                 .setVibrate(null)
+                .setContentIntent(pendingIntent)
                 .setChannelId(CHANNEL_ID);
         Notification notification = builder.build();
 

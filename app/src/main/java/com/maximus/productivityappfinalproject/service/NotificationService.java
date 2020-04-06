@@ -55,11 +55,12 @@ public class NotificationService extends Service {
         mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(getApplicationContext());
 
 
-        IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
-        filter.addAction(Intent.ACTION_SCREEN_OFF);
-        filter.addAction(Intent.ACTION_BOOT_COMPLETED);
-        receiver = new ScreenReceiver();
-        registerReceiver(receiver, filter);
+//        IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+//        filter.addAction(Intent.ACTION_SCREEN_OFF);
+//        filter.addAction(Intent.ACTION_BOOT_COMPLETED);
+//        receiver = new ScreenReceiver();
+//        registerReceiver(receiver, filter);
+
         mNotificationManager = new PhoneUsageNotificationManager(this);
         mNotificationManager.createNotificationChannel();
         mPhoneUsageDataSource = new PhoneUsageDataSourceImp(getApplicationContext());
@@ -78,8 +79,6 @@ public class NotificationService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        updateNotification(mNotificationManager.createNotification(time, count));
-        startForeground(PhoneUsageNotificationManager.NOTIFICATION_ID, mNotificationManager.createNotification(time, count));
         return START_STICKY;
     }
 

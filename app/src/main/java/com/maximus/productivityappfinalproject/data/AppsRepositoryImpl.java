@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManager;
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
+import com.maximus.productivityappfinalproject.domain.model.AppsModel;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 import com.maximus.productivityappfinalproject.framework.db.AppsDatabase;
@@ -93,6 +94,8 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
         });
         return mIgnoreItems;
     }
+
+
 
     public Observable<List<IgnoreItems>> getIgnoreList() {
         return Observable.create(emitter -> {
