@@ -8,10 +8,12 @@
             name="viewmodel"
             type="com.maximus.productivityappfinalproject.presentation.LimitedListViewModel" />
     </data>
+
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="#e0f7fa">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/limited_list_recycler_view"

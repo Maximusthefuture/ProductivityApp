@@ -75,6 +75,9 @@ public class AppsViewModel extends AndroidViewModel {
     }
 
 
+
+
+
     //TODO MOVE TO USECASE
     public List<AppsModel> searchLogic(String query) {
         List<AppsModel> list = mMyUsageStatsManagerWrapper.getAllAppsObservable(false, 0);
@@ -101,9 +104,7 @@ public class AppsViewModel extends AndroidViewModel {
                 })
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(list -> {
-                    mAdapter.setList(list);
-                }, e -> {
+                .subscribe(mAdapter::setList, e -> {
                 });
     }
 
@@ -115,6 +116,7 @@ public class AppsViewModel extends AndroidViewModel {
         List<IgnoreItems> list = new ArrayList<>();
         list.add(ignoreItems);
         mIgnoreListUseCase.addToIgnoreList(ignoreItems);
+
     }
 
     public void startService() {

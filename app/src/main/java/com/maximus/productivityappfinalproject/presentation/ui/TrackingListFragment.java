@@ -33,6 +33,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
+
 import com.maximus.productivityappfinalproject.presentation.AppDetailFragmentRecyclerViewAdapter;
 import com.maximus.productivityappfinalproject.presentation.AppsDetailViewModel;
 import com.maximus.productivityappfinalproject.presentation.LimitedListViewModel;
@@ -42,6 +43,7 @@ import com.maximus.productivityappfinalproject.presentation.TrackingListAdapter;
 import com.maximus.productivityappfinalproject.presentation.UsageLimitViewModel;
 import com.maximus.productivityappfinalproject.utils.Utils;
 
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 import static com.maximus.productivityappfinalproject.utils.IntervalEnum.THIS_WEEK;
@@ -75,11 +77,14 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     private LimitedAppDetailSheet mLimitedAppDetailSheet;
     private LinearLayout mLineaLVL;
     private TextView mNothingTextView;
+    private CompositeDisposable mCompositeDisposable;
+    boolean isChanged;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = LayoutInflater.from(container.getContext()).inflate(R.layout.fragment_tracking_list, container, false);
+        AppsFragment appsFragment = new AppsFragment();
         mAppname = root.findViewById(R.id.app_name_bottom_sheet);
         mTimeUsed = root.findViewById(R.id.time_used_bottom_sheet);
         mLastUsed = root.findViewById(R.id.last_used_bottom_sheet);
@@ -91,13 +96,13 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
 
         mNothingTextView = root.findViewById(R.id.nothing);
 
-
-
         mLimitViewModel = new ViewModelProvider(this).get(UsageLimitViewModel.class);
         mAppsDetailViewModel = new ViewModelProvider(this).get(AppsDetailViewModel.class);
         mModelView = new ViewModelProvider(this).get(LimitedListViewModel.class);
 
         mMinutesLimitDialogFragment = new MinutesLimitDialogFragment();
+
+        mCompositeDisposable = new CompositeDisposable();
 
         mActionButton = root.findViewById(R.id.fab_add_app);
         mNavController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
@@ -120,6 +125,7 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         mModelView.getAllIgnoreItems().observe(getViewLifecycleOwner(), apps -> {
             mTrackingListAdapter.setList(apps);
         });
+
 
         return root;
     }
@@ -168,11 +174,13 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
                         break;
                 }
                 mAppsDetailViewModel.intervalList(mPackageName);
+
             }
         });
     }
 
     private void initChips() {
+
         mLimitDailyChip.setOnClickListener(view -> {
             mLimitDailyChip.setSelected(true);
             TimePickerDialog.OnTimeSetListener t =
@@ -182,10 +190,20 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
                             @Override
                             public void onChanged(Integer integer) {
                                 Snackbar.make(getView(), getString(integer, appName), Snackbar.LENGTH_LONG).show();
+
+
+
                             }
                         });
                         //TODO Add plurals
                         mLimitDailyChip.setText(getString(R.string.limit_in_day_chip_with_args, hourOfDay + " часа " + minute + " минут"));
+                        isChanged = true;
+                        if(isChanged) {
+                            mLimitDailyChip.setClickable(false);
+                        }
+                        //Ставим true когда 1 раз в день установили лимит, можно через шеред преф сделать булево значение
+                        //и обновлять его в конце дня.
+//                        mLimitViewModel.resetChanged(isChanged);
                     };
             TimePickerDialog f = new TimePickerDialog(requireContext(), t, 0, 0, true);
             f.setTitle("Установить ограничение в день");
@@ -208,6 +226,7 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume() called");
+
     }
 
     private void initAppsModelList() {
@@ -270,7 +289,7 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     }
 
     private void showLimitedTime() {
-        mModelView.showLimitedTimeOnChips(mPackageName, mLimitHourlyChip, mLimitDailyChip);
+        mCompositeDisposable.add(mModelView.showLimitedTimeOnChips(mPackageName, mLimitHourlyChip, mLimitDailyChip));
     }
 
 
@@ -293,6 +312,7 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         //Call dialog before delete
         mModelView.deleteItem(ignoreItems);
         mTrackingListAdapter.notifyDataSetChanged();
+
     }
 
     @Override
@@ -309,8 +329,7 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        if (!disposable.isDisposed()) {
-//            disposable.dispose();
-//        }
+        mCompositeDisposable.dispose();
+        mCompositeDisposable.clear();
     }
 }

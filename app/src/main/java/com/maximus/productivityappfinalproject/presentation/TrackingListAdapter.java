@@ -51,7 +51,6 @@ public class TrackingListAdapter extends RecyclerView.Adapter<TrackingListAdapte
     public void setList(List<IgnoreItems> list) {
         mIgnoreItems = list;
         notifyDataSetChanged();
-
     }
 
     @Override

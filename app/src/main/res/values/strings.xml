@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Productivity App</string>
+    <string name="app_name">Используй время с умом</string>
     <string name="apps_title_bottom_menu">Приложения</string>
     <string name="habits_title_bottom_menu">Habits</string>
     <string name="statistics_title_bottom_menu">Статистика</string>
@@ -29,10 +29,11 @@
         <item>@string/five_minutes</item>
         <item>@string/ten_minutes</item>
         <item>@string/fifteen_minutes</item>
-    </string-array><string-array name="notification_before_end_array_entriesValues">
-        <item>5</item>
-        <item>10</item>
-        <item>15</item>
+    </string-array>
+    <string-array name="notification_before_end_array_entriesValues">
+        <item>300000</item>
+        <item>600000</item>
+        <item>900000</item>
     </string-array>
     <string name="title_activity_on_boarding">OnBoardingActivity</string>
     <string name="tab_text_1">Tab 1</string>

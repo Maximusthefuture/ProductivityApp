@@ -22,7 +22,7 @@ public abstract class AppsDatabase extends RoomDatabase {
     public abstract IgnoreDao ignoreDao();
     public abstract PhoneUsageDao phoneUsageDao();
     public abstract AppLimitDao appLimitDao();
-    public static final ExecutorService datatbaseWriterExecutor
+    public static final ExecutorService databaseWriterExecutor
             = Executors.newFixedThreadPool(5);
 
     private static final Object sLock = new Object();
@@ -45,7 +45,7 @@ public abstract class AppsDatabase extends RoomDatabase {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
-            datatbaseWriterExecutor.execute(() -> {
+            databaseWriterExecutor.execute(() -> {
                 IgnoreItems settings = new IgnoreItems("com.android.settings","Settings");
                 IgnoreItems myApp = new IgnoreItems("com.maximus.productivityappfinalproject","ProductivityApp");
 //                IgnoreEntity ignoreEntity = new IgnoreEntity(ignoreItems.getPackageName(), ignoreItems.getName());

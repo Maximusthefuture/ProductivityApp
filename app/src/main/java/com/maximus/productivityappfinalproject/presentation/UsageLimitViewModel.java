@@ -19,6 +19,8 @@ import com.maximus.productivityappfinalproject.domain.SetAppWithLimitUseCase;
 import com.maximus.productivityappfinalproject.framework.AppLimitDataSourceImpl;
 import com.maximus.productivityappfinalproject.framework.PhoneUsageDataSourceImp;
 
+import javax.inject.Inject;
+
 public class UsageLimitViewModel extends AndroidViewModel {
     private static final String TAG = "UsageLimitViewModel";
     private AppsRepositoryImpl mAppsRepository;

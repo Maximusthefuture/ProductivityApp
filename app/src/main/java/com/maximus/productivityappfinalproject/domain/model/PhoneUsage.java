@@ -69,8 +69,6 @@ public class PhoneUsage {
         return usageCount;
     }
 
-
-
     public String getUsageTime() {
         return usageTime;
     }

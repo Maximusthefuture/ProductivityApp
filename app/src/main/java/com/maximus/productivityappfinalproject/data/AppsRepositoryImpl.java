@@ -5,16 +5,15 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManager;
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
-import com.maximus.productivityappfinalproject.domain.model.AppsModel;
 import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 import com.maximus.productivityappfinalproject.framework.db.AppsDatabase;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
 
 
 //TODO:
@@ -55,6 +54,7 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
         mPhoneUsageDataSource = phoneUsageDataSource;
     }
 
+//    @Inject
     public AppsRepositoryImpl(AppLimitDataSource appLimitDataSource) {
         mAppLimitDataSource = appLimitDataSource;
     }
@@ -89,7 +89,7 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
 
     @Override
     public LiveData<List<IgnoreItems>> getIgnoreItems() {
-        AppsDatabase.datatbaseWriterExecutor.execute(() -> {
+        AppsDatabase.databaseWriterExecutor.execute(() -> {
             mIgnoreItems.postValue(mIgnoreAppDataSource.getAll());
         });
         return mIgnoreItems;
@@ -113,27 +113,27 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
 
     @Override
     public void insertToIgnoreList(IgnoreItems item) {
-        AppsDatabase.datatbaseWriterExecutor.execute(() ->
+        AppsDatabase.databaseWriterExecutor.execute(() ->
                 mIgnoreAppDataSource.add(item));
     }
 
     @Override
     public void deleteFromIgnoreList(String packageName) {
-        AppsDatabase.datatbaseWriterExecutor.execute(() -> {
+        AppsDatabase.databaseWriterExecutor.execute(() -> {
             mIgnoreAppDataSource.removeItem(packageName);
         });
     }
 
     @Override
     public void deleteAllIgnoreList() {
-        AppsDatabase.datatbaseWriterExecutor.execute(() -> {
+        AppsDatabase.databaseWriterExecutor.execute(() -> {
             mIgnoreAppDataSource.removeAll();
         });
     }
 
     @Override
     public LiveData<Integer> getUsageCount(int usageCount) {
-        AppsDatabase.datatbaseWriterExecutor.execute(() -> {
+        AppsDatabase.databaseWriterExecutor.execute(() -> {
             mPhoneUsage.postValue(mPhoneUsageDataSource.getUsageCount(usageCount));
         });
         return mPhoneUsage;
@@ -141,7 +141,7 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
 
     @Override
     public void insertPhoneUsage(PhoneUsage phoneUsage) {
-        AppsDatabase.datatbaseWriterExecutor.execute(() -> {
+        AppsDatabase.databaseWriterExecutor.execute(() -> {
             mPhoneUsageDataSource.insertPhoneUsage(phoneUsage);
         });
     }
@@ -162,14 +162,14 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
 
     @Override
     public void updatePhoneUsage(PhoneUsage phoneUsage) {
-        AppsDatabase.datatbaseWriterExecutor.execute(() -> {
+        AppsDatabase.databaseWriterExecutor.execute(() -> {
             mPhoneUsageDataSource.updatePhoneUsage(phoneUsage);
         });
     }
 
     @Override
     public LiveData<Integer> getUsageCount() {
-        AppsDatabase.datatbaseWriterExecutor.execute(() -> {
+        AppsDatabase.databaseWriterExecutor.execute(() -> {
             mPhoneUsage.postValue(mPhoneUsageDataSource.getUsageCount());
 
         });
@@ -205,7 +205,7 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
 
     @Override
     public void addToLimit(AppUsageLimitModel app) {
-        AppsDatabase.datatbaseWriterExecutor.execute(() -> {
+        AppsDatabase.databaseWriterExecutor.execute(() -> {
             mAppLimitDataSource.addToLimit(app);
         });
     }

@@ -49,10 +49,16 @@ public class AppsDetailViewModel extends AndroidViewModel {
         mDayInterval.setValue(0);
     }
 
+    public LiveData<Integer> getInterval(){
+        return mDayInterval;
+    }
+
 
     public LiveData<List<AppsModel>> intervalList(String packageName) {
         return mAppIntervalUseCase.getAppUsedInterval(packageName, mDayInterval.getValue());
     }
+
+
 
 
     public void setFiltering(IntervalEnum intervalEnum) {

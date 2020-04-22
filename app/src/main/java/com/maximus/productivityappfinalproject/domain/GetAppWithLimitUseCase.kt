@@ -3,20 +3,26 @@ package com.maximus.productivityappfinalproject.domain
 import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage
+import com.maximus.productivityappfinalproject.framework.db.AppsDatabase
+import com.maximus.productivityappfinalproject.utils.Utils
+import javax.inject.Inject
 
 //можно использовать юз кейсы вместе с другими юз кейсами
-class GetAppWithLimitUseCase(private var appsRepository: AppsRepositoryImpl) {
+class GetAppWithLimitUseCase (private var appsRepository: AppsRepositoryImpl) {
 
     private var currentTime: Long = 0
     private var prevApp: String
     private var noAPP: String = "NO_APP"
 
+    var  TAG = "GetAppWithLimitUseCase"
+
     init {
         prevApp = noAPP
     }
 
-    fun isLimitSet(packageName: String): Boolean {
-        var currentPackageName: String
+    //Todo crash ошибка  java.lang.IllegalArgumentException: Parameter specified as non-null is null: method kotlin.jvm.internal.Intrinsics.checkParameterIsNotNull, parameter packageName
+    fun isLimitSet(packageName: String?): Boolean {
+        var currentPackageName: String?
         val list = appsRepository.limitedItems
         for (appUsageLimitModel in list) {
             currentPackageName = appUsageLimitModel.packageName
@@ -28,14 +34,15 @@ class GetAppWithLimitUseCase(private var appsRepository: AppsRepositoryImpl) {
     }
 
     fun getAppUsageLimitFromDB(packageName: String): AppUsageLimitModel {
-        var appUsageLimitModel = AppUsageLimitModel()
-        var list = appsRepository.limitedItems
-        for (limitModel in list) {
-            if (limitModel.isAppLimited
-                    && limitModel.packageName.equals(packageName)) {
-                appUsageLimitModel = AppUsageLimitModel(limitModel.appName,
-                        limitModel.timeLimitPerDay, limitModel.timeLimitPerHour, limitModel.isAppLimited)
-            }
+        var appUsageLimitModel = AppUsageLimitModel(packageName, 0, 0, isLimitSet(packageName))
+
+            var list = appsRepository.limitedItems
+            for (limitModel in list) {
+                if (limitModel.isAppLimited
+                        && limitModel.packageName == packageName) {
+                    appUsageLimitModel = AppUsageLimitModel(limitModel.appName,
+                            limitModel.timeLimitPerDay, limitModel.timeLimitPerHour, limitModel.isAppLimited)
+                }
         }
         return appUsageLimitModel
     }
@@ -49,7 +56,6 @@ class GetAppWithLimitUseCase(private var appsRepository: AppsRepositoryImpl) {
         var isFound = false
 
         for (phoneUsage in list) {
-
             currentPackageName = phoneUsage.packageName
             if (currentPackageName == appPackageName) {
                 isFound = true
@@ -69,7 +75,7 @@ class GetAppWithLimitUseCase(private var appsRepository: AppsRepositoryImpl) {
     private fun updateAppUsage(currentAppForeground: String, timeCompletedThisUse: Long) {
         var phoneUsage: PhoneUsage = PhoneUsage()
         var isFound = false
-        var currentPackageName: String
+        var currentPackageName: String?= null
         var getTimeDay: Long = 0
         var getTimeHour: Long = 0
         var timeCompletedThisHour: Long = 0
@@ -90,7 +96,7 @@ class GetAppWithLimitUseCase(private var appsRepository: AppsRepositoryImpl) {
             timeCompletedThisDay = getTimeDay
             timeCompletedThisDay += timeCompletedThisUse
             phoneUsage = PhoneUsage(currentAppForeground, timeCompletedThisHour, timeCompletedThisDay)
-            appsRepository.insertPhoneUsage(phoneUsage)
+            appsRepository.updatePhoneUsage(phoneUsage)
         } else {
             phoneUsage = PhoneUsage(currentAppForeground, getTimeHour, getTimeDay)
             appsRepository.insertPhoneUsage(phoneUsage)
@@ -105,10 +111,11 @@ class GetAppWithLimitUseCase(private var appsRepository: AppsRepositoryImpl) {
             }
             prevApp = currentAppForeground
             currentTime = System.currentTimeMillis()
-        } else if(currentTimeForeground >= 60000) {
+
+        } else if(currentTimeForeground >= 15000) {
             updateAppUsage(prevApp, currentTimeForeground)
             currentTime = System.currentTimeMillis()
-        }
 
+        }
     }
 }

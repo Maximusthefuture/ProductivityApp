@@ -78,7 +78,7 @@ public class LimitedListViewModel extends AndroidViewModel {
 
     public void deleteAll() {
         mLimitedListUseCase.deleteAllLimitedItems();
-        getAllIgnoreItems();
+
     }
 
     public void deleteItem(String packageName) {
@@ -87,10 +87,6 @@ public class LimitedListViewModel extends AndroidViewModel {
 
     public Observable<List<AppUsageLimitModel>> getLimited() {
         return mAppsRepository.getLimited();
-    }
-
-    public boolean isLimit(String packageName) {
-        return mAppWithLimitUseCase.isLimitSet(packageName);
     }
 
     public Observable<List<IgnoreItems>> getIgnoreItems() {
@@ -140,19 +136,4 @@ public class LimitedListViewModel extends AndroidViewModel {
                     Log.d(TAG, "rxjavasomething: " + e);
                 });
     }
-
-    //TODO move to usecase?
-    //TODO rx?
-    public String getLimitTimePerDay(String packageName) {
-        int time = 0;
-        List<AppUsageLimitModel> models = mAppsRepository.getLimitedItems();
-        for (AppUsageLimitModel model : models) {
-            if (model.getPackageName().equals(packageName)) {
-                time = model.getTimeLimitPerDay();
-                return Utils.formatMillisToSeconds(time);
-            }
-        }
-        return Utils.formatMillisToSeconds(time);
-    }
-
 }

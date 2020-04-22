@@ -22,14 +22,13 @@ public class ScreenReceiver extends BroadcastReceiver {
         if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
             bootCompleted = true;
             isScreenOn = true;
-            Toast.makeText(context, "BOOT COMPLETED", Toast.LENGTH_LONG).show();
             Log.d("SCREENRECEIVER", "BOOT_COMPLETED");
         } else if ((intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) || (intent.getAction().equals(Intent.ACTION_SHUTDOWN))) {
             isScreenOn = false;
         } else if ((intent.getAction().equals(Intent.ACTION_SCREEN_ON))) {
             isScreenOn = true;
         } else if (intent.getAction().equals("android.intent.action.QUICKBOOT_POWERON")) {
-            Toast.makeText(context, "QUICKBOOTPOWERON", Toast.LENGTH_SHORT).show();
+            bootCompleted = true;
         }
 
         Intent screenIntent = new Intent(context, CheckAppLaunchService.class);

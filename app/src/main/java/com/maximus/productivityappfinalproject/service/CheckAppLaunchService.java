@@ -5,22 +5,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.PixelFormat;
+import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Process;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
+import androidx.preference.PreferenceManager;
 
 import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.data.AppLimitDataSource;
@@ -31,6 +27,10 @@ import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManager;
 import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManagerImpl;
 import com.maximus.productivityappfinalproject.device.MyUsageStatsManagerWrapper;
 import com.maximus.productivityappfinalproject.device.PhoneUsageNotificationManager;
+import com.maximus.productivityappfinalproject.di.AppComponent;
+import com.maximus.productivityappfinalproject.di.AppModule;
+import com.maximus.productivityappfinalproject.di.ContextModule;
+import com.maximus.productivityappfinalproject.di.DaggerAppComponent;
 import com.maximus.productivityappfinalproject.domain.GetAppWithLimitUseCase;
 import com.maximus.productivityappfinalproject.domain.GetClosestTimeUseCase;
 import com.maximus.productivityappfinalproject.domain.ResetAppUseTimeDbUseCase;
@@ -40,23 +40,30 @@ import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 import com.maximus.productivityappfinalproject.framework.AppLimitDataSourceImpl;
 import com.maximus.productivityappfinalproject.framework.PhoneUsageDataSourceImp;
+import com.maximus.productivityappfinalproject.presentation.ui.Reminder;
 import com.maximus.productivityappfinalproject.utils.MyPreferenceManager;
 import com.maximus.productivityappfinalproject.utils.Utils;
 
 import java.util.Calendar;
 
+import javax.inject.Inject;
+
 //TODO ForegroundService
-public class CheckAppLaunchService extends Service {
+public class CheckAppLaunchService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = "CheckAppLaunchService";
+    String currentForegroundApp;
+    long notificationMinutes;
     private HandlerThread appLaunchThread;
     private Handler mHandler;
     private Looper mLooper;
     private Runnable mRunnable;
     private MyUsageStatsManagerWrapper mMyUsageStatsManagerWrapper;
-    private GetAppWithLimitUseCase mGetAppWithLimitUseCase;
+//    @Inject
+     GetAppWithLimitUseCase mGetAppWithLimitUseCase;
     private AppsRepositoryImpl mAppsRepository;
-    private AppLimitDataSource mAppLimitDataSource;
+//    @Inject
+     AppLimitDataSource mAppLimitDataSource;
     private PhoneUsageDataSource mPhoneUsageDataSource;
     private UpdateClosestTimeUseCase mUpdateClosestTimeUseCase;
     private GetClosestTimeUseCase mGetClosestTimeUseCase;
@@ -69,16 +76,16 @@ public class CheckAppLaunchService extends Service {
     private long timeNow;
     private MyPreferenceManager mMyPreferenceManager;
     private ScreenReceiver mScreenReceiver;
-    String currentForegroundApp;
-
+    boolean isScreenOn;
 
     @Override
     public void onCreate() {
         super.onCreate();
+//         AppComponent f =  DaggerAppComponent.builder().appModule(new AppModule()).contextModule(new ContextModule(this)).build();
+//         f.inject(this);
         mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(getApplicationContext());
         appLaunchThread = new HandlerThread("MyHandlerThread", Process.THREAD_PRIORITY_BACKGROUND);
         mSharedPrefManager = new SharedPrefManagerImpl(this, "TimePrefs");
-        appLaunchThread.start();
         mAppLimitDataSource = new AppLimitDataSourceImpl(getApplicationContext());
         mPhoneUsageDataSource = new PhoneUsageDataSourceImp(getApplicationContext());
         mAppsRepository = new AppsRepositoryImpl(mPhoneUsageDataSource, mAppLimitDataSource, mSharedPrefManager);
@@ -87,6 +94,7 @@ public class CheckAppLaunchService extends Service {
         mUpdateClosestTimeUseCase = new UpdateClosestTimeUseCase(mSetClosestTimeUseCase);
         mGetClosestTimeUseCase = new GetClosestTimeUseCase(mAppsRepository);
         mResetAppUseTimeDbUseCase = new ResetAppUseTimeDbUseCase(mAppsRepository);
+        appLaunchThread.start();
         mLooper = appLaunchThread.getLooper();
         mNotificationManager = new PhoneUsageNotificationManager(this);
         mNotificationManager.createNotificationChannel();
@@ -94,10 +102,17 @@ public class CheckAppLaunchService extends Service {
         MyPreferenceManager.init(getApplicationContext());
 
         IntentFilter filter = new IntentFilter(Intent.ACTION_BOOT_COMPLETED);
+        filter.addAction(Intent.ACTION_SCREEN_ON);
         mScreenReceiver = new ScreenReceiver();
         registerReceiver(mScreenReceiver, filter);
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+//        notificationMinutes = Long.parseLong(sharedPreferences.getString(getString(R.string.notification_before_lock_key), ""));
+        notificationMinutes = 300000;
 
+        sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+
+        startForeground(PhoneUsageNotificationManager.NOTIFICATION_ID, mNotificationManager.createNotification(this));
 
     }
 
@@ -112,57 +127,83 @@ public class CheckAppLaunchService extends Service {
                 timeNow = Calendar.getInstance().getTimeInMillis();
                 checkTimeAndResetDb();
                 checkAppLimitAndUpdateStats();
+
+
             }
         };
 
-
-        boolean isBoot = intent.getBooleanExtra(ScreenReceiver.BOOT_COMPLETED_RECEIVER, true);
-
-        if (isBoot) {
-            startForeground(PhoneUsageNotificationManager.NOTIFICATION_ID, mNotificationManager.createNotification(this));
-        }
-
+//        boolean isBoot = intent.getBooleanExtra(ScreenReceiver.BOOT_COMPLETED_RECEIVER, true);
+//        if (isBoot) {
+//            startForeground(PhoneUsageNotificationManager.NOTIFICATION_ID, mNotificationManager.createNotification(this));
+//        }
 
         mHandler.post(mRunnable);
 
-        boolean foregroundWork = MyPreferenceManager.getInstance().getBoolean(getString(R.string.show_notification_key));
-
-        if (foregroundWork) {
-            startForeground(PhoneUsageNotificationManager.NOTIFICATION_ID, mNotificationManager.createNotification(this));
-        }else {
-            stopForeground(true);
-        }
+//        boolean foregroundWork = MyPreferenceManager.getInstance().getBoolean(getString(R.string.show_notification_key));
+//
+//        if (foregroundWork) {
+//
+//        } else {
+//            stopForeground(true);
+//        }
         return START_STICKY;
     }
 
     private void checkTimeAndResetDb() {
         if (closestHour < timeNow) {
             Runnable hourly = () -> mResetAppUseTimeDbUseCase.resetHourAppUsage();
-            mHandler.postDelayed(hourly, 2000);
+            mHandler.postDelayed(hourly, 5000);
             mUpdateClosestTimeUseCase.updateClosestHour();
         }
 
         if (closestDay < timeNow) {
             mUpdateClosestTimeUseCase.updateClosestHour();
             Runnable daily = () -> mResetAppUseTimeDbUseCase.resetDayAppUsage();
-            mHandler.postDelayed(daily, 2000);
+            mHandler.postDelayed(daily, 5000);
             mUpdateClosestTimeUseCase.updateClosestDay();
         }
     }
 
+    //Todo запускается 2 или 3 сервиса одновременно, нужно снизить до 1го=)
     private void checkAppLimitAndUpdateStats() {
         currentForegroundApp = mMyUsageStatsManagerWrapper.getForegroundApp();
+        Toast toast = Toast.makeText(this, "ОСТАЛОСЬ 5 МИНУТ", Toast.LENGTH_LONG);
 
         if (mGetAppWithLimitUseCase.isLimitSet(currentForegroundApp)) {
             Log.d(TAG, "currentForegroundApp: " + currentForegroundApp);
+
             AppUsageLimitModel appUsageLimitModel = mGetAppWithLimitUseCase.getAppUsageLimitFromDB(currentForegroundApp);
-            //TODO баг который складывает время приложений в фоне?
+            Log.d(TAG, "TimeLimitPerHour: " + appUsageLimitModel.getTimeLimitPerHour());
+
             PhoneUsage phoneUsage = mGetAppWithLimitUseCase.getAppUsageData(currentForegroundApp);
-            Log.d(TAG, "phoneUsage: " + phoneUsage.getPackageName() + "   " + Utils.formatMillisToSeconds(phoneUsage.getTimeCompletedInHour()) + "    " + appUsageLimitModel.getPackageName());
+            long limitTime = appUsageLimitModel.getTimeLimitPerHour() - phoneUsage.getTimeCompletedInHour();
+            Log.d(TAG, "notificationMinutes: " + notificationMinutes);
+            Log.d(TAG, "limit time: " + limitTime);
+            //SingleLiveData?
+            Intent intent = new Intent(this, Reminder.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (limitTime <= notificationMinutes) {
+//                toast.show();
+//                toast.cancel();
+
+//              this.getApplicationContext().startActivity(intent);
+            }
+
+            if (mSharedPrefManager.getClosestHour() < Calendar.getInstance().getTimeInMillis()
+                    && phoneUsage.getTimeCompletedInHour() >= 0) {
+                mResetAppUseTimeDbUseCase.resetHourAppUsage();
+            }
+
+//
+
+            //TODO баг который складывает время приложений в фоне?
+
+            Log.d(TAG, "TimeCompletedInDay " + phoneUsage.getTimeCompletedInDay());
+            Log.d(TAG, "TimeCompletedInHour " + phoneUsage.getTimeCompletedInHour());
+            Log.d(TAG, "phoneUsage: " + phoneUsage.getPackageName() + "   " + Utils.formatMillisToSeconds(phoneUsage.getTimeCompletedInHour()) + "    " + appUsageLimitModel.getAppName());
             Pair<Boolean, String> appAccessAllowed = getStatusAccessAllowedNow(appUsageLimitModel, phoneUsage);
             boolean isAppAccessAllowedNow = appAccessAllowed.first;
             String d = appAccessAllowed.second;
-
 
             if (!isAppAccessAllowedNow) {
                 showHomeScreen(getApplicationContext());
@@ -171,6 +212,17 @@ public class CheckAppLaunchService extends Service {
 
             if (currentForegroundApp != null) {
                 mGetAppWithLimitUseCase.updateCurrentAppStats(currentForegroundApp);
+            }
+
+//
+//            restrictAccessBeforeBed(appUsageLimitModel);
+//            allowAccessAtMorning(appUsageLimitModel);
+//            Log.d(TAG, "restrictAccessBeforeBed: " + Utils.formatMillisToSeconds(restrictAccessBeforeBed(appUsageLimitModel)));
+//            Log.d(TAG, "allowAccessAtMorning: " + Utils.formatMillisToSeconds(allowAccessAtMorning(appUsageLimitModel)));
+//            Log.d(TAG, "currentMillis: " + Utils.formatMillisToSeconds(System.currentTimeMillis()));
+            if (System.currentTimeMillis() > restrictAccessBeforeBed(appUsageLimitModel)
+                    && System.currentTimeMillis() < allowAccessAtMorning(appUsageLimitModel)) {
+                showHomeScreen(this);
             }
         }
     }
@@ -188,8 +240,37 @@ public class CheckAppLaunchService extends Service {
         context.startActivity(intent);
     }
 
+    public long restrictAccessBeforeBed(AppUsageLimitModel appUsageLimitModel) {
+        long time = 0;
+        if (appUsageLimitModel.isAppLimited()) {
+            Calendar timeBeforeBed = Calendar.getInstance();
+            timeBeforeBed.set(Calendar.HOUR_OF_DAY, 22);
+            timeBeforeBed.set(Calendar.MINUTE, 30);
+            timeBeforeBed.set(Calendar.SECOND, 0);
+            time = timeBeforeBed.getTimeInMillis();
+        }
+
+        return time;
+    }
+
+    public long allowAccessAtMorning(AppUsageLimitModel appUsageLimitModel) {
+        long time = 0;
+        if (appUsageLimitModel.isAppLimited()) {
+            Calendar morningTime = Calendar.getInstance();
+            int dayOfMonth = morningTime.get(Calendar.DATE);
+            dayOfMonth++;
+            morningTime.set(Calendar.DATE, dayOfMonth);
+            morningTime.set(Calendar.HOUR_OF_DAY, 8);
+            morningTime.set(Calendar.MINUTE, 40);
+            morningTime.set(Calendar.SECOND, 0);
+            time = morningTime.getTimeInMillis();
+        }
+        return time;
+    }
+
     public Pair<Boolean, String> getStatusAccessAllowedNow(AppUsageLimitModel appUsageLimitModel, PhoneUsage phoneUsage) {
         String msg = null;
+
         if (appUsageLimitModel.isAppLimited()) {
             if (phoneUsage.getTimeCompletedInHour() >= appUsageLimitModel.getTimeLimitPerHour()) {
                 msg = getString(R.string.closest_hour);
@@ -201,12 +282,28 @@ public class CheckAppLaunchService extends Service {
                 return new Pair<>(false, msg);
             }
         }
+        msg = "No limited";
         return new Pair<>(true, msg);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "onDestroy:  SERVICE");
         unregisterReceiver(mScreenReceiver);
+        PreferenceManager.getDefaultSharedPreferences(this)
+                .unregisterOnSharedPreferenceChangeListener(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(new Intent(this, CheckAppLaunchService.class));
+        } else {
+            startService(new Intent(this, CheckAppLaunchService.class));
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.notification_before_lock_key))) {
+//            notificationMinutes = Long.parseLong((sharedPreferences.getString(key, "")));
+        }
     }
 }

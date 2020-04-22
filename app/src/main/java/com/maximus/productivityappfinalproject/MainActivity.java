@@ -40,31 +40,32 @@ public class MainActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mLinearLayout = findViewById(R.id.linear_lvl);
+//        mLinearLayout = findViewById(R.id.linear_lvl);
 
 //        final BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav_menu);
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
 //        AppBarConfiguration appBarConfiguration =
 //                new AppBarConfiguration.Builder(navController.getGraph()).build();
-        toolbar = findViewById(R.id.toolbar);
+//        toolbar = findViewById(R.id.toolbar);
 //        NavigationUI.setupWithNavController(toolbar,navController);
 //        NavigationUI.setupActionBarWithNavController(this, navController);
 
-        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-            if (destination.getId() == R.id.apps_dest) {
-               toolbar.animate().translationY(-toolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
-               toolbar.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 0));
-            } else if (destination.getId() == R.id.settings_dest) {
-                toolbar.animate().translationY(-toolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
-                toolbar.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 0));
-            } else {
-                toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
-                toolbar.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            }
-        });
+//        navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+//            if (destination.getId() == R.id.apps_dest) {
+//               toolbar.animate().translationY(-toolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
+//               toolbar.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 0));
+//            } else if (destination.getId() == R.id.settings_dest) {
+//                toolbar.animate().translationY(-toolbar.getBottom()).setInterpolator(new AccelerateInterpolator()).start();
+//                toolbar.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, 0));
+//            } else {
+//                toolbar.animate().translationY(0).setInterpolator(new DecelerateInterpolator()).start();
+//                toolbar.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+//            }
+//        });
 
         checkPermissionForUsageStats();
-        startServiceFromPrefs();
+//        startServiceFromPrefs();
+        startService();
     }
 
     private void checkPermissionForUsageStats() {
@@ -74,14 +75,25 @@ public class MainActivity extends AppCompatActivity  {
         }
     }
 
-    private void startServiceFromPrefs() {
-        MyPreferenceManager.init(this);
-        boolean it = MyPreferenceManager.getInstance().getBoolean(getString(R.string.show_notification_key));
+//    private void startServiceFromPrefs() {
+//        MyPreferenceManager.init(this);
+//        boolean it = MyPreferenceManager.getInstance().getBoolean(getString(R.string.show_notification_key));
+//        Intent intent = new Intent(this, CheckAppLaunchService.class);
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            if (it) {
+//                startForegroundService(intent);
+//            } else {
+//                startService(intent);
+//            }
+//        } else if (it){
+//            startService(intent);
+//        }
+//    }
+
+    private void startService() {
         Intent intent = new Intent(this, CheckAppLaunchService.class);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (it) {
-                startForegroundService(intent);
-            }
+            startForegroundService(intent);
         } else {
             startService(intent);
         }
@@ -98,6 +110,8 @@ public class MainActivity extends AppCompatActivity  {
 
 
 
+
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -110,6 +124,7 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onResume() {
         super.onResume();
+//        startServiceFromPrefs();
     }
 
     @Override

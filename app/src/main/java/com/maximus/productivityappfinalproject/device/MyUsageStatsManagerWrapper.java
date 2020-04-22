@@ -11,7 +11,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
@@ -33,8 +32,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import io.reactivex.Observable;
 
 public class MyUsageStatsManagerWrapper {
     private static final String TAG = "MyUsageStatsManagerWrap";
@@ -91,7 +88,7 @@ public class MyUsageStatsManagerWrapper {
         List<AppsModel> mAppsModelList = new ArrayList<>();
 
         long[] range = Utils.getInterval(IntervalEnum.getInterval(sort));
-        AppsDatabase.datatbaseWriterExecutor.execute(() -> {
+        AppsDatabase.databaseWriterExecutor.execute(() -> {
             for (String packageName : getInstalledPackages(isSystem)) {
                 AppsModel appsModel =
                         new AppsModel(packageName ,getAppName(packageName), getAppIcon(packageName),
@@ -171,7 +168,7 @@ public class MyUsageStatsManagerWrapper {
 
     //TODO UPDATE ONLY USEDTIME AND LASTTIMEUSED!!!
     public void refreshIgnoreList(IgnoreItems ignoreItems) {
-        AppsDatabase.datatbaseWriterExecutor.execute(new Runnable() {
+        AppsDatabase.databaseWriterExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 long[] range = Utils.getInterval(IntervalEnum.getInterval(0));

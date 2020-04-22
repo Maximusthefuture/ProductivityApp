@@ -2,10 +2,13 @@ package com.maximus.productivityappfinalproject.domain;
 
 import com.maximus.productivityappfinalproject.data.AppsRepository;
 
+import javax.inject.Inject;
+
 public class SetClosestTimeUseCase {
+
     private AppsRepository mAppsRepository;
 
-
+//    @Inject
     public SetClosestTimeUseCase(AppsRepository appsRepository) {
         mAppsRepository = appsRepository;
     }

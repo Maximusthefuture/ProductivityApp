@@ -54,7 +54,7 @@ public class PhoneUsageDataSourceImp implements PhoneUsageDataSource {
 
     @Override
     public void resetDaily() {
-        mAppsDatabase.phoneUsageDao().resetHourly();
+        mAppsDatabase.phoneUsageDao().resetDaily();
     }
 
     @Override

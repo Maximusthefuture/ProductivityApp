@@ -1,10 +1,13 @@
 package com.maximus.productivityappfinalproject.domain;
 
+import android.util.Log;
+
 import com.maximus.productivityappfinalproject.utils.Utils;
 
 public class UpdateClosestTimeUseCase {
 
     private SetClosestTimeUseCase mSetClosestTimeUseCase;
+    private static final String TAG = "UpdateClosestTimeUseCas";
 
     public UpdateClosestTimeUseCase(SetClosestTimeUseCase setClosestTimeUseCase) {
 
@@ -13,6 +16,7 @@ public class UpdateClosestTimeUseCase {
 
     public void updateClosestHour() {
         long hour = Utils.getComingHour();
+        Log.d(TAG, "updateClosestHour: " + hour);
         mSetClosestTimeUseCase.setClosestHour(hour);
     }
 

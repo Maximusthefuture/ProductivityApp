@@ -16,6 +16,11 @@
             android:summary="Напоминать если нет не одного отслеживамого приложения"
             />
 
+        <SwitchPreferenceCompat
+            android:title="Уведомления"
+            android:summary="Включить уведомление о времени"
+            />
+
 
     </PreferenceCategory>
 
