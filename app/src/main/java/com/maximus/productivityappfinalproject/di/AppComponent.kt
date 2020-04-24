@@ -1,8 +1,6 @@
 package com.maximus.productivityappfinalproject.di
 
-import android.content.Context
 import com.maximus.productivityappfinalproject.service.CheckAppLaunchService
-import dagger.BindsInstance
 import dagger.Component
 
 @Component(modules = [AppModule::class, ContextModule::class])

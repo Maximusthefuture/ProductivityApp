@@ -7,7 +7,7 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-
+//TODO builder pattern?
 public class AppsModel implements Parcelable {
 
     private String mPackageName;

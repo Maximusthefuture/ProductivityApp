@@ -10,6 +10,7 @@ class SharedPrefManagerImpl(context: Context, prefFileName: String) : SharedPref
     companion object {
         private const val PREF_KEY_CLOSEST_HOUR = "PREF_KEY_CLOSEST_HOUR"
         private const val PREF_KEY_CLOSEST_DAY = "PREF_KEY_CLOSEST_DAY"
+        private const val PREF_KEY_SELECTED_TIME = "PREF_KEY_SELECTED_TIME"
     }
 
     override fun setClosestHour(hour: Long) {
@@ -26,6 +27,14 @@ class SharedPrefManagerImpl(context: Context, prefFileName: String) : SharedPref
 
     override fun getClosestDay(): Long {
         return mSharedPreferences.getLong(PREF_KEY_CLOSEST_DAY, 0)
+    }
+
+    override fun isTimeLimitChanged(): Boolean {
+        return mSharedPreferences.getBoolean(PREF_KEY_SELECTED_TIME, false)
+    }
+
+    override fun setTimeLimitChanged(bool: Boolean) {
+       mSharedPreferences.edit().putBoolean(PREF_KEY_SELECTED_TIME, bool).apply()
     }
 
 

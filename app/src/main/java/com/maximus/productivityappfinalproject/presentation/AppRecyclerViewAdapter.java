@@ -1,6 +1,5 @@
 package com.maximus.productivityappfinalproject.presentation;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +42,7 @@ public class AppRecyclerViewAdapter extends RecyclerView.Adapter<AppRecyclerView
     }
 
     public AppsModel getDataFromPosition(int position) {
-        if (mAppsNameList.size()  >= position) {
+        if (mAppsNameList.size() >= position) {
             return mAppsNameList.get(position);
         }
         return null;

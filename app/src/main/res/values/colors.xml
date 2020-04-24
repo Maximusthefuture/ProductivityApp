@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <color name="colorPrimary">#64ffda</color>
+    <color name="colorPrimary">#2196f3</color>
     <color name="colorPrimaryDark">#227A68</color>
     <color name="colorAccent">#F7F7F7</color>
     <color name="color">#00BCD4</color>

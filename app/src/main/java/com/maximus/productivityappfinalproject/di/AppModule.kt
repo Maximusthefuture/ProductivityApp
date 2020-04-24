@@ -5,13 +5,11 @@ import com.maximus.productivityappfinalproject.data.AppLimitDataSource
 import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl
 import com.maximus.productivityappfinalproject.domain.GetAppWithLimitUseCase
 import com.maximus.productivityappfinalproject.framework.AppLimitDataSourceImpl
-import dagger.Binds
-import dagger.BindsInstance
 import dagger.Module
 import dagger.Provides
 
 @Module
- class AppModule {
+class AppModule {
 
 
     @Provides
@@ -28,7 +26,6 @@ import dagger.Provides
     fun provideRepository(appLimitDataSource: AppLimitDataSource): AppsRepositoryImpl {
         return AppsRepositoryImpl(appLimitDataSource);
     }
-
 
 
 }

@@ -34,31 +34,35 @@
             android:id="@+id/time_used_bottom_sheet"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="right"
             android:textSize="15sp"
             android:textStyle="bold"
             tools:text="13m 10s" />
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:weightSum="2"
         android:orientation="horizontal">
 
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:text="@string/last_used_text" />
 
     <TextView
         android:id="@+id/last_used_bottom_sheet"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="March 3th "/>
+        android:gravity="end"
+        tools:text="March 3th "
+        android:layout_marginStart="40dp"/>
     </LinearLayout>
 
     <LinearLayout
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -79,7 +83,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/limit_in_day_chip"
-            app:chipBackgroundColor="@drawable/time_chip_selector"
+            app:chipBackgroundColor="@android:color/white"
             app:chipIcon="@drawable/ic_access_time_black_24dp"
             />
 
@@ -97,7 +101,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
         <com.google.android.material.chip.Chip
             android:id="@+id/limit_in_hour"
@@ -105,9 +109,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Лимит в час"
-            app:chipBackgroundColor="@drawable/time_chip_selector"
+            app:chipBackgroundColor="@android:color/white"
             app:chipIcon="@drawable/ic_access_time_black_24dp"
             />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="2"
+            android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/remain_time_tv"
+            android:layout_width="0dp"
+            android:layout_weight="1.5"
+            android:layout_height="wrap_content"
+            android:text="@string/remaining_time"
+            android:textSize="20sp"/>
+
+            <TextView
+                android:id="@+id/remain_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10 min"
+                android:textSize="20sp"/>
+        </LinearLayout>
 
 <!--        <TextView-->
 <!--            android:layout_width="0dp"-->

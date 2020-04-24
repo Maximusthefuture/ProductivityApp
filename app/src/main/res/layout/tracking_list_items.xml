@@ -22,35 +22,38 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+
         app:layout_constraintLeft_toRightOf="@id/app_icon_image_view"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:layout_marginStart="@dimen/padding_small"
         android:layout_toEndOf="@id/app_icon_image_view"
         tools:text="Mine" />
 
-    <TextView
-        android:id="@+id/last_used"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/ignore_item_app_name"
-        app:layout_constraintLeft_toRightOf="@id/app_icon_image_view"
-        android:text="@string/last_used_text"/>
+<!--    <TextView-->
+<!--        android:id="@+id/last_used"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="@dimen/padding_small"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/ignore_item_app_name"-->
+<!--        app:layout_constraintLeft_toRightOf="@id/app_icon_image_view"-->
+<!--        android:text="@string/last_used_text"/>-->
 
-    <TextView
-        android:id="@+id/time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/ignore_item_app_name"
-        app:layout_constraintLeft_toRightOf="@id/last_used"
-        tools:text="fdsfsdf"/>
+<!--    <TextView-->
+<!--        android:id="@+id/time"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/ignore_item_app_name"-->
+<!--        app:layout_constraintLeft_toRightOf="@id/last_used"-->
+<!--        tools:text="fdsfsdf"/>-->
 
-    <TextView
-        android:id="@+id/time_used"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        tools:text="13m30s"/>
+<!--    <TextView-->
+<!--        android:id="@+id/time_used"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintRight_toRightOf="parent"-->
+<!--        tools:text="13m30s"/>-->
 
 
 

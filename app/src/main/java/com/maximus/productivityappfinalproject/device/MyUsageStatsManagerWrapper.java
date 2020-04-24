@@ -220,10 +220,10 @@ public class MyUsageStatsManagerWrapper {
 
         while (events.hasNextEvent()) {
             events.getNextEvent(event);
-            String currectPackageName = event.getPackageName();
+            String currentPackageName = event.getPackageName();
             int eventType = event.getEventType();
             long eventTime = event.getTimeStamp();
-            if (currectPackageName.equals(packageName)) {
+            if (currentPackageName.equals(packageName)) {
                 if (eventType == UsageEvents.Event.ACTIVITY_RESUMED) {
                     if (start == 0) {
                         start = eventTime;

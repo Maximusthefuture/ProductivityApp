@@ -2,6 +2,7 @@ package com.maximus.productivityappfinalproject.presentation;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -87,6 +88,20 @@ public class LimitedListViewModel extends AndroidViewModel {
 
     public Observable<List<AppUsageLimitModel>> getLimited() {
         return mAppsRepository.getLimited();
+    }
+
+
+    public String getRemainingTime(String packageName) {
+        getLimited()
+                .flatMap((list) ->  Observable.fromIterable(list))
+                .subscribe((app) -> {
+                    if (app.getPackageName().equals(packageName)) {
+                         app.getTimeLimitPerHour();
+                    }
+                }, e-> {
+                    Log.e(TAG, "getRemainingTime: ",  e);
+                });
+        return null;
     }
 
     public Observable<List<IgnoreItems>> getIgnoreItems() {

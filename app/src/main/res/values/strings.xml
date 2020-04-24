@@ -82,4 +82,6 @@
     <string name="five_minutes">5 минут</string>
     <string name="show_time_preference_key">show_time</string>
     <string name="notification_before_lock_key">notification_before_lock</string>
+    <string name="remaining_time">Оставшееся время:</string>
+    <string name="cannot_change_time">Вы не можете сегодня изменять время</string>
 </resources>

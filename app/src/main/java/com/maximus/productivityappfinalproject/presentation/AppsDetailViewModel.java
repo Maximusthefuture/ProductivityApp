@@ -58,9 +58,6 @@ public class AppsDetailViewModel extends AndroidViewModel {
         return mAppIntervalUseCase.getAppUsedInterval(packageName, mDayInterval.getValue());
     }
 
-
-
-
     public void setFiltering(IntervalEnum intervalEnum) {
         mIntervalEnum = intervalEnum;
         switch (intervalEnum) {

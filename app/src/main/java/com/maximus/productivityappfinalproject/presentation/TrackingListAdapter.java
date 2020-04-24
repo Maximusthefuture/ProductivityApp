@@ -67,15 +67,15 @@ public class TrackingListAdapter extends RecyclerView.Adapter<TrackingListAdapte
         public IgnoreViewHolder(@NonNull View itemView) {
             super(itemView);
             mAppName = itemView.findViewById(R.id.ignore_item_app_name);
-            mLastTimeUsed = itemView.findViewById(R.id.time);
-            mTimeUsed = itemView.findViewById(R.id.time_used);
+//            mLastTimeUsed = itemView.findViewById(R.id.time);
+//            mTimeUsed = itemView.findViewById(R.id.time_used);
             mIcon = itemView.findViewById(R.id.app_icon_image_view);
         }
 
         public void bind(IgnoreItems item, IgnoreViewHolder holder) {
             mAppName.setText(item.getName());
-            mLastTimeUsed.setText(item.getLastTimeUsed());
-            mTimeUsed.setText(Utils.formatMillisToSeconds(item.getTimeUsed()));
+//            mLastTimeUsed.setText(item.getLastTimeUsed());
+//            mTimeUsed.setText(Utils.formatMillisToSeconds(item.getTimeUsed()));
             Glide.with(mIcon.getContext())
                     .load(mMyUsageStatsManagerWrapper.getAppIcon(item.getPackageName()))
                     .transition(new DrawableTransitionOptions().crossFade())

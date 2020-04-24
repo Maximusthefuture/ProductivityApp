@@ -15,11 +15,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.maximus.productivityappfinalproject.R;
+import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManagerImpl;
 
 public class MinutesLimitDialogFragment extends DialogFragment {
 
     private NumberPicker mNumberPicker;
     private MinutesLimitDialogListener mListener;
+    private SharedPrefManagerImpl mSharedPrefManager;
 
 
     public interface MinutesLimitDialogListener {
@@ -31,12 +33,14 @@ public class MinutesLimitDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        mSharedPrefManager = new SharedPrefManagerImpl(getContext(), "limited_prefs");
 
                 LayoutInflater inflater = requireActivity().getLayoutInflater();
                 View dialogView = inflater.inflate(R.layout.number_picker, null);
                 mNumberPicker = dialogView.findViewById(R.id.number_picker);
                 mNumberPicker.setMinValue(0);
                 mNumberPicker.setMaxValue(59);
+
 
         builder.setMessage(R.string.set_hourly_limit)
 
@@ -46,6 +50,7 @@ public class MinutesLimitDialogFragment extends DialogFragment {
 //                    mNumberPicker.setOnValueChangedListener((picker, oldVal, newVal) -> {
 //                        Toast.makeText(requireContext(), newVal, Toast.LENGTH_SHORT).show();
 //                    });
+                    mSharedPrefManager.setTimeLimitChanged(true);
                 })
                 .setNegativeButton(R.string.negative_button_title, (dialog, which) ->
                         mListener.onDialogNegativeClick(MinutesLimitDialogFragment.this, mNumberPicker))

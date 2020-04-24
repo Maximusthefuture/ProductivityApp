@@ -5,4 +5,6 @@ interface SharedPrefManager {
     fun getClosestHour(): Long
     fun setClosestDay(day: Long)
     fun getClosestDay(): Long
+    fun isTimeLimitChanged(): Boolean
+    fun setTimeLimitChanged(bool: Boolean)
 }

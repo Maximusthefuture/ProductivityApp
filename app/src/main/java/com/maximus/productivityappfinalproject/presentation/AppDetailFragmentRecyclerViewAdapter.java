@@ -50,7 +50,7 @@ public class AppDetailFragmentRecyclerViewAdapter extends RecyclerView.Adapter<A
     private String addDelimiter(int event) {
         switch (event) {
             case 1:
-                return "┏ ";
+                return "┏";
             case 2:
                 return "┗ ";
             default:

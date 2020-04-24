@@ -32,10 +32,10 @@ public interface PhoneUsageDao {
     @Update
     void updatePhoneUsage(PhoneUsage phoneUsage);
 
-    @Query("UPDATE phone_usage_table SET time_completed_in_hour=0")
+    @Query("UPDATE phone_usage_table SET time_completed_in_hour=0 WHERE time_completed_in_hour > 0")
     void resetHourly();
 
-    @Query("UPDATE phone_usage_table SET time_completed_in_day=0")
+    @Query("UPDATE phone_usage_table SET time_completed_in_day=0 WHERE time_completed_in_day > 0")
     void resetDaily();
 
     @Query("DELETE FROM phone_usage_table ")

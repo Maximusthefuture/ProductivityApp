@@ -3,6 +3,8 @@ package com.maximus.productivityappfinalproject.utils;
 import android.app.AppOpsManager;
 import android.content.Context;
 
+import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
+
 import java.util.Calendar;
 
 public class Utils {
@@ -84,6 +86,44 @@ public class Utils {
         Utils.formatMillisToSeconds(start);
         return new long[]{start, timeNow};
 
+    }
+
+    public static boolean isTimeBeforeBad(AppUsageLimitModel appUsageLimitModel, int hourBeforeBed, int minutesBeforeBed, int hourAtMorning, int minutesAtMorning) {
+        if (System.currentTimeMillis() > restrictAccessBeforeBed(appUsageLimitModel, hourBeforeBed, minutesBeforeBed)
+                && System.currentTimeMillis() < allowAccessAtMorning(appUsageLimitModel, hourAtMorning, minutesAtMorning)) {  //  && System.currentTimeMillis() < allowAccessAtMorning(appUsageLimitModel)
+            return true;
+        }
+        return false;
+    }
+
+
+
+    private static long restrictAccessBeforeBed(AppUsageLimitModel appUsageLimitModel, int hour, int minutes) {
+        long time = 0;
+        if (appUsageLimitModel.isAppLimited()) {
+            Calendar timeBeforeBed = Calendar.getInstance();
+            timeBeforeBed.set(Calendar.HOUR_OF_DAY, hour);
+            timeBeforeBed.set(Calendar.MINUTE, minutes);
+            timeBeforeBed.set(Calendar.SECOND, 0);
+            time = timeBeforeBed.getTimeInMillis();
+        }
+
+        return time;
+    }
+
+    private static long allowAccessAtMorning(AppUsageLimitModel appUsageLimitModel, int hour, int minutes) {
+        long time = 0;
+        if (appUsageLimitModel.isAppLimited()) {
+            Calendar morningTime = Calendar.getInstance();
+            int dayOfMonth = morningTime.get(Calendar.DAY_OF_WEEK);
+            dayOfMonth++;
+            morningTime.set(Calendar.DAY_OF_WEEK, dayOfMonth);
+            morningTime.set(Calendar.HOUR_OF_DAY, hour);
+            morningTime.set(Calendar.MINUTE, minutes);
+            morningTime.set(Calendar.SECOND, 0);
+            time = morningTime.getTimeInMillis();
+        }
+        return time;
     }
 
     public static boolean hasPermission(Context context) {

@@ -54,16 +54,17 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
     private static final String TAG = "CheckAppLaunchService";
     String currentForegroundApp;
     long notificationMinutes;
+//    @Inject
+    GetAppWithLimitUseCase mGetAppWithLimitUseCase;
+    //    @Inject
+    AppLimitDataSource mAppLimitDataSource;
+    boolean isScreenOn;
     private HandlerThread appLaunchThread;
     private Handler mHandler;
     private Looper mLooper;
     private Runnable mRunnable;
     private MyUsageStatsManagerWrapper mMyUsageStatsManagerWrapper;
-//    @Inject
-     GetAppWithLimitUseCase mGetAppWithLimitUseCase;
     private AppsRepositoryImpl mAppsRepository;
-//    @Inject
-     AppLimitDataSource mAppLimitDataSource;
     private PhoneUsageDataSource mPhoneUsageDataSource;
     private UpdateClosestTimeUseCase mUpdateClosestTimeUseCase;
     private GetClosestTimeUseCase mGetClosestTimeUseCase;
@@ -71,21 +72,22 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
     private ResetAppUseTimeDbUseCase mResetAppUseTimeDbUseCase;
     private SharedPrefManager mSharedPrefManager;
     private PhoneUsageNotificationManager mNotificationManager;
+    private SharedPrefManagerImpl mLimitedSharedPrefs;
     private long closestHour;
     private long closestDay;
     private long timeNow;
     private MyPreferenceManager mMyPreferenceManager;
     private ScreenReceiver mScreenReceiver;
-    boolean isScreenOn;
 
     @Override
     public void onCreate() {
         super.onCreate();
-//         AppComponent f =  DaggerAppComponent.builder().appModule(new AppModule()).contextModule(new ContextModule(this)).build();
-//         f.inject(this);
+        AppComponent f = DaggerAppComponent.builder().appModule(new AppModule()).contextModule(new ContextModule(this)).build();
+        f.inject(this);
         mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(getApplicationContext());
         appLaunchThread = new HandlerThread("MyHandlerThread", Process.THREAD_PRIORITY_BACKGROUND);
         mSharedPrefManager = new SharedPrefManagerImpl(this, "TimePrefs");
+        mLimitedSharedPrefs = new SharedPrefManagerImpl(this, "limited_prefs");
         mAppLimitDataSource = new AppLimitDataSourceImpl(getApplicationContext());
         mPhoneUsageDataSource = new PhoneUsageDataSourceImp(getApplicationContext());
         mAppsRepository = new AppsRepositoryImpl(mPhoneUsageDataSource, mAppLimitDataSource, mSharedPrefManager);
@@ -107,13 +109,11 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
         registerReceiver(mScreenReceiver, filter);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-//        notificationMinutes = Long.parseLong(sharedPreferences.getString(getString(R.string.notification_before_lock_key), ""));
         notificationMinutes = 300000;
 
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 
         startForeground(PhoneUsageNotificationManager.NOTIFICATION_ID, mNotificationManager.createNotification(this));
-
     }
 
     @Override
@@ -127,25 +127,11 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
                 timeNow = Calendar.getInstance().getTimeInMillis();
                 checkTimeAndResetDb();
                 checkAppLimitAndUpdateStats();
-
-
             }
         };
 
-//        boolean isBoot = intent.getBooleanExtra(ScreenReceiver.BOOT_COMPLETED_RECEIVER, true);
-//        if (isBoot) {
-//            startForeground(PhoneUsageNotificationManager.NOTIFICATION_ID, mNotificationManager.createNotification(this));
-//        }
-
         mHandler.post(mRunnable);
 
-//        boolean foregroundWork = MyPreferenceManager.getInstance().getBoolean(getString(R.string.show_notification_key));
-//
-//        if (foregroundWork) {
-//
-//        } else {
-//            stopForeground(true);
-//        }
         return START_STICKY;
     }
 
@@ -158,13 +144,15 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
 
         if (closestDay < timeNow) {
             mUpdateClosestTimeUseCase.updateClosestHour();
-            Runnable daily = () -> mResetAppUseTimeDbUseCase.resetDayAppUsage();
+            Runnable daily = () -> {
+                mResetAppUseTimeDbUseCase.resetDayAppUsage();
+                mLimitedSharedPrefs.setTimeLimitChanged(false);
+            };
             mHandler.postDelayed(daily, 5000);
             mUpdateClosestTimeUseCase.updateClosestDay();
         }
     }
 
-    //Todo запускается 2 или 3 сервиса одновременно, нужно снизить до 1го=)
     private void checkAppLimitAndUpdateStats() {
         currentForegroundApp = mMyUsageStatsManagerWrapper.getForegroundApp();
         Toast toast = Toast.makeText(this, "ОСТАЛОСЬ 5 МИНУТ", Toast.LENGTH_LONG);
@@ -190,17 +178,13 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
             }
 
             if (mSharedPrefManager.getClosestHour() < Calendar.getInstance().getTimeInMillis()
-                    && phoneUsage.getTimeCompletedInHour() >= 0) {
+                    && phoneUsage.getTimeCompletedInHour() > 0) {
                 mResetAppUseTimeDbUseCase.resetHourAppUsage();
             }
+            //todo checkAppLimitAndUpdateStats: 474144 after reset
+            Log.d(TAG, "checkAppLimitAndUpdateStats: " + phoneUsage.getTimeCompletedInHour());
+            Log.d(TAG, "mSharedPrefs " + mSharedPrefManager.getClosestHour());
 
-//
-
-            //TODO баг который складывает время приложений в фоне?
-
-            Log.d(TAG, "TimeCompletedInDay " + phoneUsage.getTimeCompletedInDay());
-            Log.d(TAG, "TimeCompletedInHour " + phoneUsage.getTimeCompletedInHour());
-            Log.d(TAG, "phoneUsage: " + phoneUsage.getPackageName() + "   " + Utils.formatMillisToSeconds(phoneUsage.getTimeCompletedInHour()) + "    " + appUsageLimitModel.getAppName());
             Pair<Boolean, String> appAccessAllowed = getStatusAccessAllowedNow(appUsageLimitModel, phoneUsage);
             boolean isAppAccessAllowedNow = appAccessAllowed.first;
             String d = appAccessAllowed.second;
@@ -214,14 +198,8 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
                 mGetAppWithLimitUseCase.updateCurrentAppStats(currentForegroundApp);
             }
 
-//
-//            restrictAccessBeforeBed(appUsageLimitModel);
-//            allowAccessAtMorning(appUsageLimitModel);
-//            Log.d(TAG, "restrictAccessBeforeBed: " + Utils.formatMillisToSeconds(restrictAccessBeforeBed(appUsageLimitModel)));
-//            Log.d(TAG, "allowAccessAtMorning: " + Utils.formatMillisToSeconds(allowAccessAtMorning(appUsageLimitModel)));
-//            Log.d(TAG, "currentMillis: " + Utils.formatMillisToSeconds(System.currentTimeMillis()));
-            if (System.currentTimeMillis() > restrictAccessBeforeBed(appUsageLimitModel)
-                    && System.currentTimeMillis() < allowAccessAtMorning(appUsageLimitModel)) {
+            if (Utils.isTimeBeforeBad(appUsageLimitModel, 22,
+                    30, 8, 40)) {
                 showHomeScreen(this);
             }
         }
@@ -240,33 +218,6 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
         context.startActivity(intent);
     }
 
-    public long restrictAccessBeforeBed(AppUsageLimitModel appUsageLimitModel) {
-        long time = 0;
-        if (appUsageLimitModel.isAppLimited()) {
-            Calendar timeBeforeBed = Calendar.getInstance();
-            timeBeforeBed.set(Calendar.HOUR_OF_DAY, 22);
-            timeBeforeBed.set(Calendar.MINUTE, 30);
-            timeBeforeBed.set(Calendar.SECOND, 0);
-            time = timeBeforeBed.getTimeInMillis();
-        }
-
-        return time;
-    }
-
-    public long allowAccessAtMorning(AppUsageLimitModel appUsageLimitModel) {
-        long time = 0;
-        if (appUsageLimitModel.isAppLimited()) {
-            Calendar morningTime = Calendar.getInstance();
-            int dayOfMonth = morningTime.get(Calendar.DATE);
-            dayOfMonth++;
-            morningTime.set(Calendar.DATE, dayOfMonth);
-            morningTime.set(Calendar.HOUR_OF_DAY, 8);
-            morningTime.set(Calendar.MINUTE, 40);
-            morningTime.set(Calendar.SECOND, 0);
-            time = morningTime.getTimeInMillis();
-        }
-        return time;
-    }
 
     public Pair<Boolean, String> getStatusAccessAllowedNow(AppUsageLimitModel appUsageLimitModel, PhoneUsage phoneUsage) {
         String msg = null;
