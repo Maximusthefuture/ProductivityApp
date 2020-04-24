@@ -8,10 +8,13 @@ import com.maximus.productivityappfinalproject.framework.db.AppsDatabase;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class PhoneUsageDataSourceImp implements PhoneUsageDataSource {
     private Context mContext;
     private AppsDatabase mAppsDatabase;
 
+    @Inject
     public PhoneUsageDataSourceImp(Context context) {
         mContext = context;
         mAppsDatabase = AppsDatabase.getInstance(mContext);

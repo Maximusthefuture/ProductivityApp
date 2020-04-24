@@ -1,12 +1,12 @@
-package com.maximus.productivityappfinalproject.domain;
+package com.maximus.productivityappfinalproject.domain.deprecated;
 
 import com.maximus.productivityappfinalproject.data.AppsRepository;
 
-public class ResetAppUseTimeDbUseCase {
+public class ResetAppUseTimeDbUseCaseJava {
 
     private AppsRepository mAppsRepository;
 
-    public ResetAppUseTimeDbUseCase(AppsRepository appsRepository) {
+    public ResetAppUseTimeDbUseCaseJava(AppsRepository appsRepository) {
         mAppsRepository = appsRepository;
     }
 

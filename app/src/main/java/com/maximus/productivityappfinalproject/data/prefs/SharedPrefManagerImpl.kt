@@ -2,10 +2,11 @@ package com.maximus.productivityappfinalproject.data.prefs
 
 import android.content.Context
 import android.content.SharedPreferences
+import javax.inject.Inject
 
-class SharedPrefManagerImpl(context: Context, prefFileName: String) : SharedPrefManager {
+class SharedPrefManagerImpl @Inject constructor(context: Context) : SharedPrefManager {
 
-    private val mSharedPreferences: SharedPreferences = context.getSharedPreferences(prefFileName, Context.MODE_PRIVATE)
+    private val mSharedPreferences: SharedPreferences = context.getSharedPreferences("TimePrefs", Context.MODE_PRIVATE)
 
     companion object {
         private const val PREF_KEY_CLOSEST_HOUR = "PREF_KEY_CLOSEST_HOUR"

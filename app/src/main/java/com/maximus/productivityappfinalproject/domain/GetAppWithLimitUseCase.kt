@@ -8,7 +8,7 @@ import com.maximus.productivityappfinalproject.utils.Utils
 import javax.inject.Inject
 
 //можно использовать юз кейсы вместе с другими юз кейсами
-class GetAppWithLimitUseCase (private var appsRepository: AppsRepositoryImpl) {
+class GetAppWithLimitUseCase @Inject constructor(private var appsRepository: AppsRepositoryImpl) {
 
     private var currentTime: Long = 0
     private var prevApp: String

@@ -12,6 +12,7 @@ import com.maximus.productivityappfinalproject.framework.db.AppsDatabase;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import io.reactivex.Observable;
 
@@ -35,6 +36,7 @@ import io.reactivex.Observable;
 // reminder if no one app isLimited
 //TODO Separate repository by logic, db, sharedpref, api
 //todo pattern builder????
+@Singleton
 public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
 
     private MutableLiveData<List<IgnoreItems>> mIgnoreItems = new MutableLiveData<>();
@@ -54,7 +56,7 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
         mPhoneUsageDataSource = phoneUsageDataSource;
     }
 
-//    @Inject
+
     public AppsRepositoryImpl(AppLimitDataSource appLimitDataSource) {
         mAppLimitDataSource = appLimitDataSource;
     }
@@ -64,12 +66,13 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
         mPhoneUsageDataSource = phoneUsageDataSource;
     }
 
+
     public AppsRepositoryImpl(PhoneUsageDataSource phoneUsageDataSource, AppLimitDataSource appLimitDataSource, SharedPrefManager prefManager) {
         mPhoneUsageDataSource = phoneUsageDataSource;
         mAppLimitDataSource = appLimitDataSource;
         mSharedPrefManager = prefManager;
     }
-
+    @Inject
     public AppsRepositoryImpl(IgnoreAppDataSource ignoreAppDataSource, PhoneUsageDataSource phoneUsageDataSource, AppLimitDataSource appLimitDataSource, SharedPrefManager sharedPrefManager) {
         mIgnoreAppDataSource = ignoreAppDataSource;
         mPhoneUsageDataSource = phoneUsageDataSource;
@@ -150,15 +153,6 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
     public List<PhoneUsage> getPhoneUsageData() {
         return mPhoneUsageDataSource.getPhoneUsageData();
     }
-
-    public Observable<List<PhoneUsage>> getPhoneUsageAsync() {
-        return Observable.create(emitter -> {
-            emitter.onNext(mPhoneUsageDataSource.getPhoneUsageData());
-            emitter.onComplete();
-//            emitter.onError(new Throwable("Can't get PhoneUsageData"));//????
-        });
-    }
-
 
     @Override
     public void updatePhoneUsage(PhoneUsage phoneUsage) {

@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 public class MyUsageStatsManagerWrapper {
     private static final String TAG = "MyUsageStatsManagerWrap";
     private MutableLiveData<List<AppsModel>> mAllApps = new MutableLiveData<>();
@@ -43,6 +45,7 @@ public class MyUsageStatsManagerWrapper {
     private IgnoreAppDataSource mIgnoreAppDataSource;
 
 
+    @Inject
     public MyUsageStatsManagerWrapper(Context context) {
         mContext = context;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {

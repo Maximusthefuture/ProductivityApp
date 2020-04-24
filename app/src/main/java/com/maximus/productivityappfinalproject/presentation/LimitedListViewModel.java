@@ -28,9 +28,12 @@ import com.maximus.productivityappfinalproject.utils.Utils;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
 public class LimitedListViewModel extends AndroidViewModel {
@@ -50,12 +53,10 @@ public class LimitedListViewModel extends AndroidViewModel {
                 }
             });
 
-
     private IgnoreAppDataSource mIgnoreAppDataSourceImp;
     private Context mContext;
     private LimitedListUseCase mLimitedListUseCase;
     private MyUsageStatsManagerWrapper mMyUsageStatsManagerWrapper;
-    private GetAppWithLimitUseCase mAppWithLimitUseCase;
     private AppLimitDataSource mAppLimitDataSource;
 
 
@@ -70,7 +71,7 @@ public class LimitedListViewModel extends AndroidViewModel {
         mAppsRepository = new AppsRepositoryImpl(mIgnoreAppDataSourceImp, mAppLimitDataSource);
         mLimitedListUseCase = new LimitedListUseCase(mAppsRepository);
         mAllIgnoreItems = mLimitedListUseCase.getLimitedList();
-        mAppWithLimitUseCase = new GetAppWithLimitUseCase(mAppsRepository);
+//        mAppWithLimitUseCase = new GetAppWithLimitUseCase(mAppsRepository);
     }
 
     public LiveData<List<IgnoreItems>> getAllIgnoreItems() {

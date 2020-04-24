@@ -8,11 +8,14 @@ import com.maximus.productivityappfinalproject.framework.db.AppsDatabase;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 public class IgnoreAppDataSourceImp implements IgnoreAppDataSource {
 
     private Context mContext;
     private AppsDatabase mAppsDatabase;
 
+    @Inject
     public IgnoreAppDataSourceImp(Context context) {
         mContext = context;
         mAppsDatabase = AppsDatabase.getInstance(mContext);

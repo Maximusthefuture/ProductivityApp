@@ -19,16 +19,12 @@ import androidx.core.util.Pair;
 import androidx.preference.PreferenceManager;
 
 import com.maximus.productivityappfinalproject.R;
-import com.maximus.productivityappfinalproject.data.AppLimitDataSource;
-import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
 import com.maximus.productivityappfinalproject.data.PhoneUsageDataSource;
 import com.maximus.productivityappfinalproject.data.ScreenReceiver;
 import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManager;
-import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManagerImpl;
 import com.maximus.productivityappfinalproject.device.MyUsageStatsManagerWrapper;
 import com.maximus.productivityappfinalproject.device.PhoneUsageNotificationManager;
 import com.maximus.productivityappfinalproject.di.AppComponent;
-import com.maximus.productivityappfinalproject.di.AppModule;
 import com.maximus.productivityappfinalproject.di.ContextModule;
 import com.maximus.productivityappfinalproject.di.DaggerAppComponent;
 import com.maximus.productivityappfinalproject.domain.GetAppWithLimitUseCase;
@@ -38,8 +34,6 @@ import com.maximus.productivityappfinalproject.domain.SetClosestTimeUseCase;
 import com.maximus.productivityappfinalproject.domain.UpdateClosestTimeUseCase;
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
-import com.maximus.productivityappfinalproject.framework.AppLimitDataSourceImpl;
-import com.maximus.productivityappfinalproject.framework.PhoneUsageDataSourceImp;
 import com.maximus.productivityappfinalproject.presentation.ui.Reminder;
 import com.maximus.productivityappfinalproject.utils.MyPreferenceManager;
 import com.maximus.productivityappfinalproject.utils.Utils;
@@ -52,27 +46,32 @@ import javax.inject.Inject;
 public class CheckAppLaunchService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = "CheckAppLaunchService";
-    String currentForegroundApp;
-    long notificationMinutes;
-//    @Inject
+    private String currentForegroundApp;
+    private long notificationMinutes;
+
+    private boolean isScreenOn;
+
+    @Inject
     GetAppWithLimitUseCase mGetAppWithLimitUseCase;
-    //    @Inject
-    AppLimitDataSource mAppLimitDataSource;
-    boolean isScreenOn;
+    @Inject
+    PhoneUsageDataSource mPhoneUsageDataSource;
+    @Inject
+    GetClosestTimeUseCase mGetClosestTimeUseCase;
+    @Inject
+    SetClosestTimeUseCase mSetClosestTimeUseCase;
+    @Inject
+    ResetAppUseTimeDbUseCase mResetAppUseTimeDbUseCase;
+    @Inject
+    SharedPrefManager mSharedPrefManager;
+    @Inject
+    MyUsageStatsManagerWrapper mMyUsageStatsManagerWrapper;
     private HandlerThread appLaunchThread;
     private Handler mHandler;
     private Looper mLooper;
     private Runnable mRunnable;
-    private MyUsageStatsManagerWrapper mMyUsageStatsManagerWrapper;
-    private AppsRepositoryImpl mAppsRepository;
-    private PhoneUsageDataSource mPhoneUsageDataSource;
     private UpdateClosestTimeUseCase mUpdateClosestTimeUseCase;
-    private GetClosestTimeUseCase mGetClosestTimeUseCase;
-    private SetClosestTimeUseCase mSetClosestTimeUseCase;
-    private ResetAppUseTimeDbUseCase mResetAppUseTimeDbUseCase;
-    private SharedPrefManager mSharedPrefManager;
     private PhoneUsageNotificationManager mNotificationManager;
-    private SharedPrefManagerImpl mLimitedSharedPrefs;
+    private SharedPrefManager mLimitedSharedPrefs;
     private long closestHour;
     private long closestDay;
     private long timeNow;
@@ -81,21 +80,15 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
 
     @Override
     public void onCreate() {
+        AppComponent appComponent = DaggerAppComponent.builder().contextModule(new ContextModule(this)).build();
+        appComponent.inject(this);
         super.onCreate();
-        AppComponent f = DaggerAppComponent.builder().appModule(new AppModule()).contextModule(new ContextModule(this)).build();
-        f.inject(this);
-        mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(getApplicationContext());
+
         appLaunchThread = new HandlerThread("MyHandlerThread", Process.THREAD_PRIORITY_BACKGROUND);
-        mSharedPrefManager = new SharedPrefManagerImpl(this, "TimePrefs");
-        mLimitedSharedPrefs = new SharedPrefManagerImpl(this, "limited_prefs");
-        mAppLimitDataSource = new AppLimitDataSourceImpl(getApplicationContext());
-        mPhoneUsageDataSource = new PhoneUsageDataSourceImp(getApplicationContext());
-        mAppsRepository = new AppsRepositoryImpl(mPhoneUsageDataSource, mAppLimitDataSource, mSharedPrefManager);
-        mGetAppWithLimitUseCase = new GetAppWithLimitUseCase(mAppsRepository);
-        mSetClosestTimeUseCase = new SetClosestTimeUseCase(mAppsRepository);
+        //todo prefs fileName???
+//        mSharedPrefManager = new SharedPrefManagerImpl(this, "TimePrefs");
         mUpdateClosestTimeUseCase = new UpdateClosestTimeUseCase(mSetClosestTimeUseCase);
-        mGetClosestTimeUseCase = new GetClosestTimeUseCase(mAppsRepository);
-        mResetAppUseTimeDbUseCase = new ResetAppUseTimeDbUseCase(mAppsRepository);
+
         appLaunchThread.start();
         mLooper = appLaunchThread.getLooper();
         mNotificationManager = new PhoneUsageNotificationManager(this);
@@ -191,7 +184,7 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
 
             if (!isAppAccessAllowedNow) {
                 showHomeScreen(getApplicationContext());
-                Toast.makeText(CheckAppLaunchService.this, getString(R.string.cannot_use_app, appUsageLimitModel.getAppName(), d), Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplication().getApplicationContext(), getString(R.string.cannot_use_app, appUsageLimitModel.getAppName(), d), Toast.LENGTH_LONG).show();
             }
 
             if (currentForegroundApp != null) {

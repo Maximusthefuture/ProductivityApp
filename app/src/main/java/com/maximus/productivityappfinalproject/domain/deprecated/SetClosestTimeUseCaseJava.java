@@ -1,15 +1,13 @@
-package com.maximus.productivityappfinalproject.domain;
+package com.maximus.productivityappfinalproject.domain.deprecated;
 
 import com.maximus.productivityappfinalproject.data.AppsRepository;
 
-import javax.inject.Inject;
-
-public class SetClosestTimeUseCase {
+public class SetClosestTimeUseCaseJava {
 
     private AppsRepository mAppsRepository;
 
 //    @Inject
-    public SetClosestTimeUseCase(AppsRepository appsRepository) {
+    public SetClosestTimeUseCaseJava(AppsRepository appsRepository) {
         mAppsRepository = appsRepository;
     }
 

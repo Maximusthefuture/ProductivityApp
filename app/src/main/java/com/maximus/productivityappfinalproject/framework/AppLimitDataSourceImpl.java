@@ -15,6 +15,7 @@ public class AppLimitDataSourceImpl implements AppLimitDataSource {
     private Context mContext;
     private AppsDatabase mAppsDatabase;
 
+    @Inject
     public AppLimitDataSourceImpl(Context context) {
         mContext = context;
         mAppsDatabase = AppsDatabase.getInstance(mContext);

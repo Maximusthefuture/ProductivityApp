@@ -1,9 +1,12 @@
 package com.maximus.productivityappfinalproject.di
 
+
 import com.maximus.productivityappfinalproject.service.CheckAppLaunchService
 import dagger.Component
+import javax.inject.Singleton
 
-@Component(modules = [AppModule::class, ContextModule::class])
+@Singleton
+@Component(modules = [ContextModule::class, DbModule::class])
 interface AppComponent {
 
 //    @Component.Factory

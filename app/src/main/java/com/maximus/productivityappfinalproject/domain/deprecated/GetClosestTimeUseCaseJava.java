@@ -1,12 +1,12 @@
-package com.maximus.productivityappfinalproject.domain;
+package com.maximus.productivityappfinalproject.domain.deprecated;
 
 import com.maximus.productivityappfinalproject.data.AppsRepository;
 
-public class GetClosestTimeUseCase {
+public class GetClosestTimeUseCaseJava {
     private AppsRepository mAppsRepository;
 
 
-    public GetClosestTimeUseCase(AppsRepository appsRepository) {
+    public GetClosestTimeUseCaseJava(AppsRepository appsRepository) {
         mAppsRepository = appsRepository;
     }
 

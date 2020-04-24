@@ -33,7 +33,7 @@ public class MinutesLimitDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        mSharedPrefManager = new SharedPrefManagerImpl(getContext(), "limited_prefs");
+        mSharedPrefManager = new SharedPrefManagerImpl(getContext());
 
                 LayoutInflater inflater = requireActivity().getLayoutInflater();
                 View dialogView = inflater.inflate(R.layout.number_picker, null);

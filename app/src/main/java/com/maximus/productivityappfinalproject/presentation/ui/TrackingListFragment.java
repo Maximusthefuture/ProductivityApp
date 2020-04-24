@@ -99,7 +99,7 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
 
         mMinutesLimitDialogFragment = new MinutesLimitDialogFragment();
 
-        mSharedPrefManager = new SharedPrefManagerImpl(getActivity().getApplicationContext(), "limited_prefs");
+        mSharedPrefManager = new SharedPrefManagerImpl(getActivity().getApplicationContext());
 
 
         mNavController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
