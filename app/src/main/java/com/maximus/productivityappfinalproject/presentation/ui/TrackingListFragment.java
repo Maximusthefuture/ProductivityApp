@@ -1,6 +1,7 @@
 package com.maximus.productivityappfinalproject.presentation.ui;
 
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,9 +33,10 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.maximus.productivityappfinalproject.MyApplication;
 import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManagerImpl;
-import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
+import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 import com.maximus.productivityappfinalproject.presentation.AppDetailFragmentRecyclerViewAdapter;
 import com.maximus.productivityappfinalproject.presentation.AppsDetailViewModel;
 import com.maximus.productivityappfinalproject.presentation.LimitedListViewModel;
@@ -43,6 +45,8 @@ import com.maximus.productivityappfinalproject.presentation.OnTrackingItemLongCl
 import com.maximus.productivityappfinalproject.presentation.TrackingListAdapter;
 import com.maximus.productivityappfinalproject.presentation.UsageLimitViewModel;
 import com.maximus.productivityappfinalproject.utils.Utils;
+
+import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -54,16 +58,18 @@ import static com.maximus.productivityappfinalproject.utils.IntervalEnum.YESTERD
 public class TrackingListFragment extends Fragment implements OnIgnoreItemClickListener, MinutesLimitDialogFragment.MinutesLimitDialogListener, OnTrackingItemLongClickListener {
 
     private static final String TAG = "TrackingListFragment";
+    @Inject
+    LimitedListViewModel mModelView;
+    @Inject
+    UsageLimitViewModel mLimitViewModel;
     Disposable disposable;
     boolean isChanged;
     private RecyclerView mLimitedRecyclerView;
     private TrackingListAdapter mTrackingListAdapter;
-    private LimitedListViewModel mModelView;
     private FloatingActionButton mActionButton;
     private NavController mNavController;
     private TextView mAppname;
     private TextView mTimeUsed;
-    private UsageLimitViewModel mLimitViewModel;
     private String mPackageName;
     private String appName;
     private Chip mLimitDailyChip;
@@ -82,24 +88,21 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     private CompositeDisposable mCompositeDisposable;
     private TextView mRemainTime;
     //TODO move to usecase
-    private SharedPrefManagerImpl mSharedPrefManager;
+    @Inject
+     SharedPrefManagerImpl mSharedPrefManager;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View root = LayoutInflater.from(container.getContext()).inflate(R.layout.fragment_tracking_list, container, false);
-        AppsFragment appsFragment = new AppsFragment();
+
         mDetailFragmentAdapter = new AppDetailFragmentRecyclerViewAdapter();
         mCompositeDisposable = new CompositeDisposable();
         init(root);
 
-        mLimitViewModel = new ViewModelProvider(this).get(UsageLimitViewModel.class);
         mAppsDetailViewModel = new ViewModelProvider(this).get(AppsDetailViewModel.class);
-        mModelView = new ViewModelProvider(this).get(LimitedListViewModel.class);
 
         mMinutesLimitDialogFragment = new MinutesLimitDialogFragment();
-
-        mSharedPrefManager = new SharedPrefManagerImpl(getActivity().getApplicationContext());
 
 
         mNavController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
@@ -116,14 +119,20 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         setHasOptionsMenu(true);
         bottomSheetBehaviorInit();
 
+        mModelView.getLimitedItems();
         mModelView.getAllIgnoreItems().observe(getViewLifecycleOwner(), apps -> {
             mTrackingListAdapter.setList(apps);
         });
 
 
-
-
         return root;
+    }
+
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        ((MyApplication)context.getApplicationContext()).getAppComponent().inject(this);
     }
 
     private void init(View root) {
@@ -196,18 +205,18 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
             TimePickerDialog.OnTimeSetListener t =
                     (view1, hourOfDay, minute) -> {
                         mLimitViewModel.setDailyLimit(mPackageName, appName, hourOfDay, minute);
-                        mLimitViewModel.getSnackBarMessage().observe(getViewLifecycleOwner(), new Observer<Integer>() {
+                        mLimitViewModel.getSnackbar().observe(getViewLifecycleOwner(), new Observer<Integer>() {
                             @Override
                             public void onChanged(Integer integer) {
                                 Snackbar.make(getView(), getString(integer, appName), Snackbar.LENGTH_LONG).show();
                             }
                         });
                         //TODO Add plurals
-                        mLimitDailyChip.setText(getString(R.string.limit_in_day_chip_with_args, hourOfDay + " часа " + minute + " минут"));
+//                        mLimitDailyChip.setText(getString(R.string.limit_in_day_chip_with_args, hourOfDay + " часа " + minute + " минут"));
+                        mLimitViewModel.getChipText().observe(getViewLifecycleOwner(), chipText -> {
+                            mLimitDailyChip.setText(chipText);
+                        });
                         mSharedPrefManager.setTimeLimitChanged(true);
-                        //Ставим true когда 1 раз в день установили лимит, можно через шеред преф сделать булево значение
-                        //и обновлять его в конце дня.
-//                        mLimitViewModel.resetChanged(isChanged);
                     };
 
 
@@ -223,14 +232,13 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         });
 
         mLimitHourlyChip.setOnClickListener(hourlyView -> {
-            if (!isChanged) {
+//            if (!isChanged) {
                 mMinutesLimitDialogFragment.show(TrackingListFragment.this.getChildFragmentManager(), "f");
-            } else {
+//            } else {
                 Toast.makeText(requireActivity().getApplicationContext(), getString(R.string.cannot_change_time), Toast.LENGTH_SHORT).show();
-            }
+//            }
 
         });
-
     }
 
     @Override
@@ -280,7 +288,7 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     }
 
     @Override
-    public void onItemClickListener(IgnoreItems items) {
+    public void onItemClickListener(LimitedApps items) {
         mPackageName = items.getPackageName();
         appName = items.getName();
         mBottomSheetBehavior.setPeekHeight(getView().getHeight() / 4, true);
@@ -306,15 +314,18 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     }
 
     private void showLimitedTime() {
-        mCompositeDisposable.add(mModelView.showLimitedTimeOnChips(mPackageName, mLimitHourlyChip, mLimitDailyChip));
+//        mCompositeDisposable.add(mModelView.showLimitedTimeOnChips(mPackageName, mLimitHourlyChip, mLimitDailyChip));
     }
 
 
     @Override
     public void onDialogPositiveClick(DialogFragment dialog, NumberPicker p) {
-        mLimitHourlyChip.setText(getString(R.string.hourly_limit_set_to, String.valueOf(p.getValue())));
+//        mLimitHourlyChip.setText(getString(R.string.hourly_limit_set_to, String.valueOf(p.getValue())));
+        mLimitViewModel.getChipText().observe(getViewLifecycleOwner(), chipText -> {
+            mLimitHourlyChip.setText(chipText);
+        });
         mLimitViewModel.setHourlyLimit(mPackageName, appName, p.getValue());
-        mLimitViewModel.getSnackBarMessage().observe(getViewLifecycleOwner(),
+        mLimitViewModel.getSnackbar().observe(getViewLifecycleOwner(),
                 integer ->
                         Snackbar.make(getView(), getString(integer, appName), Snackbar.LENGTH_LONG).show());
     }

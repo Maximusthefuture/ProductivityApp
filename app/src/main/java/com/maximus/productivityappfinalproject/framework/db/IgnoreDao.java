@@ -6,21 +6,23 @@ import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
+import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 
 import java.util.List;
+
+import io.reactivex.Flowable;
 
 @Dao
 public interface IgnoreDao {
 
     @Query("SELECT * FROM ignore_table")
-    List<IgnoreItems> getIgnoreItems();
+    Flowable<List<LimitedApps>> getIgnoreItems();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertIgnoreItem(IgnoreItems item);
+    void insertIgnoreItem(LimitedApps item);
 
     @Update
-    void updateIgnoreItem(IgnoreItems ignoreItems);
+    void updateIgnoreItem(LimitedApps limitedApps);
 
     @Query("DELETE FROM ignore_table")
     void deleteAllItems();

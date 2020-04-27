@@ -43,7 +43,7 @@ public class AppsDetailViewModel extends AndroidViewModel {
         mContext = application.getApplicationContext();
         mIgnoreAppDataSourceImp = new IgnoreAppDataSourceImp(mContext);
         mAppsRepositoryImpl = new AppsRepositoryImpl(mIgnoreAppDataSourceImp);
-        mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(mContext);
+        mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(mContext, mIgnoreAppDataSourceImp);
         mAppIntervalUseCase = new GetAppIntervalUseCase(mMyUsageStatsManagerWrapper);
         setFiltering(mIntervalEnum);
         mDayInterval.setValue(0);

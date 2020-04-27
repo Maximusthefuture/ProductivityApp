@@ -3,24 +3,24 @@ package com.maximus.productivityappfinalproject.data;
 import androidx.lifecycle.LiveData;
 
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
-import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
+import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 
 
 import java.util.List;
 
+import io.reactivex.Flowable;
+
 public interface AppsRepository {
 
 
-    LiveData<List<IgnoreItems>> getIgnoreItems();
-    void insertToIgnoreList(IgnoreItems item);
+    Flowable<List<LimitedApps>> getIgnoreItems();
+    void insertToIgnoreList(LimitedApps item);
     void deleteFromIgnoreList(String item);
     void deleteAllIgnoreList();
 
 
-    LiveData<Integer> getUsageCount(int usageCount);
     void insertPhoneUsage(PhoneUsage phoneUsage);
-    LiveData<Integer> getUsageCount();
     void resetHourly();
     void resetDaily();
     void deletePhoneUsage();

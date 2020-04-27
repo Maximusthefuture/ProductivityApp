@@ -15,9 +15,10 @@ public class PhoneUsageDataSourceImp implements PhoneUsageDataSource {
     private AppsDatabase mAppsDatabase;
 
     @Inject
-    public PhoneUsageDataSourceImp(Context context) {
+    public PhoneUsageDataSourceImp(Context context, AppsDatabase appsDatabase) {
         mContext = context;
-        mAppsDatabase = AppsDatabase.getInstance(mContext);
+//        mAppsDatabase = AppsDatabase.getInstance(mContext);
+        this.mAppsDatabase = appsDatabase;
     }
 
     @Override

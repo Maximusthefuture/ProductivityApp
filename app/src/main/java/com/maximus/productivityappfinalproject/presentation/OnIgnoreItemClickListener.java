@@ -1,7 +1,7 @@
 package com.maximus.productivityappfinalproject.presentation;
 
-import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
+import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 
 public interface OnIgnoreItemClickListener {
-    void onItemClickListener(IgnoreItems items);
+    void onItemClickListener(LimitedApps items);
 }

@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManager;
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
-import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
+import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 import com.maximus.productivityappfinalproject.framework.db.AppsDatabase;
 
@@ -14,6 +14,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 
 
@@ -21,7 +22,7 @@ import io.reactivex.Observable;
 // All todo's from presentation,
 //todo viewModelFactory?
 //todo dagger2?
-// todo foreground service?
+// todo foreground service? DONE!
 // todo look how much battery eat app
 // TODO: customview переделать доделать, random colors
 // TODO: rx java?
@@ -30,7 +31,7 @@ import io.reactivex.Observable;
 //todo tests? unit, ui
 //todo add bottom sheets like in yandex map?
 // settings? bottom navigation? like in yandex map?
-// save statistic to server? and share?
+// save statistic to server? and share? firebase?
 // change UI
 // onBoarding write about permission and why u need that
 // reminder if no one app isLimited
@@ -39,7 +40,7 @@ import io.reactivex.Observable;
 @Singleton
 public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
 
-    private MutableLiveData<List<IgnoreItems>> mIgnoreItems = new MutableLiveData<>();
+    private MutableLiveData<List<LimitedApps>> mIgnoreItems = new MutableLiveData<>();
     private MutableLiveData<Integer> mPhoneUsage = new MutableLiveData<>();
     private IgnoreAppDataSource mIgnoreAppDataSource;
     private PhoneUsageDataSource mPhoneUsageDataSource;
@@ -91,20 +92,8 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
     }
 
     @Override
-    public LiveData<List<IgnoreItems>> getIgnoreItems() {
-        AppsDatabase.databaseWriterExecutor.execute(() -> {
-            mIgnoreItems.postValue(mIgnoreAppDataSource.getAll());
-        });
-        return mIgnoreItems;
-    }
-
-
-
-    public Observable<List<IgnoreItems>> getIgnoreList() {
-        return Observable.create(emitter -> {
-            emitter.onNext(mIgnoreAppDataSource.getAll());
-            emitter.onComplete();
-        });
+    public Flowable<List<LimitedApps>> getIgnoreItems() {
+        return mIgnoreAppDataSource.getAll();
     }
 
     public Observable<List<AppUsageLimitModel>> getLimited() {
@@ -114,8 +103,19 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
         });
     }
 
+    public Observable<List<PhoneUsage>> getPhoneUsage() {
+        return Observable.create(emitter -> {
+           emitter.onNext(mPhoneUsageDataSource.getPhoneUsageData());
+           emitter.onComplete();
+        });
+    }
+
+    public void setPhone(long hour, long day) {
+        mPhoneUsageDataSource.updateUsageTime(hour, day);
+    }
+
     @Override
-    public void insertToIgnoreList(IgnoreItems item) {
+    public void insertToIgnoreList(LimitedApps item) {
         AppsDatabase.databaseWriterExecutor.execute(() ->
                 mIgnoreAppDataSource.add(item));
     }
@@ -134,13 +134,7 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
         });
     }
 
-    @Override
-    public LiveData<Integer> getUsageCount(int usageCount) {
-        AppsDatabase.databaseWriterExecutor.execute(() -> {
-            mPhoneUsage.postValue(mPhoneUsageDataSource.getUsageCount(usageCount));
-        });
-        return mPhoneUsage;
-    }
+
 
     @Override
     public void insertPhoneUsage(PhoneUsage phoneUsage) {
@@ -159,15 +153,10 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
         AppsDatabase.databaseWriterExecutor.execute(() -> {
             mPhoneUsageDataSource.updatePhoneUsage(phoneUsage);
         });
-    }
-
-    @Override
-    public LiveData<Integer> getUsageCount() {
-        AppsDatabase.databaseWriterExecutor.execute(() -> {
-            mPhoneUsage.postValue(mPhoneUsageDataSource.getUsageCount());
-
-        });
-        return mPhoneUsage;
+//        Observable.create(emitter -> {
+//                emitter.onNext(mPhoneUsageDataSource.updatePhoneUsage(phoneUsage));
+//            emitter.onComplete();
+//        })
     }
 
     @Override

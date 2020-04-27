@@ -5,6 +5,8 @@ import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage
 import com.maximus.productivityappfinalproject.framework.db.AppsDatabase
 import com.maximus.productivityappfinalproject.utils.Utils
+import io.reactivex.schedulers.Schedulers
+import java.util.function.Predicate
 import javax.inject.Inject
 
 //можно использовать юз кейсы вместе с другими юз кейсами
@@ -20,7 +22,6 @@ class GetAppWithLimitUseCase @Inject constructor(private var appsRepository: App
         prevApp = noAPP
     }
 
-    //Todo crash ошибка  java.lang.IllegalArgumentException: Parameter specified as non-null is null: method kotlin.jvm.internal.Intrinsics.checkParameterIsNotNull, parameter packageName
     fun isLimitSet(packageName: String?): Boolean {
         var currentPackageName: String?
         val list = appsRepository.limitedItems
@@ -53,6 +54,7 @@ class GetAppWithLimitUseCase @Inject constructor(private var appsRepository: App
         var timeUsedThisDay: Long = 0
         var timeUsedThisHour: Long = 0
         var list = appsRepository.phoneUsageData
+
         var isFound = false
 
         for (phoneUsage in list) {
@@ -82,6 +84,7 @@ class GetAppWithLimitUseCase @Inject constructor(private var appsRepository: App
         var timeCompletedThisDay: Long = 0
 
         var list = appsRepository.phoneUsageData
+        //todo можно ли это сделать через rxjava?
         for (phoneUsageList in list) {
             currentPackageName = phoneUsageList.packageName
             if (currentPackageName == currentAppForeground) {

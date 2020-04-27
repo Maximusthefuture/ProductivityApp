@@ -17,11 +17,11 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.maximus.productivityappfinalproject.data.IgnoreAppDataSource;
+import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 import com.maximus.productivityappfinalproject.framework.IgnoreAppDataSourceImp;
 import com.maximus.productivityappfinalproject.utils.IntervalEnum;
 import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
-import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
 import com.maximus.productivityappfinalproject.framework.db.AppsDatabase;
 import com.maximus.productivityappfinalproject.utils.Utils;
 
@@ -46,13 +46,14 @@ public class MyUsageStatsManagerWrapper {
 
 
     @Inject
-    public MyUsageStatsManagerWrapper(Context context) {
+    public MyUsageStatsManagerWrapper(Context context, IgnoreAppDataSource ignoreAppDataSource) {
         mContext = context;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             mUsageStatsManager = (UsageStatsManager) mContext.getSystemService(Context.USAGE_STATS_SERVICE);
         }
         mPackageManager = mContext.getPackageManager();
-        mIgnoreAppDataSource = new IgnoreAppDataSourceImp(mContext);
+        this.mIgnoreAppDataSource = ignoreAppDataSource;
+//        mIgnoreAppDataSource = new IgnoreAppDataSourceImp(mContext);
     }
 
     /**
@@ -104,9 +105,9 @@ public class MyUsageStatsManagerWrapper {
                     continue;
                 }
                 //TODO check is the iteractor? usecase?
-                if (isIgnoredList(mIgnoreAppDataSource.getAll(), appsModel.getPackageName())) {
-                    continue;
-                }
+//                if (isIgnoredList(mIgnoreAppDataSource.getAll(), appsModel.getPackageName())) {
+//                    continue;
+//                }
 //                Log.d(TAG, "getAllApps: " + getLastTimeUsed(startMills, System.currentTimeMillis(), packageName));
                 mAppsModelList.add(appsModel);
                 mAllApps.postValue(mAppsModelList);
@@ -133,9 +134,9 @@ public class MyUsageStatsManagerWrapper {
                     continue;
                 }
                 //TODO check is the iteractor? usecase?
-                if (isIgnoredList(mIgnoreAppDataSource.getAll(), appsModel.getPackageName())) {
-                    continue;
-                }
+//                if (isIgnoredList(mIgnoreAppDataSource.getAll(), appsModel.getPackageName())) {
+//                    continue;
+//                }
 //                Log.d(TAG, "getAllApps: " + getLastTimeUsed(startMills, System.currentTimeMillis(), packageName));
                 mAppsModelList.add(appsModel);
                 Collections.sort(mAppsModelList, (o1, o2) ->
@@ -170,24 +171,24 @@ public class MyUsageStatsManagerWrapper {
 //    }
 
     //TODO UPDATE ONLY USEDTIME AND LASTTIMEUSED!!!
-    public void refreshIgnoreList(IgnoreItems ignoreItems) {
+    public void refreshIgnoreList(LimitedApps limitedApps) {
         AppsDatabase.databaseWriterExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 long[] range = Utils.getInterval(IntervalEnum.getInterval(0));
-                String lastTimeUsed = getLastTimeUsed(range[0], System.currentTimeMillis(), ignoreItems.getPackageName());
-                long usedTime = fetchAppStatsInfo(range[0], range[1], ignoreItems.getPackageName());
-                IgnoreItems items = new IgnoreItems(ignoreItems.getPackageName(),ignoreItems.getName(), lastTimeUsed, usedTime);
-                List<IgnoreItems> list = new ArrayList<>();
+                String lastTimeUsed = getLastTimeUsed(range[0], System.currentTimeMillis(), limitedApps.getPackageName());
+                long usedTime = fetchAppStatsInfo(range[0], range[1], limitedApps.getPackageName());
+                LimitedApps items = new LimitedApps(limitedApps.getPackageName(), limitedApps.getName(), lastTimeUsed, usedTime);
+                List<LimitedApps> list = new ArrayList<>();
                 list.add(items);
                 mIgnoreAppDataSource.update(items);
             }
         });
     }
 
-    private boolean isIgnoredList(List<IgnoreItems> itemsList, String packageName) {
-        for (IgnoreItems ignoreItems : itemsList) {
-            if (ignoreItems.getPackageName().equals(packageName)) {
+    private boolean isIgnoredList(List<LimitedApps> itemsList, String packageName) {
+        for (LimitedApps limitedApps : itemsList) {
+            if (limitedApps.getPackageName().equals(packageName)) {
                 return true;
             }
         }
@@ -216,7 +217,7 @@ public class MyUsageStatsManagerWrapper {
         long[] range = Utils.getInterval(IntervalEnum.getInterval(sort));
         UsageEvents events = mUsageStatsManager.queryEvents(range[0], range[1]);
         UsageEvents.Event event = new UsageEvents.Event();
-        AppsModel appsModel;
+        AppsModel appsModel = null;
         MyEvent myEvent = null;
         long start = 0;
         long usageTime = 0;
@@ -237,7 +238,7 @@ public class MyUsageStatsManagerWrapper {
                     if (start > 0) {
                         myEvent = new MyEvent(event);
                         myEvent.mEventType = -1;
-
+//                        appsModel.setEventType(-1);
                     }
                 }
             } else {
@@ -247,9 +248,6 @@ public class MyUsageStatsManagerWrapper {
                         usageTime = 0;
                     }
                     appsModel = new AppsModel(usageTime, myEvent.mTimeStamp, myEvent.mEventType);
-                    if (appsModel.getAppUsageTime() >= 4000) {
-                        appsModel.setCount(mCount++);
-                    }
                     appsModelList.add(appsModel);
                     start = 0;
                     myEvent = null;

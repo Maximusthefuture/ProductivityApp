@@ -1,19 +1,21 @@
 package com.maximus.productivityappfinalproject.data;
 
-import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
+import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
+
 public interface IgnoreAppDataSource {
 
-    void add(IgnoreItems item);
+    void add(LimitedApps item);
 
-    List<IgnoreItems> getAll();
+    Flowable<List<LimitedApps>> getAll();
 
     void removeItem(String packageName);
 
     void removeAll();
 
-    void update(IgnoreItems items);
+    void update(LimitedApps items);
 
 }

@@ -44,6 +44,10 @@ public class PhoneUsage {
         this.timeCompletedInDay = timeCompletedInDay;
     }
 
+    public void setTimeCompletedInHour(long timeCompletedInHour) {
+        this.timeCompletedInHour = timeCompletedInHour;
+    }
+
     @Ignore
     public PhoneUsage(int usageCount) {
         this.usageCount = usageCount;

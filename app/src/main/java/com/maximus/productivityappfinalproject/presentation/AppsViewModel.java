@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
@@ -19,9 +20,8 @@ import com.maximus.productivityappfinalproject.domain.GetAppsUseCase;
 import com.maximus.productivityappfinalproject.domain.LimitedListUseCase;
 import com.maximus.productivityappfinalproject.domain.ShowAppUsageUseCase;
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
-import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
+import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 import com.maximus.productivityappfinalproject.framework.IgnoreAppDataSourceImp;
-import com.maximus.productivityappfinalproject.framework.PhoneUsageDataSourceImp;
 import com.maximus.productivityappfinalproject.service.NotificationService;
 import com.maximus.productivityappfinalproject.utils.MyPreferenceManager;
 
@@ -32,6 +32,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Inject;
+
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -39,11 +41,10 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
-public class AppsViewModel extends AndroidViewModel {
+public class AppsViewModel extends ViewModel {
     private static final String TAG = "AppsViewModel";
     private AppsRepositoryImpl mRepository;
     private LiveData<List<AppsModel>> mAllApps;
-    private Context mContext;
     private MutableLiveData<Integer> mDayInterval = new MutableLiveData<>();
     private GetAppsUseCase mAppsUseCase;
     private LimitedListUseCase mIgnoreListUseCase;
@@ -51,22 +52,25 @@ public class AppsViewModel extends AndroidViewModel {
     private ShowAppUsageUseCase mShowAppUsageUseCase;
     private PhoneUsageNotificationManager mManager;
     private IgnoreAppDataSource mIgnoreAppDataSource;
-    private PhoneUsageDataSource mDataSource;
+//    @Inject
+//     PhoneUsageDataSource mDataSource;
     //TODO
     private boolean isSystemAppMenuChecked;
 
-    public AppsViewModel(@NonNull Application application) {
-        super(application);
-        mContext = application.getApplicationContext();
-        mDataSource = new PhoneUsageDataSourceImp(mContext);
-        mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(mContext);
-        mIgnoreAppDataSource = new IgnoreAppDataSourceImp(mContext);
-        mRepository = new AppsRepositoryImpl(mIgnoreAppDataSource, mDataSource);
-        mIgnoreListUseCase = new LimitedListUseCase(mRepository);
-        mAppsUseCase = new GetAppsUseCase(mMyUsageStatsManagerWrapper);
+    @Inject
+    public AppsViewModel(LimitedListUseCase limitedListUseCase, MyUsageStatsManagerWrapper myUsageStatsManagerWrapper, GetAppsUseCase useCase) {
+//        mDataSource = new PhoneUsageDataSourceImp(mContext);
+//        mIgnoreAppDataSource = new IgnoreAppDataSourceImp(mContext);
+//        mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(mContext, mIgnoreAppDataSource);
+//        mRepository = new AppsRepositoryImpl(mIgnoreAppDataSource, mDataSource);
+//        mIgnoreListUseCase = new LimitedListUseCase(mRepository);
+//        mAppsUseCase = new GetAppsUseCase(mMyUsageStatsManagerWrapper);
+        mIgnoreListUseCase = limitedListUseCase;
+        mMyUsageStatsManagerWrapper = myUsageStatsManagerWrapper;
+        mAppsUseCase = useCase;
+
         mAllApps = mAppsUseCase.getAllApps(false, 0);
-        mManager = new PhoneUsageNotificationManager(mContext);
-        mShowAppUsageUseCase = new ShowAppUsageUseCase(mManager);
+//        mShowAppUsageUseCase = new ShowAppUsageUseCase(mManager);
         mDayInterval.setValue(0);
     }
 
@@ -112,21 +116,11 @@ public class AppsViewModel extends AndroidViewModel {
         String packageName = info.getPackageName();
         String appName = info.getAppName();
         info.setSelected(true);
-        IgnoreItems ignoreItems = new IgnoreItems(packageName, appName);
-        List<IgnoreItems> list = new ArrayList<>();
-        list.add(ignoreItems);
-        mIgnoreListUseCase.addToIgnoreList(ignoreItems);
+        LimitedApps limitedApps = new LimitedApps(packageName, appName);
+        List<LimitedApps> list = new ArrayList<>();
+        list.add(limitedApps);
+        mIgnoreListUseCase.addToIgnoreList(limitedApps);
 
-    }
-
-    public void startService() {
-        MyPreferenceManager.init(mContext);
-        boolean isNotificationsSwitchOn = MyPreferenceManager.getInstance().getBoolean(mContext.getString(R.string.show_notification_key));
-        if (isNotificationsSwitchOn) {
-            Intent intent = new Intent(mContext, NotificationService.class);
-//            mUsageCountUseCase.getPhoneUsageCount(0);
-            mContext.startService(intent);
-        }
     }
 
     public Observable<List<AppsModel>> getAllAppsObservable() {

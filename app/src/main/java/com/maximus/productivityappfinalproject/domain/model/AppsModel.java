@@ -46,6 +46,11 @@ public class AppsModel implements Parcelable {
         mEventType = eventType;
     }
 
+    public void setEventType(int eventType) {
+        mEventType = eventType;
+
+    }
+
     public void setSelected(boolean selected) {
         mSelected = selected;
     }

@@ -4,7 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 
 import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManagerImpl;
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
-import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
+import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 import com.maximus.productivityappfinalproject.framework.AppLimitDataSourceImpl;
 import com.maximus.productivityappfinalproject.framework.IgnoreAppDataSourceImp;
@@ -55,9 +55,9 @@ public class AppsRepositoryImplTest {
 
     @Test
     public void insertIgnoreList() {
-        IgnoreItems ignoreItems = new IgnoreItems("com.example.f", 1000, "f");
-        mAppsRepository.insertToIgnoreList(ignoreItems);
-        verify(mIgnoreAppDataSource).add(ignoreItems);
+//        LimitedApps limitedApps = new LimitedApps("com.example.f", 1000, "f");
+//        mAppsRepository.insertToIgnoreList(limitedApps);
+//        verify(mIgnoreAppDataSource).add(limitedApps);
 
     }
 
@@ -90,10 +90,10 @@ public class AppsRepositoryImplTest {
 
     @Test
     public void deleteIgnoreItemFromDb() {
-        IgnoreItems ignoreItems = new IgnoreItems("com.example.media", 1000, "Media");
-        IgnoreItems ignoreItems1 = new IgnoreItems("com.example.Example", 1000, "Example");
-        mIgnoreAppDataSource.add(ignoreItems);
-        mIgnoreAppDataSource.add(ignoreItems1);
+//        LimitedApps limitedApps = new LimitedApps("com.example.media", 1000, "Media");
+//        LimitedApps limitedApps1 = new LimitedApps("com.example.Example", 1000, "Example");
+//        mIgnoreAppDataSource.add(limitedApps);
+//        mIgnoreAppDataSource.add(limitedApps1);
         assertThat(mIgnoreAppDataSource.getAll().get(1), is(true));
 //        verify(mIgnoreAppDataSource).removeItem(ignoreItems.getPackageName());
 //        mAppsRepository.deleteFromIgnoreList(ignoreItems.getPackageName());

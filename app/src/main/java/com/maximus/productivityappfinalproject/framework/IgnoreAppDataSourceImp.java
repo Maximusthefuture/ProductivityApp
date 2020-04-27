@@ -3,12 +3,14 @@ package com.maximus.productivityappfinalproject.framework;
 import android.content.Context;
 
 import com.maximus.productivityappfinalproject.data.IgnoreAppDataSource;
-import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
+import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 import com.maximus.productivityappfinalproject.framework.db.AppsDatabase;
 
 import java.util.List;
 
 import javax.inject.Inject;
+
+import io.reactivex.Flowable;
 
 public class IgnoreAppDataSourceImp implements IgnoreAppDataSource {
 
@@ -22,13 +24,13 @@ public class IgnoreAppDataSourceImp implements IgnoreAppDataSource {
     }
 
     @Override
-    public void add(IgnoreItems item) {
+    public void add(LimitedApps item) {
         mAppsDatabase.ignoreDao().insertIgnoreItem(item);
 
     }
 
     @Override
-    public List<IgnoreItems> getAll() {
+    public Flowable<List<LimitedApps>> getAll() {
         return mAppsDatabase.ignoreDao().getIgnoreItems();
     }
 
@@ -43,7 +45,7 @@ public class IgnoreAppDataSourceImp implements IgnoreAppDataSource {
     }
 
     @Override
-    public void update(IgnoreItems items) {
+    public void update(LimitedApps items) {
         mAppsDatabase.ignoreDao().updateIgnoreItem(items);
     }
 }

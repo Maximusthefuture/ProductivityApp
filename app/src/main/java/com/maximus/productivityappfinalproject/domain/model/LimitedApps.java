@@ -7,11 +7,10 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
-import androidx.room.Insert;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "ignore_table")
-public class IgnoreItems implements Parcelable {
+public class LimitedApps implements Parcelable {
 
     @PrimaryKey
     @NonNull
@@ -27,7 +26,7 @@ public class IgnoreItems implements Parcelable {
     private long mTimeUsed;
 
 
-    public IgnoreItems(String packageName, long created, String name, String lastTimeUsed, long timeUsed) {
+    public LimitedApps(String packageName, long created, String name, String lastTimeUsed, long timeUsed) {
         mPackageName = packageName;
         mCreated = created;
         mName = name;
@@ -36,24 +35,24 @@ public class IgnoreItems implements Parcelable {
     }
 
     @Ignore
-    public IgnoreItems(@NonNull String packageName) {
+    public LimitedApps(@NonNull String packageName) {
         mPackageName = packageName;
     }
 
     @Ignore
-    public IgnoreItems(@NonNull String packageName, String lastTimeUsed, long timeUsed) {
+    public LimitedApps(@NonNull String packageName, String lastTimeUsed, long timeUsed) {
         mLastTimeUsed = lastTimeUsed;
         mPackageName = packageName;
         mTimeUsed = timeUsed;
     }
     @Ignore
-    public IgnoreItems(@NonNull String packageName, String name) {
+    public LimitedApps(@NonNull String packageName, String name) {
         mPackageName = packageName;
         mName = name;
     }
 
     @Ignore
-    public IgnoreItems(@NonNull String packageName, String name, String lastTimeUsed, long timeUsed) {
+    public LimitedApps(@NonNull String packageName, String name, String lastTimeUsed, long timeUsed) {
         mPackageName = packageName;
         mName = name;
         mLastTimeUsed = lastTimeUsed;
@@ -64,7 +63,7 @@ public class IgnoreItems implements Parcelable {
 //        mTimeUsed = timeUsed;
 //    }
 
-    protected IgnoreItems(Parcel in) {
+    protected LimitedApps(Parcel in) {
         mPackageName = in.readString();
         mCreated = in.readLong();
         mName = in.readString();
@@ -72,15 +71,15 @@ public class IgnoreItems implements Parcelable {
         mTimeUsed = in.readLong();
     }
 
-    public static final Creator<IgnoreItems> CREATOR = new Creator<IgnoreItems>() {
+    public static final Creator<LimitedApps> CREATOR = new Creator<LimitedApps>() {
         @Override
-        public IgnoreItems createFromParcel(Parcel in) {
-            return new IgnoreItems(in);
+        public LimitedApps createFromParcel(Parcel in) {
+            return new LimitedApps(in);
         }
 
         @Override
-        public IgnoreItems[] newArray(int size) {
-            return new IgnoreItems[size];
+        public LimitedApps[] newArray(int size) {
+            return new LimitedApps[size];
         }
     };
 

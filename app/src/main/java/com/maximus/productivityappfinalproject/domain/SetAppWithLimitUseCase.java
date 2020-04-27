@@ -10,13 +10,16 @@ import android.widget.Toast;
 import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
 
-public class SetAppWithLimitUseCase {
-    private AppsRepositoryImpl mAppsRepository;
-    private Context mContext;
+import javax.inject.Inject;
 
-    public SetAppWithLimitUseCase(AppsRepositoryImpl appsRepository, Context context) {
+public class SetAppWithLimitUseCase {
+
+    private AppsRepositoryImpl mAppsRepository;
+
+    @Inject
+    public SetAppWithLimitUseCase(AppsRepositoryImpl appsRepository) {
         mAppsRepository = appsRepository;
-        mContext = context;
+
     }
 
     public void setLimit(String appPackageName, String appName,int perDayHours, int perDayMinutes, int perHourMinutes) {

@@ -3,11 +3,11 @@ package com.maximus.productivityappfinalproject.data
 import androidx.lifecycle.LiveData
 import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManager
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel
-import com.maximus.productivityappfinalproject.domain.model.IgnoreItems
+import com.maximus.productivityappfinalproject.domain.model.LimitedApps
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage
-import javax.inject.Inject
+import io.reactivex.Flowable
 
-class AppRepositoryImplKt(
+class AppRepositoryImplKt (
         val phoneUsageDataSource: PhoneUsageDataSource? = null,
         val appDataSource: AppLimitDataSource? = null,
         val sharedPrefManager: SharedPrefManager? = null,
@@ -15,20 +15,11 @@ class AppRepositoryImplKt(
 ): AppsRepository, ApiRepository{
 
 
-
-    override fun getUsageCount(usageCount: Int): LiveData<Int> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun getUsageCount(): LiveData<Int> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     override fun updatePhoneUsage(phoneUsage: PhoneUsage?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getIgnoreItems(): LiveData<MutableList<IgnoreItems>> {
+    override fun getIgnoreItems(): Flowable<MutableList<LimitedApps>> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -68,7 +59,7 @@ class AppRepositoryImplKt(
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun insertToIgnoreList(item: IgnoreItems?) {
+    override fun insertToIgnoreList(item: LimitedApps?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

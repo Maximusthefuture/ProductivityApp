@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -14,19 +13,21 @@ import androidx.core.app.NotificationManagerCompat;
 
 import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
 import com.maximus.productivityappfinalproject.data.PhoneUsageDataSource;
-import com.maximus.productivityappfinalproject.data.ScreenReceiver;
 import com.maximus.productivityappfinalproject.device.MyUsageStatsManagerWrapper;
 import com.maximus.productivityappfinalproject.device.PhoneUsageNotificationManager;
 import com.maximus.productivityappfinalproject.domain.AddPhoneUsageUseCase;
 import com.maximus.productivityappfinalproject.domain.GetAppWithLimitUseCase;
-
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
-import com.maximus.productivityappfinalproject.framework.PhoneUsageDataSourceImp;
+
+import javax.inject.Inject;
 
 
 public class NotificationService extends Service {
 
     private static final String TAG = "NotificationService";
+    @Inject
+    PhoneUsageDataSource mDataSource;
+    String time = null;
     private int count = 0;
     private boolean isScreenOn;
     private PhoneUsageNotificationManager mNotificationManager;
@@ -35,24 +36,18 @@ public class NotificationService extends Service {
     private int seconds = 0;
     private BroadcastReceiver receiver;
     private AddPhoneUsageUseCase mPhoneUsageUseCase;
-
     private AppsRepositoryImpl mAppsRepository;
-    private PhoneUsageDataSource mDataSource;
     private PhoneUsage mPhoneUsage;
     private MyUsageStatsManagerWrapper mMyUsageStatsManagerWrapper;
-
-    String time = null;
-    private PhoneUsageDataSourceImp mPhoneUsageDataSource;
     private GetAppWithLimitUseCase mGetAppWithLimitUseCase;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        mDataSource = new PhoneUsageDataSourceImp(this);
         mAppsRepository = new AppsRepositoryImpl(mDataSource);
         mPhoneUsageUseCase = new AddPhoneUsageUseCase(mAppsRepository);
 
-        mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(getApplicationContext());
+        mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(getApplicationContext(), null);
 
 
 //        IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
@@ -63,8 +58,8 @@ public class NotificationService extends Service {
 
         mNotificationManager = new PhoneUsageNotificationManager(this);
         mNotificationManager.createNotificationChannel();
-        mPhoneUsageDataSource = new PhoneUsageDataSourceImp(getApplicationContext());
-        mAppsRepository = new AppsRepositoryImpl(mPhoneUsageDataSource);
+//        mPhoneUsageDataSource = new PhoneUsageDataSourceImp(getApplicationContext());
+        mAppsRepository = new AppsRepositoryImpl(mDataSource);
         mGetAppWithLimitUseCase = new GetAppWithLimitUseCase(mAppsRepository);
 
     }
@@ -74,7 +69,6 @@ public class NotificationService extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
-
 
 
     @Override

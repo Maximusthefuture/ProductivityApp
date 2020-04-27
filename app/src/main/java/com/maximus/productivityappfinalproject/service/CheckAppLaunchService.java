@@ -18,7 +18,9 @@ import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 import androidx.preference.PreferenceManager;
 
+import com.maximus.productivityappfinalproject.MyApplication;
 import com.maximus.productivityappfinalproject.R;
+import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
 import com.maximus.productivityappfinalproject.data.PhoneUsageDataSource;
 import com.maximus.productivityappfinalproject.data.ScreenReceiver;
 import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManager;
@@ -39,18 +41,24 @@ import com.maximus.productivityappfinalproject.utils.MyPreferenceManager;
 import com.maximus.productivityappfinalproject.utils.Utils;
 
 import java.util.Calendar;
+import java.util.List;
 
 import javax.inject.Inject;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
+import io.reactivex.schedulers.Schedulers;
 
 //TODO ForegroundService
 public class CheckAppLaunchService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String TAG = "CheckAppLaunchService";
-    private String currentForegroundApp;
-    private long notificationMinutes;
-
-    private boolean isScreenOn;
-
+    @Inject
+    AppsRepositoryImpl mAppsRepository;
     @Inject
     GetAppWithLimitUseCase mGetAppWithLimitUseCase;
     @Inject
@@ -65,6 +73,9 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
     SharedPrefManager mSharedPrefManager;
     @Inject
     MyUsageStatsManagerWrapper mMyUsageStatsManagerWrapper;
+    private String currentForegroundApp;
+    private long notificationMinutes;
+    private boolean isScreenOn;
     private HandlerThread appLaunchThread;
     private Handler mHandler;
     private Looper mLooper;
@@ -77,11 +88,13 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
     private long timeNow;
     private MyPreferenceManager mMyPreferenceManager;
     private ScreenReceiver mScreenReceiver;
+    private boolean isLockBeforeBed;
 
     @Override
     public void onCreate() {
-        AppComponent appComponent = DaggerAppComponent.builder().contextModule(new ContextModule(this)).build();
-        appComponent.inject(this);
+        ((MyApplication) getApplication()).getAppComponent().inject(this);
+//        AppComponent appComponent = DaggerAppComponent.builder().contextModule(new ContextModule(this)).build();
+//        appComponent.inject(this);
         super.onCreate();
 
         appLaunchThread = new HandlerThread("MyHandlerThread", Process.THREAD_PRIORITY_BACKGROUND);
@@ -94,7 +107,7 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
         mNotificationManager = new PhoneUsageNotificationManager(this);
         mNotificationManager.createNotificationChannel();
         mHandler = new Handler(mLooper);
-        MyPreferenceManager.init(getApplicationContext());
+//        MyPreferenceManager.init(getApplicationContext());
 
         IntentFilter filter = new IntentFilter(Intent.ACTION_BOOT_COMPLETED);
         filter.addAction(Intent.ACTION_SCREEN_ON);
@@ -102,9 +115,11 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
         registerReceiver(mScreenReceiver, filter);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        notificationMinutes = 300000;
+        notificationMinutes = 30000;
 
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+
+//        isLockBeforeBed = MyPreferenceManager.getInstance().getBoolean(getString(R.string.show_notification_key));
 
         startForeground(PhoneUsageNotificationManager.NOTIFICATION_ID, mNotificationManager.createNotification(this));
     }
@@ -122,16 +137,43 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
                 checkAppLimitAndUpdateStats();
             }
         };
-
         mHandler.post(mRunnable);
 
         return START_STICKY;
     }
 
+
+    //todo some refactor
+    private void resetHour() {
+       Disposable d =  mAppsRepository.getPhoneUsage()
+                .subscribeOn(Schedulers.computation())
+                .filter(phoneUsage -> {
+                    for (PhoneUsage usage : phoneUsage) {
+                        if (usage.getTimeCompletedInHour() > 0) {
+                            Log.d(TAG, "test() called with: phoneUsage = [" + phoneUsage + "true]");
+                            return true;
+                        }
+                    }
+                    Log.d(TAG, "test() called with: phoneUsage = [" + phoneUsage + "false]");
+                    return false;
+                })
+                .observeOn(Schedulers.computation())
+                .subscribe(phoneUsage -> {
+                    for (PhoneUsage usage : phoneUsage) {
+                        Log.d(TAG, "accept: before update" + usage.getPackageName() + "   " + usage.getTimeCompletedInHour());
+                        usage.setTimeCompletedInHour(0);
+                        mAppsRepository.updatePhoneUsage(usage);
+                        Log.d(TAG, "accept: " + usage.getPackageName() + "  " + usage.getTimeCompletedInHour());
+                        Log.d(TAG, "accept() called with: phoneUsage = [" + phoneUsage + "]");
+                    }
+                });
+    }
+
     private void checkTimeAndResetDb() {
         if (closestHour < timeNow) {
-            Runnable hourly = () -> mResetAppUseTimeDbUseCase.resetHourAppUsage();
-            mHandler.postDelayed(hourly, 5000);
+//            Runnable hourly = () -> mResetAppUseTimeDbUseCase.resetHourAppUsage();
+//            mHandler.postDelayed(hourly, 5000);
+            resetHour();
             mUpdateClosestTimeUseCase.updateClosestHour();
         }
 
@@ -139,13 +181,13 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
             mUpdateClosestTimeUseCase.updateClosestHour();
             Runnable daily = () -> {
                 mResetAppUseTimeDbUseCase.resetDayAppUsage();
-                mLimitedSharedPrefs.setTimeLimitChanged(false);
+//                mLimitedSharedPrefs.setTimeLimitChanged(false);
             };
             mHandler.postDelayed(daily, 5000);
             mUpdateClosestTimeUseCase.updateClosestDay();
         }
     }
-
+    //todo баг со временем использования приложения, считает больше на n минут после сбрасывания
     private void checkAppLimitAndUpdateStats() {
         currentForegroundApp = mMyUsageStatsManagerWrapper.getForegroundApp();
         Toast toast = Toast.makeText(this, "ОСТАЛОСЬ 5 МИНУТ", Toast.LENGTH_LONG);
@@ -165,7 +207,9 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
             if (limitTime <= notificationMinutes) {
 //                toast.show();
+//                startActivity(intent);
 //                toast.cancel();
+//                startActivity(intent);
 
 //              this.getApplicationContext().startActivity(intent);
             }

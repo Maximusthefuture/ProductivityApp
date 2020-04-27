@@ -1,5 +1,6 @@
 package com.maximus.productivityappfinalproject.presentation.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.maximus.productivityappfinalproject.MyApplication;
 import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
 import com.maximus.productivityappfinalproject.presentation.AppRecyclerViewAdapter;
@@ -33,6 +35,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
@@ -48,7 +52,8 @@ public class AppsFragment extends Fragment implements OnSwipeAppToLimitedList {
 
     public static final String APP_DETAILS = "APP_DETAIL";
     private static final String TAG = "AddAppsFragment";
-    private AppsViewModel mViewModel;
+    @Inject
+    AppsViewModel mViewModel;
     private AppRecyclerViewAdapter mAdapter;
     private RecyclerView recyclerView;
     private NavController mNavController;
@@ -62,7 +67,7 @@ public class AppsFragment extends Fragment implements OnSwipeAppToLimitedList {
         View root = LayoutInflater.from(container.getContext()).inflate(R.layout.fragment_app_list, container, false);
 
         mCompositeDisposable = new CompositeDisposable();
-        mViewModel = new ViewModelProvider(this).get(AppsViewModel.class);
+//        mViewModel = new ViewModelProvider(this).get(AppsViewModel.class);
 
         recyclerView = root.findViewById(R.id.apps_add_recycler_view);
         mNavController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
@@ -79,10 +84,16 @@ public class AppsFragment extends Fragment implements OnSwipeAppToLimitedList {
         mViewModel.getAllApps().observe(getViewLifecycleOwner(), apps -> {
             mAdapter.setList(apps);
         });
+
         setHasOptionsMenu(true);
-        mViewModel.startService();
 
         return root;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        ((MyApplication) context.getApplicationContext()).getAppComponent().inject(this);
     }
 
     @Override

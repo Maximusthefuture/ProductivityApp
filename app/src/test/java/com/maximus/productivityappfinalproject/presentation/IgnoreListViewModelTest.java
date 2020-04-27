@@ -3,7 +3,7 @@ package com.maximus.productivityappfinalproject.presentation;
 import androidx.lifecycle.Observer;
 
 import com.maximus.productivityappfinalproject.domain.LimitedListUseCase;
-import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
+import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +23,7 @@ public class IgnoreListViewModelTest {
     private LimitedListUseCase mLimitedListUseCase;
 
     @Mock
-    private Observer<List<IgnoreItems>> mObserver;
+    private Observer<List<LimitedApps>> mObserver;
 
     @Before
     public void setUp() throws Exception {

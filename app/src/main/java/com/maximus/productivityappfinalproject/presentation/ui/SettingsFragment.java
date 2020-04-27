@@ -80,22 +80,20 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             }
         });
 
-//        preference.setOnPreferenceChangeListener((preference1, newValue) -> {
-//            Intent intent = new Intent(getContext(), CheckAppLaunchService.class);
-////            if (newValue.equals(true)) {
-////                MyPreferenceManager.getInstance().putBoolean(getString(R.string.show_notification_key), true);
-////                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-////                    getContext().startForegroundService(intent);
-////                }
-////                return true;
-////            } else {
-////                MyPreferenceManager.getInstance().putBoolean(getString(R.string.show_notification_key), false);
-////                getContext().stopService(intent);
-////                return true;
-////            }
-////                Log.d(TAG, "onPreferenceChange: " + newValue);
-////                return true;
-//        });
+        preference.setOnPreferenceChangeListener((preference1, newValue) -> {
+            if (newValue.equals(true)) {
+                MyPreferenceManager.getInstance().putBoolean(getString(R.string.show_notification_key), true);
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+
+//                    getContext().startForegroundService(intent);
+//                }
+                return true;
+            } else {
+                MyPreferenceManager.getInstance().putBoolean(getString(R.string.show_notification_key), false);
+                return true;
+            }
+
+        });
 
     }
 

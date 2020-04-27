@@ -1,7 +1,6 @@
 package com.maximus.productivityappfinalproject.presentation;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +14,14 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.device.MyUsageStatsManagerWrapper;
-import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
-import com.maximus.productivityappfinalproject.utils.Utils;
+import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 
 import java.util.List;
 
 public class TrackingListAdapter extends RecyclerView.Adapter<TrackingListAdapter.IgnoreViewHolder> {
 
     private static final String TAG = "LimitedListAdapter";
-    private List<IgnoreItems> mIgnoreItems;
+    private List<LimitedApps> mIgnoreItems;
     private MyUsageStatsManagerWrapper mMyUsageStatsManagerWrapper;
     private Context mContext;
     private OnIgnoreItemClickListener mItemClickListener;
@@ -31,7 +29,7 @@ public class TrackingListAdapter extends RecyclerView.Adapter<TrackingListAdapte
 
     public TrackingListAdapter(Context context, OnIgnoreItemClickListener clickListener) {
         mContext = context;
-        mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(mContext);
+        mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(mContext, null);
         mItemClickListener = clickListener;
     }
 
@@ -44,11 +42,11 @@ public class TrackingListAdapter extends RecyclerView.Adapter<TrackingListAdapte
 
     @Override
     public void onBindViewHolder(@NonNull IgnoreViewHolder holder, int position) {
-        IgnoreItems ignoreItems = mIgnoreItems.get(position);
-        holder.bind(ignoreItems, holder);
+        LimitedApps limitedApps = mIgnoreItems.get(position);
+        holder.bind(limitedApps, holder);
     }
 
-    public void setList(List<IgnoreItems> list) {
+    public void setList(List<LimitedApps> list) {
         mIgnoreItems = list;
         notifyDataSetChanged();
     }
@@ -72,7 +70,7 @@ public class TrackingListAdapter extends RecyclerView.Adapter<TrackingListAdapte
             mIcon = itemView.findViewById(R.id.app_icon_image_view);
         }
 
-        public void bind(IgnoreItems item, IgnoreViewHolder holder) {
+        public void bind(LimitedApps item, IgnoreViewHolder holder) {
             mAppName.setText(item.getName());
 //            mLastTimeUsed.setText(item.getLastTimeUsed());
 //            mTimeUsed.setText(Utils.formatMillisToSeconds(item.getTimeUsed()));

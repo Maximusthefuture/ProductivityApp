@@ -11,7 +11,7 @@ import dagger.Module
 import javax.inject.Singleton
 
 @Module
-abstract class DbModule {
+abstract class DaoModule {
 
     @Binds
     @Singleton

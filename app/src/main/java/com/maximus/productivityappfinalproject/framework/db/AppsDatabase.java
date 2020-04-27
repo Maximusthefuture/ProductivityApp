@@ -9,13 +9,13 @@ import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
-import com.maximus.productivityappfinalproject.domain.model.IgnoreItems;
+import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {IgnoreItems.class, PhoneUsage.class, AppUsageLimitModel.class}, version = 14, exportSchema = false)
+@Database(entities = {LimitedApps.class, PhoneUsage.class, AppUsageLimitModel.class}, version = 14, exportSchema = false)
 public abstract class AppsDatabase extends RoomDatabase {
     private static AppsDatabase INSTANCE;
 
@@ -46,8 +46,8 @@ public abstract class AppsDatabase extends RoomDatabase {
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
             databaseWriterExecutor.execute(() -> {
-                IgnoreItems settings = new IgnoreItems("com.android.settings","Settings");
-                IgnoreItems myApp = new IgnoreItems("com.maximus.productivityappfinalproject","ProductivityApp");
+                LimitedApps settings = new LimitedApps("com.android.settings","Settings");
+                LimitedApps myApp = new LimitedApps("com.maximus.productivityappfinalproject","ProductivityApp");
 //                IgnoreEntity ignoreEntity = new IgnoreEntity(ignoreItems.getPackageName(), ignoreItems.getName());
                 IgnoreDao dao = INSTANCE.ignoreDao();
                 dao.insertIgnoreItem(settings);
