@@ -1,4 +1,4 @@
-package com.maximus.productivityappfinalproject.presentation;
+package com.maximus.productivityappfinalproject.presentation.viewmodels;
 
 import android.app.Application;
 import android.content.Context;
@@ -23,28 +23,28 @@ import com.maximus.productivityappfinalproject.service.NotificationService;
 
 import java.util.List;
 
-public class AppsDetailViewModel extends AndroidViewModel {
+public class AppsDetailViewModelJava extends AndroidViewModel {
 
     private final MutableLiveData<AppsModel> mApp = new MutableLiveData<>();
-    private final AppsRepositoryImpl mAppsRepositoryImpl;
+//    private final AppsRepositoryImpl mAppsRepositoryImpl;
     private MutableLiveData<Integer> mDayInterval = new MutableLiveData<>();
     private IntervalEnum mIntervalEnum = IntervalEnum.TODAY;
-    private IgnoreAppDataSource mIgnoreAppDataSourceImp;
-    private MyUsageStatsManagerWrapper mMyUsageStatsManagerWrapper;
+//    private IgnoreAppDataSource mIgnoreAppDataSourceImp;
+//    private MyUsageStatsManagerWrapper mMyUsageStatsManagerWrapper;
     private Context mContext;
     private GetAppIntervalUseCase mAppIntervalUseCase;
 
 
-    public AppsDetailViewModel(@NonNull Application application) {
+    public AppsDetailViewModelJava(@NonNull Application application) {
         super(application);
         Bundle bundle = new Bundle();
         mApp.setValue(bundle.getParcelable(AppsFragment.APP_DETAILS));
 
-        mContext = application.getApplicationContext();
-        mIgnoreAppDataSourceImp = new IgnoreAppDataSourceImp(mContext);
-        mAppsRepositoryImpl = new AppsRepositoryImpl(mIgnoreAppDataSourceImp);
-        mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(mContext, mIgnoreAppDataSourceImp);
-        mAppIntervalUseCase = new GetAppIntervalUseCase(mMyUsageStatsManagerWrapper);
+//        mContext = application.getApplicationContext();
+//        mIgnoreAppDataSourceImp = new IgnoreAppDataSourceImp(mContext);
+//        mAppsRepositoryImpl = new AppsRepositoryImpl(mIgnoreAppDataSourceImp);
+//        mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(mContext, mIgnoreAppDataSourceImp);
+//        mAppIntervalUseCase = new GetAppIntervalUseCase(mMyUsageStatsManagerWrapper);
         setFiltering(mIntervalEnum);
         mDayInterval.setValue(0);
     }
@@ -53,10 +53,9 @@ public class AppsDetailViewModel extends AndroidViewModel {
         return mDayInterval;
     }
 
-
-    public LiveData<List<AppsModel>> intervalList(String packageName) {
-        return mAppIntervalUseCase.getAppUsedInterval(packageName, mDayInterval.getValue());
-    }
+//    public LiveData<List<AppsModel>> intervalList(String packageName) {
+//        return mAppIntervalUseCase.getAppUsedInterval(packageName, mDayInterval.getValue());
+//    }
 
     public void setFiltering(IntervalEnum intervalEnum) {
         mIntervalEnum = intervalEnum;

@@ -211,7 +211,7 @@ public class MyUsageStatsManagerWrapper {
      * @param sort
      * @return List of {@link AppsModel}
      */
-    public LiveData<List<AppsModel>> getUsedInterval(String packageName, int sort) {
+    public List<AppsModel> getUsedInterval(String packageName, int sort) {
         List<AppsModel> appsModelList = new ArrayList<>();
         int mCount = 0;
         long[] range = Utils.getInterval(IntervalEnum.getInterval(sort));
@@ -254,8 +254,8 @@ public class MyUsageStatsManagerWrapper {
                 }
             }
         }
-        mAppsInterval.setValue(appsModelList);
-        return mAppsInterval;
+//        mAppsInterval.setValue(appsModelList);
+        return appsModelList;
     }
 
 

@@ -20,7 +20,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
@@ -38,12 +37,12 @@ import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManagerImpl;
 import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 import com.maximus.productivityappfinalproject.presentation.AppDetailFragmentRecyclerViewAdapter;
-import com.maximus.productivityappfinalproject.presentation.AppsDetailViewModel;
-import com.maximus.productivityappfinalproject.presentation.LimitedListViewModel;
+import com.maximus.productivityappfinalproject.presentation.viewmodels.AppsDetailViewModel;
+import com.maximus.productivityappfinalproject.presentation.viewmodels.LimitedListViewModel;
 import com.maximus.productivityappfinalproject.presentation.OnIgnoreItemClickListener;
 import com.maximus.productivityappfinalproject.presentation.OnTrackingItemLongClickListener;
 import com.maximus.productivityappfinalproject.presentation.TrackingListAdapter;
-import com.maximus.productivityappfinalproject.presentation.UsageLimitViewModel;
+import com.maximus.productivityappfinalproject.presentation.viewmodels.UsageLimitViewModel;
 import com.maximus.productivityappfinalproject.utils.Utils;
 
 import javax.inject.Inject;
@@ -64,6 +63,12 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     UsageLimitViewModel mLimitViewModel;
     Disposable disposable;
     boolean isChanged;
+    @Inject
+    AppsDetailViewModel mAppsDetailViewModel;
+    //TODO move to usecase
+    @Inject
+    SharedPrefManagerImpl mSharedPrefManager;
+
     private RecyclerView mLimitedRecyclerView;
     private TrackingListAdapter mTrackingListAdapter;
     private FloatingActionButton mActionButton;
@@ -79,7 +84,6 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     private BottomSheetBehavior mBottomSheetBehavior;
     private MinutesLimitDialogFragment mMinutesLimitDialogFragment;
     private RecyclerView mTimeUsedRecyclerView;
-    private AppsDetailViewModel mAppsDetailViewModel;
     private AppDetailFragmentRecyclerViewAdapter mDetailFragmentAdapter;
     private ChipGroup mSelectDay;
     private LimitedAppDetailSheet mLimitedAppDetailSheet;
@@ -87,9 +91,6 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     private TextView mNothingTextView;
     private CompositeDisposable mCompositeDisposable;
     private TextView mRemainTime;
-    //TODO move to usecase
-    @Inject
-     SharedPrefManagerImpl mSharedPrefManager;
 
     @Nullable
     @Override
@@ -100,17 +101,10 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         mCompositeDisposable = new CompositeDisposable();
         init(root);
 
-        mAppsDetailViewModel = new ViewModelProvider(this).get(AppsDetailViewModel.class);
-
         mMinutesLimitDialogFragment = new MinutesLimitDialogFragment();
 
-
         mNavController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment);
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(mLimitedRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
-        mLimitedRecyclerView.addItemDecoration(itemDecoration);
-        mLimitedRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        mTrackingListAdapter = new TrackingListAdapter(requireContext(), this);
-        mLimitedRecyclerView.setAdapter(mTrackingListAdapter);
+        initLimitedRecyclerView();
 
         mActionButton.setOnClickListener(view -> {
             mNavController.navigate(R.id.apps_dest);
@@ -119,7 +113,9 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         setHasOptionsMenu(true);
         bottomSheetBehaviorInit();
 
+
         mModelView.getLimitedItems();
+
         mModelView.getAllIgnoreItems().observe(getViewLifecycleOwner(), apps -> {
             mTrackingListAdapter.setList(apps);
         });
@@ -128,11 +124,19 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         return root;
     }
 
+    private void initLimitedRecyclerView() {
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(mLimitedRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
+        mLimitedRecyclerView.addItemDecoration(itemDecoration);
+        mLimitedRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        mTrackingListAdapter = new TrackingListAdapter(requireContext(), this);
+        mLimitedRecyclerView.setAdapter(mTrackingListAdapter);
+    }
+
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        ((MyApplication)context.getApplicationContext()).getAppComponent().inject(this);
+        ((MyApplication) context.getApplicationContext()).getAppComponent().inject(this);
     }
 
     private void init(View root) {
@@ -233,9 +237,9 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
 
         mLimitHourlyChip.setOnClickListener(hourlyView -> {
 //            if (!isChanged) {
-                mMinutesLimitDialogFragment.show(TrackingListFragment.this.getChildFragmentManager(), "f");
+            mMinutesLimitDialogFragment.show(TrackingListFragment.this.getChildFragmentManager(), "f");
 //            } else {
-                Toast.makeText(requireActivity().getApplicationContext(), getString(R.string.cannot_change_time), Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireActivity().getApplicationContext(), getString(R.string.cannot_change_time), Toast.LENGTH_SHORT).show();
 //            }
 
         });
@@ -306,9 +310,13 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         //TODO
         /// TODO: add this data when add? and when onPause?
         mModelView.refresh(items);
-        mAppsDetailViewModel.intervalList(mPackageName).observe(getViewLifecycleOwner(), apps -> {
-            mDetailFragmentAdapter.setList(apps);
-        });
+
+//        mAppsDetailViewModel.intervalList(mPackageName).observe(getViewLifecycleOwner(), apps -> {
+//            mDetailFragmentAdapter.setList(apps);
+//        });
+
+        mDetailFragmentAdapter.setList(mAppsDetailViewModel.intervalList(mPackageName));
+        mAppsDetailViewModel.intervalList(mPackageName);
 
         mTimeUsed.setText(Utils.formatMillisToSeconds(items.getTimeUsed()));
     }

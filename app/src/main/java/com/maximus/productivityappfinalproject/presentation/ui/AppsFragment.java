@@ -9,13 +9,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -27,26 +25,15 @@ import com.maximus.productivityappfinalproject.MyApplication;
 import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
 import com.maximus.productivityappfinalproject.presentation.AppRecyclerViewAdapter;
-import com.maximus.productivityappfinalproject.presentation.AppsViewModel;
+import com.maximus.productivityappfinalproject.presentation.viewmodels.AppsViewModel;
 import com.maximus.productivityappfinalproject.presentation.OnSwipeAppToLimitedList;
 import com.maximus.productivityappfinalproject.presentation.SimpleItemTouchHelperCallback;
-
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
-import io.reactivex.Observable;
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 public class AppsFragment extends Fragment implements OnSwipeAppToLimitedList {
 

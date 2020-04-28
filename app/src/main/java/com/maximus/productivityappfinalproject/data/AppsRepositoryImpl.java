@@ -14,6 +14,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 
@@ -146,6 +147,13 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
     @Override
     public List<PhoneUsage> getPhoneUsageData() {
         return mPhoneUsageDataSource.getPhoneUsageData();
+    }
+
+    public Flowable<List<PhoneUsage>> getPhoneUsageFlowable() {
+        return Flowable.create(emitter -> {
+            emitter.onNext((mPhoneUsageDataSource.getPhoneUsageData()));
+            emitter.onComplete();
+        }, BackpressureStrategy.BUFFER);
     }
 
     @Override

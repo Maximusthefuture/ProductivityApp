@@ -26,9 +26,6 @@ import com.maximus.productivityappfinalproject.data.ScreenReceiver;
 import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManager;
 import com.maximus.productivityappfinalproject.device.MyUsageStatsManagerWrapper;
 import com.maximus.productivityappfinalproject.device.PhoneUsageNotificationManager;
-import com.maximus.productivityappfinalproject.di.AppComponent;
-import com.maximus.productivityappfinalproject.di.ContextModule;
-import com.maximus.productivityappfinalproject.di.DaggerAppComponent;
 import com.maximus.productivityappfinalproject.domain.GetAppWithLimitUseCase;
 import com.maximus.productivityappfinalproject.domain.GetClosestTimeUseCase;
 import com.maximus.productivityappfinalproject.domain.ResetAppUseTimeDbUseCase;
@@ -41,16 +38,10 @@ import com.maximus.productivityappfinalproject.utils.MyPreferenceManager;
 import com.maximus.productivityappfinalproject.utils.Utils;
 
 import java.util.Calendar;
-import java.util.List;
 
 import javax.inject.Inject;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 
 //TODO ForegroundService
@@ -93,8 +84,6 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
     @Override
     public void onCreate() {
         ((MyApplication) getApplication()).getAppComponent().inject(this);
-//        AppComponent appComponent = DaggerAppComponent.builder().contextModule(new ContextModule(this)).build();
-//        appComponent.inject(this);
         super.onCreate();
 
         appLaunchThread = new HandlerThread("MyHandlerThread", Process.THREAD_PRIORITY_BACKGROUND);
@@ -107,8 +96,6 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
         mNotificationManager = new PhoneUsageNotificationManager(this);
         mNotificationManager.createNotificationChannel();
         mHandler = new Handler(mLooper);
-//        MyPreferenceManager.init(getApplicationContext());
-
         IntentFilter filter = new IntentFilter(Intent.ACTION_BOOT_COMPLETED);
         filter.addAction(Intent.ACTION_SCREEN_ON);
         mScreenReceiver = new ScreenReceiver();
@@ -146,7 +133,6 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
     //todo some refactor
     private void resetHour() {
        Disposable d =  mAppsRepository.getPhoneUsage()
-                .subscribeOn(Schedulers.computation())
                 .filter(phoneUsage -> {
                     for (PhoneUsage usage : phoneUsage) {
                         if (usage.getTimeCompletedInHour() > 0) {
@@ -157,7 +143,6 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
                     Log.d(TAG, "test() called with: phoneUsage = [" + phoneUsage + "false]");
                     return false;
                 })
-                .observeOn(Schedulers.computation())
                 .subscribe(phoneUsage -> {
                     for (PhoneUsage usage : phoneUsage) {
                         Log.d(TAG, "accept: before update" + usage.getPackageName() + "   " + usage.getTimeCompletedInHour());
@@ -195,10 +180,10 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
         if (mGetAppWithLimitUseCase.isLimitSet(currentForegroundApp)) {
             Log.d(TAG, "currentForegroundApp: " + currentForegroundApp);
 
-            AppUsageLimitModel appUsageLimitModel = mGetAppWithLimitUseCase.getAppUsageLimitFromDB(currentForegroundApp);
+            AppUsageLimitModel appUsageLimitModel = mGetAppWithLimitUseCase.appUsageLimitObservable(currentForegroundApp);
             Log.d(TAG, "TimeLimitPerHour: " + appUsageLimitModel.getTimeLimitPerHour());
-
             PhoneUsage phoneUsage = mGetAppWithLimitUseCase.getAppUsageData(currentForegroundApp);
+            Log.d(TAG, "PhoneUsage:  " + phoneUsage.getTimeCompletedInHour());
             long limitTime = appUsageLimitModel.getTimeLimitPerHour() - phoneUsage.getTimeCompletedInHour();
             Log.d(TAG, "notificationMinutes: " + notificationMinutes);
             Log.d(TAG, "limit time: " + limitTime);
@@ -206,12 +191,7 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
             Intent intent = new Intent(this, Reminder.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
             if (limitTime <= notificationMinutes) {
-//                toast.show();
-//                startActivity(intent);
-//                toast.cancel();
-//                startActivity(intent);
-
-//              this.getApplicationContext().startActivity(intent);
+                //toast?
             }
 
             if (mSharedPrefManager.getClosestHour() < Calendar.getInstance().getTimeInMillis()
@@ -233,6 +213,7 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
 
             if (currentForegroundApp != null) {
                 mGetAppWithLimitUseCase.updateCurrentAppStats(currentForegroundApp);
+                Log.d(TAG, "updateCurrentAppStats calls");
             }
 
             if (Utils.isTimeBeforeBad(appUsageLimitModel, 22,

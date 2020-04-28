@@ -5,12 +5,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.maximus.productivityappfinalproject.ViewModelFactory
 import com.maximus.productivityappfinalproject.data.AppsRepository
 import com.maximus.productivityappfinalproject.device.MyUsageStatsManagerWrapper
-import com.maximus.productivityappfinalproject.domain.GetAppsUseCase
-import com.maximus.productivityappfinalproject.domain.LimitedListUseCase
-import com.maximus.productivityappfinalproject.domain.SetAppWithLimitUseCase
-import com.maximus.productivityappfinalproject.presentation.AppsViewModel
-import com.maximus.productivityappfinalproject.presentation.LimitedListViewModel
-import com.maximus.productivityappfinalproject.presentation.UsageLimitViewModel
+import com.maximus.productivityappfinalproject.domain.*
+import com.maximus.productivityappfinalproject.presentation.viewmodels.AppsDetailViewModel
+import com.maximus.productivityappfinalproject.presentation.viewmodels.AppsViewModel
+import com.maximus.productivityappfinalproject.presentation.viewmodels.LimitedListViewModel
+import com.maximus.productivityappfinalproject.presentation.viewmodels.UsageLimitViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoMap
@@ -28,8 +27,16 @@ class ViewModelModule {
     @Provides
     @IntoMap
     @ViewModelKey(AppsViewModel::class)
-    fun getAppViewModel(limitedListUseCase: LimitedListUseCase, myUsageStatsManagerWrapper: MyUsageStatsManagerWrapper, getAppsUseCase: GetAppsUseCase): ViewModel {
-        return AppsViewModel(limitedListUseCase, myUsageStatsManagerWrapper, getAppsUseCase)
+    fun getAppViewModel(limitedListUseCase: LimitedListUseCase, myUsageStatsManagerWrapper: MyUsageStatsManagerWrapper,
+                        getAppsUseCase: GetAppsUseCase, searchAppUseCase: SearchAppUseCase): ViewModel {
+        return AppsViewModel(limitedListUseCase, myUsageStatsManagerWrapper, getAppsUseCase, searchAppUseCase)
+    }
+
+    @Provides
+    @IntoMap
+    @ViewModelKey(AppsDetailViewModel::class)
+    fun getAppsDetailViewModel(getAppIntervalUseCase: GetAppIntervalUseCase): ViewModel {
+        return AppsDetailViewModel(getAppIntervalUseCase)
     }
 
     @Provides

@@ -1,4 +1,4 @@
-package com.maximus.productivityappfinalproject.presentation;
+package com.maximus.productivityappfinalproject.presentation.viewmodels;
 
 import android.app.Application;
 import android.content.Context;
@@ -18,10 +18,12 @@ import com.maximus.productivityappfinalproject.device.MyUsageStatsManagerWrapper
 import com.maximus.productivityappfinalproject.device.PhoneUsageNotificationManager;
 import com.maximus.productivityappfinalproject.domain.GetAppsUseCase;
 import com.maximus.productivityappfinalproject.domain.LimitedListUseCase;
+import com.maximus.productivityappfinalproject.domain.SearchAppUseCase;
 import com.maximus.productivityappfinalproject.domain.ShowAppUsageUseCase;
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
 import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 import com.maximus.productivityappfinalproject.framework.IgnoreAppDataSourceImp;
+import com.maximus.productivityappfinalproject.presentation.AppRecyclerViewAdapter;
 import com.maximus.productivityappfinalproject.service.NotificationService;
 import com.maximus.productivityappfinalproject.utils.MyPreferenceManager;
 
@@ -43,34 +45,23 @@ import io.reactivex.schedulers.Schedulers;
 
 public class AppsViewModel extends ViewModel {
     private static final String TAG = "AppsViewModel";
-    private AppsRepositoryImpl mRepository;
     private LiveData<List<AppsModel>> mAllApps;
     private MutableLiveData<Integer> mDayInterval = new MutableLiveData<>();
     private GetAppsUseCase mAppsUseCase;
     private LimitedListUseCase mIgnoreListUseCase;
     private MyUsageStatsManagerWrapper mMyUsageStatsManagerWrapper;
-    private ShowAppUsageUseCase mShowAppUsageUseCase;
-    private PhoneUsageNotificationManager mManager;
-    private IgnoreAppDataSource mIgnoreAppDataSource;
-//    @Inject
-//     PhoneUsageDataSource mDataSource;
+    private SearchAppUseCase mSearchAppUseCase;
+
     //TODO
     private boolean isSystemAppMenuChecked;
 
     @Inject
-    public AppsViewModel(LimitedListUseCase limitedListUseCase, MyUsageStatsManagerWrapper myUsageStatsManagerWrapper, GetAppsUseCase useCase) {
-//        mDataSource = new PhoneUsageDataSourceImp(mContext);
-//        mIgnoreAppDataSource = new IgnoreAppDataSourceImp(mContext);
-//        mMyUsageStatsManagerWrapper = new MyUsageStatsManagerWrapper(mContext, mIgnoreAppDataSource);
-//        mRepository = new AppsRepositoryImpl(mIgnoreAppDataSource, mDataSource);
-//        mIgnoreListUseCase = new LimitedListUseCase(mRepository);
-//        mAppsUseCase = new GetAppsUseCase(mMyUsageStatsManagerWrapper);
+    public AppsViewModel(LimitedListUseCase limitedListUseCase, MyUsageStatsManagerWrapper myUsageStatsManagerWrapper, GetAppsUseCase useCase, SearchAppUseCase searchAppUseCase) {
         mIgnoreListUseCase = limitedListUseCase;
         mMyUsageStatsManagerWrapper = myUsageStatsManagerWrapper;
         mAppsUseCase = useCase;
-
+        mSearchAppUseCase = searchAppUseCase;
         mAllApps = mAppsUseCase.getAllApps(false, 0);
-//        mShowAppUsageUseCase = new ShowAppUsageUseCase(mManager);
         mDayInterval.setValue(0);
     }
 
@@ -78,38 +69,9 @@ public class AppsViewModel extends ViewModel {
         return mAllApps;
     }
 
-
-
-
-
-    //TODO MOVE TO USECASE
-    public List<AppsModel> searchLogic(String query) {
-        List<AppsModel> list = mMyUsageStatsManagerWrapper.getAllAppsObservable(false, 0);
-        List<AppsModel> list2 = new ArrayList<>();
-        for (AppsModel appsModel : list) {
-            if (appsModel.getAppName().toLowerCase().contains(query)) {
-                list2.add(new AppsModel(appsModel.getPackageName(), appsModel.getAppName(), appsModel.getAppIcon(), appsModel.getLastTimeUsed(), appsModel.getAppUsageTime()));
-                return list2;
-            }
-        }
-        return Collections.emptyList();
-    }
-
     @NotNull
     public Disposable searchWithSearchView(Flowable<String> search, AppRecyclerViewAdapter mAdapter) {
-        return search
-                .observeOn(Schedulers.computation())
-                .filter(s -> s.length() >= 3)
-                .map(new Function<String, List<AppsModel>>() {
-                    @Override
-                    public List<AppsModel> apply(String s) throws Exception {
-                        return searchLogic(s.toLowerCase());
-                    }
-                })
-                .debounce(500, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(mAdapter::setList, e -> {
-                });
+        return mSearchAppUseCase.searchWithSearchView(search, mAdapter);
     }
 
     public void insertToIgnoreList(AppsModel info) {

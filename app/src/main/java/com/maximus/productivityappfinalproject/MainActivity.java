@@ -75,21 +75,6 @@ public class MainActivity extends AppCompatActivity  {
         }
     }
 
-//    private void startServiceFromPrefs() {
-//        MyPreferenceManager.init(this);
-//        boolean it = MyPreferenceManager.getInstance().getBoolean(getString(R.string.show_notification_key));
-//        Intent intent = new Intent(this, CheckAppLaunchService.class);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            if (it) {
-//                startForegroundService(intent);
-//            } else {
-//                startService(intent);
-//            }
-//        } else if (it){
-//            startService(intent);
-//        }
-//    }
-
     private void startService() {
         Intent intent = new Intent(this, CheckAppLaunchService.class);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

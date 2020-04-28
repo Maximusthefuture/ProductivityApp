@@ -1,4 +1,4 @@
-package com.maximus.productivityappfinalproject.presentation;
+package com.maximus.productivityappfinalproject.presentation.viewmodels;
 
 import android.app.Application;
 import android.content.Context;
