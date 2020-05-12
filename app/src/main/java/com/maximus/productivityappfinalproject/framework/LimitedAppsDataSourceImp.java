@@ -18,9 +18,10 @@ public class IgnoreAppDataSourceImp implements IgnoreAppDataSource {
     private AppsDatabase mAppsDatabase;
 
     @Inject
-    public IgnoreAppDataSourceImp(Context context) {
+    public IgnoreAppDataSourceImp(Context context, AppsDatabase appsDatabase) {
         mContext = context;
-        mAppsDatabase = AppsDatabase.getInstance(mContext);
+        this.mAppsDatabase = appsDatabase;
+//        mAppsDatabase = AppsDatabase.getInstance(mContext);
     }
 
     @Override

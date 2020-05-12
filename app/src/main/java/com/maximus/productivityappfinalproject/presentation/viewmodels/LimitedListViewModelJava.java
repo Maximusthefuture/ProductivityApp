@@ -41,6 +41,9 @@ public class LimitedListViewModel extends ViewModel {
 
     AppsRepository mAppsRepository;
 
+    @Inject
+    AppsRepositoryImpl mAppsRepositoryImpl;
+
     LimitedListUseCase mLimitedListUseCase;
     private MutableLiveData<List<LimitedApps>> mAllIgnoreItems;
     /**
@@ -101,16 +104,18 @@ public class LimitedListViewModel extends ViewModel {
 
 
 //    public String getRemainingTime(String packageName) {
-//        getLimited()
+//        String her;
+//        mAppsRepositoryImpl.getLimitObservable()
 //                .flatMap((list) -> Observable.fromIterable(list))
 //                .subscribe((app) -> {
 //                    if (app.getPackageName().equals(packageName)) {
-//                        app.getTimeLimitPerHour();
+//                        her = Utils.formatMillisToSeconds(app.getTimeLimitPerHour());
 //                    }
 //                }, e -> {
 //                    Log.e(TAG, "getRemainingTime: ", e);
 //                });
-//        return null;
+//        return her;
+//
 //    }
 
 
