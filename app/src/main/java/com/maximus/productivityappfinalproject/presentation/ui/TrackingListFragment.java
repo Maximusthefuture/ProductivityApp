@@ -37,11 +37,11 @@ import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManagerImpl;
 import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 import com.maximus.productivityappfinalproject.presentation.AppDetailFragmentRecyclerViewAdapter;
-import com.maximus.productivityappfinalproject.presentation.viewmodels.AppsDetailViewModel;
-import com.maximus.productivityappfinalproject.presentation.viewmodels.LimitedListViewModel;
 import com.maximus.productivityappfinalproject.presentation.OnIgnoreItemClickListener;
 import com.maximus.productivityappfinalproject.presentation.OnTrackingItemLongClickListener;
 import com.maximus.productivityappfinalproject.presentation.TrackingListAdapter;
+import com.maximus.productivityappfinalproject.presentation.viewmodels.AppsDetailViewModel;
+import com.maximus.productivityappfinalproject.presentation.viewmodels.LimitedListViewModel;
 import com.maximus.productivityappfinalproject.presentation.viewmodels.UsageLimitViewModel;
 import com.maximus.productivityappfinalproject.utils.Utils;
 
@@ -86,9 +86,6 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     private RecyclerView mTimeUsedRecyclerView;
     private AppDetailFragmentRecyclerViewAdapter mDetailFragmentAdapter;
     private ChipGroup mSelectDay;
-    private LimitedAppDetailSheet mLimitedAppDetailSheet;
-    private LinearLayout mLineaLVL;
-    private TextView mNothingTextView;
     private CompositeDisposable mCompositeDisposable;
     private TextView mRemainTime;
 
@@ -114,7 +111,8 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         bottomSheetBehaviorInit();
 
 
-        mModelView.getLimitedItems();
+//        mModelView.getLimitedItems();
+        mModelView.getAllLimitedItems();
 
         mModelView.getAllIgnoreItems().observe(getViewLifecycleOwner(), apps -> {
             mTrackingListAdapter.setList(apps);
@@ -126,7 +124,7 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
 
     private void initLimitedRecyclerView() {
         DividerItemDecoration itemDecoration = new DividerItemDecoration(mLimitedRecyclerView.getContext(), DividerItemDecoration.VERTICAL);
-        mLimitedRecyclerView.addItemDecoration(itemDecoration);
+//        mLimitedRecyclerView.addItemDecoration(itemDecoration);
         mLimitedRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         mTrackingListAdapter = new TrackingListAdapter(requireContext(), this);
         mLimitedRecyclerView.setAdapter(mTrackingListAdapter);
@@ -147,8 +145,7 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         mLimitHourlyChip = root.findViewById(R.id.limit_in_hour);
         mTimeUsedRecyclerView = root.findViewById(R.id.app_limit_recycler_view);
         mSelectDay = root.findViewById(R.id.interval_chip_group);
-        mRemainTime = root.findViewById(R.id.remain_time_tv);
-        mNothingTextView = root.findViewById(R.id.nothing);
+        mRemainTime = root.findViewById(R.id.remain_time);
         mActionButton = root.findViewById(R.id.fab_add_app);
         mLimitedRecyclerView = root.findViewById(R.id.limited_list_recycler_view);
         mLinearLayout = root.findViewById(R.id.bottom_sheet);
@@ -274,7 +271,7 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.delete_all:
-                mModelView.deleteAll();
+                mModelView.deleteAllLimitedItems();
                 break;
             case R.id.sort_by_usage_time:
             case R.id.sort_by_limited_time:
@@ -307,9 +304,17 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         showLimitedTime();
 
 
+        mModelView.test(mPackageName);
+//        mModelView.getRemainingTime(mPackageName);
+        mModelView.getTime().observe(getViewLifecycleOwner(), string -> {
+            Log.d(TAG, "onItemClickListener: " + string);
+            mRemainTime.setText(string);
+        });
+
+
         //TODO
         /// TODO: add this data when add? and when onPause?
-        mModelView.refresh(items);
+//        mModelView.refresh(items);
 
 //        mAppsDetailViewModel.intervalList(mPackageName).observe(getViewLifecycleOwner(), apps -> {
 //            mDetailFragmentAdapter.setList(apps);
@@ -346,7 +351,7 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     @Override
     public void onItemDelete(String ignoreItems) {
         //Call dialog before delete
-        mModelView.deleteItem(ignoreItems);
+//        mModelView.deleteItem(ignoreItems);
         mTrackingListAdapter.notifyDataSetChanged();
 
     }

@@ -23,9 +23,6 @@ public interface PhoneUsageDao {
     @Query("SELECT * FROM phone_usage_table")
     List<PhoneUsage> getPhoneUsageData();
 
-//    @Query("SELECT * FROM phone_usage WHERE usage_time =:usageTime")
-//    String getUsageTime(String usageTime);
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertPhoneUsage(PhoneUsage phoneUsage);
 
@@ -42,6 +39,6 @@ public interface PhoneUsageDao {
     void deletePhoneUsage();
 
     @Query("UPDATE phone_usage_table SET time_completed_in_day = :usedPerDay,"
-    + "  time_completed_in_hour= :usedPerHour")
+            + "  time_completed_in_hour= :usedPerHour")
     void updateUsageTime(long usedPerDay, long usedPerHour);
 }

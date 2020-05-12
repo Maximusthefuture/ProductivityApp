@@ -1,6 +1,5 @@
 package com.maximus.productivityappfinalproject.data;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManager;
@@ -43,14 +42,14 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
 
     private MutableLiveData<List<LimitedApps>> mIgnoreItems = new MutableLiveData<>();
     private MutableLiveData<Integer> mPhoneUsage = new MutableLiveData<>();
-    private IgnoreAppDataSource mIgnoreAppDataSource;
+    private LimitedAppsDataSource mLimitedAppsDataSource;
     private PhoneUsageDataSource mPhoneUsageDataSource;
     private AppLimitDataSource mAppLimitDataSource;
     private SharedPrefManager mSharedPrefManager;
 
 
-    public AppsRepositoryImpl(IgnoreAppDataSource ignoreAppDataSource) {
-        mIgnoreAppDataSource = ignoreAppDataSource;
+    public AppsRepositoryImpl(LimitedAppsDataSource limitedAppsDataSource) {
+        mLimitedAppsDataSource = limitedAppsDataSource;
 
     }
 
@@ -63,8 +62,8 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
         mAppLimitDataSource = appLimitDataSource;
     }
 
-    public AppsRepositoryImpl(IgnoreAppDataSource ignoreAppDataSource, PhoneUsageDataSource phoneUsageDataSource) {
-        mIgnoreAppDataSource = ignoreAppDataSource;
+    public AppsRepositoryImpl(LimitedAppsDataSource limitedAppsDataSource, PhoneUsageDataSource phoneUsageDataSource) {
+        mLimitedAppsDataSource = limitedAppsDataSource;
         mPhoneUsageDataSource = phoneUsageDataSource;
     }
 
@@ -74,16 +73,17 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
         mAppLimitDataSource = appLimitDataSource;
         mSharedPrefManager = prefManager;
     }
+
     @Inject
-    public AppsRepositoryImpl(IgnoreAppDataSource ignoreAppDataSource, PhoneUsageDataSource phoneUsageDataSource, AppLimitDataSource appLimitDataSource, SharedPrefManager sharedPrefManager) {
-        mIgnoreAppDataSource = ignoreAppDataSource;
+    public AppsRepositoryImpl(LimitedAppsDataSource limitedAppsDataSource, PhoneUsageDataSource phoneUsageDataSource, AppLimitDataSource appLimitDataSource, SharedPrefManager sharedPrefManager) {
+        mLimitedAppsDataSource = limitedAppsDataSource;
         mPhoneUsageDataSource = phoneUsageDataSource;
         mAppLimitDataSource = appLimitDataSource;
         mSharedPrefManager = sharedPrefManager;
     }
 
-    public AppsRepositoryImpl(IgnoreAppDataSource ignoreAppDataSource, AppLimitDataSource appLimitDataSource) {
-        mIgnoreAppDataSource = ignoreAppDataSource;
+    public AppsRepositoryImpl(LimitedAppsDataSource limitedAppsDataSource, AppLimitDataSource appLimitDataSource) {
+        mLimitedAppsDataSource = limitedAppsDataSource;
         mAppLimitDataSource = appLimitDataSource;
     }
 
@@ -93,8 +93,11 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
     }
 
     @Override
-    public Flowable<List<LimitedApps>> getIgnoreItems() {
-        return mIgnoreAppDataSource.getAll();
+    public Observable<List<LimitedApps>> getIgnoreItems() {
+        return Observable.create(emitter -> {
+            emitter.onNext(mLimitedAppsDataSource.getAll());
+            emitter.onComplete();
+        });
     }
 
     public Observable<List<AppUsageLimitModel>> getLimited() {
@@ -106,35 +109,31 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
 
     public Observable<List<PhoneUsage>> getPhoneUsage() {
         return Observable.create(emitter -> {
-           emitter.onNext(mPhoneUsageDataSource.getPhoneUsageData());
-           emitter.onComplete();
+            emitter.onNext(mPhoneUsageDataSource.getPhoneUsageData());
+            emitter.onComplete();
         });
-    }
-
-    public void setPhone(long hour, long day) {
-        mPhoneUsageDataSource.updateUsageTime(hour, day);
     }
 
     @Override
     public void insertToIgnoreList(LimitedApps item) {
         AppsDatabase.databaseWriterExecutor.execute(() ->
-                mIgnoreAppDataSource.add(item));
+                mLimitedAppsDataSource.add(item));
+//        mLimitedAppsDataSource.add(item);
     }
 
     @Override
     public void deleteFromIgnoreList(String packageName) {
         AppsDatabase.databaseWriterExecutor.execute(() -> {
-            mIgnoreAppDataSource.removeItem(packageName);
+            mLimitedAppsDataSource.removeItem(packageName);
         });
     }
 
     @Override
     public void deleteAllIgnoreList() {
         AppsDatabase.databaseWriterExecutor.execute(() -> {
-            mIgnoreAppDataSource.removeAll();
+            mLimitedAppsDataSource.removeAll();
         });
     }
-
 
 
     @Override
@@ -188,7 +187,7 @@ public class AppsRepositoryImpl implements AppsRepository, ApiRepository {
     }
 
     public Observable<List<AppUsageLimitModel>> getLimitObservable() {
-        return Observable.create(emmiter-> {
+        return Observable.create(emmiter -> {
             emmiter.onNext(mAppLimitDataSource.getLimitedApps());
             emmiter.onComplete();
         });

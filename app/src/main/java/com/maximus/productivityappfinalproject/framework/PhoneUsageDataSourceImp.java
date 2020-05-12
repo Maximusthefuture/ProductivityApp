@@ -1,7 +1,5 @@
 package com.maximus.productivityappfinalproject.framework;
 
-import android.content.Context;
-
 import com.maximus.productivityappfinalproject.data.PhoneUsageDataSource;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 import com.maximus.productivityappfinalproject.framework.db.AppsDatabase;
@@ -11,13 +9,11 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class PhoneUsageDataSourceImp implements PhoneUsageDataSource {
-    private Context mContext;
+
     private AppsDatabase mAppsDatabase;
 
     @Inject
-    public PhoneUsageDataSourceImp(Context context, AppsDatabase appsDatabase) {
-        mContext = context;
-//        mAppsDatabase = AppsDatabase.getInstance(mContext);
+    public PhoneUsageDataSourceImp(AppsDatabase appsDatabase) {
         this.mAppsDatabase = appsDatabase;
     }
 
@@ -63,7 +59,7 @@ public class PhoneUsageDataSourceImp implements PhoneUsageDataSource {
 
     @Override
     public void updateUsageTime(long perDay, long perHour) {
-        mAppsDatabase.phoneUsageDao().updateUsageTime( perDay, perHour);
+        mAppsDatabase.phoneUsageDao().updateUsageTime(perDay, perHour);
     }
 
 }

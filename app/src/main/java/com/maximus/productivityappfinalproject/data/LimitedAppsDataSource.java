@@ -4,13 +4,11 @@ import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 
 import java.util.List;
 
-import io.reactivex.Flowable;
-
-public interface IgnoreAppDataSource {
+public interface LimitedAppsDataSource {
 
     void add(LimitedApps item);
 
-    Flowable<List<LimitedApps>> getAll();
+    List<LimitedApps> getAll();
 
     void removeItem(String packageName);
 

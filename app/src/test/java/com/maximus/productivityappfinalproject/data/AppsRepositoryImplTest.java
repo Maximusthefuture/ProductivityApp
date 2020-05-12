@@ -4,10 +4,9 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 
 import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManagerImpl;
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
-import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 import com.maximus.productivityappfinalproject.framework.AppLimitDataSourceImpl;
-import com.maximus.productivityappfinalproject.framework.IgnoreAppDataSourceImp;
+import com.maximus.productivityappfinalproject.framework.LimitedAppsDataSourceImp;
 import com.maximus.productivityappfinalproject.framework.PhoneUsageDataSourceImp;
 
 import org.junit.Before;
@@ -29,7 +28,7 @@ public class AppsRepositoryImplTest {
     public InstantTaskExecutorRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
 
     @Mock
-    private IgnoreAppDataSourceImp mIgnoreAppDataSource;
+    private LimitedAppsDataSourceImp mIgnoreAppDataSource;
 
     @Mock
     private PhoneUsageDataSourceImp mPhoneUsageDataSource;

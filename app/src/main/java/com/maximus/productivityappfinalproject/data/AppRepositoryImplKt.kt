@@ -1,17 +1,17 @@
 package com.maximus.productivityappfinalproject.data
 
-import androidx.lifecycle.LiveData
 import com.maximus.productivityappfinalproject.data.prefs.SharedPrefManager
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel
 import com.maximus.productivityappfinalproject.domain.model.LimitedApps
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage
 import io.reactivex.Flowable
+import io.reactivex.Observable
 
 class AppRepositoryImplKt (
         val phoneUsageDataSource: PhoneUsageDataSource? = null,
         val appDataSource: AppLimitDataSource? = null,
         val sharedPrefManager: SharedPrefManager? = null,
-        val ignoreAppDataSource: IgnoreAppDataSource? = null
+        val limitedAppsDataSource: LimitedAppsDataSource? = null
 ): AppsRepository, ApiRepository{
 
 
@@ -19,7 +19,7 @@ class AppRepositoryImplKt (
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun getIgnoreItems(): Flowable<MutableList<LimitedApps>> {
+    override fun getIgnoreItems(): Observable<MutableList<LimitedApps>> {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

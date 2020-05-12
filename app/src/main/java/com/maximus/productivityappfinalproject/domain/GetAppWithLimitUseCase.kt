@@ -37,9 +37,10 @@ class GetAppWithLimitUseCase @Inject constructor(private var appsRepository: App
     }
 
     @SuppressLint("CheckResult")
-    fun appUsageLimitObservable(packageName: String): AppUsageLimitModel {
+    fun getAppUsageLimit(packageName: String): AppUsageLimitModel {
         var appUsageLimitModel = AppUsageLimitModel()
         appsRepository.limitObservable
+//                .subscribeOn(Schedulers.io())
                 .flatMap { Observable.fromIterable(it) }
                 .filter {
                     it.isAppLimited && it.packageName == packageName
@@ -63,12 +64,10 @@ class GetAppWithLimitUseCase @Inject constructor(private var appsRepository: App
                 .filter {
                     it.packageName == appPackageName
                 }
-//                .doOnNext { Log.d(TAG,  "in doOnNext: ${Thread.currentThread().name}") }
                 .subscribe({
                     phoneUsage = PhoneUsage(it.packageName, it.timeCompletedInHour, it.timeCompletedInDay)
-//                    Log.d(TAG, "in subscribe:  ${Thread.currentThread().name}")
                 }, {
-
+                    Log.e(TAG, it.localizedMessage)
                 })
         return phoneUsage
 
@@ -101,7 +100,7 @@ class GetAppWithLimitUseCase @Inject constructor(private var appsRepository: App
             timeCompletedThisDay = getTimeDay
             timeCompletedThisDay += timeCompletedThisUse
             phoneUsage = PhoneUsage(currentAppForeground, timeCompletedThisHour, timeCompletedThisDay)
-            appsRepository.updatePhoneUsage(phoneUsage)
+            appsRepository.insertPhoneUsage(phoneUsage)
         } else {
             phoneUsage = PhoneUsage(currentAppForeground, getTimeHour, getTimeDay)
             appsRepository.insertPhoneUsage(phoneUsage)
@@ -112,15 +111,17 @@ class GetAppWithLimitUseCase @Inject constructor(private var appsRepository: App
     // and then going in limited app, time is adding to prev app
     fun updateCurrentAppStats(currentAppForeground: String) {
         var currentTimeForeground = System.currentTimeMillis() - currentTime
-        if (prevApp != currentAppForeground) {
-            if (prevApp != noAPP) {
+        if (!prevApp.equals(currentAppForeground)) {
+            if (!prevApp.equals(noAPP)) {
                 Log.d(TAG, "usageUpdated to $prevApp for $currentTimeForeground")
-                updateAppUsage(prevApp, currentTimeForeground)
+//                prevApp?.let { updateAppUsage(it, currentTimeForeground) }
+               updateAppUsage(prevApp, currentTimeForeground)
             }
             prevApp = currentAppForeground
             currentTime = System.currentTimeMillis()
 
         } else if (currentTimeForeground >= 15000) {
+//            prevApp?.let{  updateAppUsage(it, currentTimeForeground)}
             updateAppUsage(prevApp, currentTimeForeground)
             Log.d(TAG, "usageUpdated to $prevApp for $currentTimeForeground")
             currentTime = System.currentTimeMillis()

@@ -22,7 +22,7 @@
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".presentation.ui.Reminder"
             android:launchMode="singleInstance"
-            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar"
+            android:theme="@style/Theme.MaterialComponents.BottomSheetDialog"
             android:taskAffinity="">
 
         </activity>

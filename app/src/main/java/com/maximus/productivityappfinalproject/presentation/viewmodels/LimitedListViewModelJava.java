@@ -35,7 +35,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class LimitedListViewModel extends ViewModel {
+public class LimitedListViewModelJava extends ViewModel {
 
     private static final String TAG = "IgnoreListViewModel";
 
@@ -58,7 +58,7 @@ public class LimitedListViewModel extends ViewModel {
 
 
     @Inject
-    public LimitedListViewModel(AppsRepository appsRepository, LimitedListUseCase useCase, MyUsageStatsManagerWrapper myUsageStatsManagerWrapper) {
+    public LimitedListViewModelJava(AppsRepository appsRepository, LimitedListUseCase useCase, MyUsageStatsManagerWrapper myUsageStatsManagerWrapper) {
         this.mAppsRepository = appsRepository;
         this.mLimitedListUseCase = useCase;
         this.mMyUsageStatsManagerWrapper = myUsageStatsManagerWrapper;

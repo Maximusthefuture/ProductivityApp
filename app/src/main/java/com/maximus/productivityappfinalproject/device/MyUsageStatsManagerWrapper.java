@@ -16,9 +16,8 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.maximus.productivityappfinalproject.data.IgnoreAppDataSource;
+import com.maximus.productivityappfinalproject.data.LimitedAppsDataSource;
 import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
-import com.maximus.productivityappfinalproject.framework.IgnoreAppDataSourceImp;
 import com.maximus.productivityappfinalproject.utils.IntervalEnum;
 import com.maximus.productivityappfinalproject.R;
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
@@ -42,17 +41,17 @@ public class MyUsageStatsManagerWrapper {
     private final PackageManager mPackageManager;
     private Context mContext;
     private MutableLiveData<List<AppsModel>> mAppsInterval = new MutableLiveData<>();
-    private IgnoreAppDataSource mIgnoreAppDataSource;
+    private LimitedAppsDataSource mLimitedAppsDataSource;
 
 
     @Inject
-    public MyUsageStatsManagerWrapper(Context context, IgnoreAppDataSource ignoreAppDataSource) {
+    public MyUsageStatsManagerWrapper(Context context, LimitedAppsDataSource limitedAppsDataSource) {
         mContext = context;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             mUsageStatsManager = (UsageStatsManager) mContext.getSystemService(Context.USAGE_STATS_SERVICE);
         }
         mPackageManager = mContext.getPackageManager();
-        this.mIgnoreAppDataSource = ignoreAppDataSource;
+        this.mLimitedAppsDataSource = limitedAppsDataSource;
 //        mIgnoreAppDataSource = new IgnoreAppDataSourceImp(mContext);
     }
 
@@ -181,7 +180,7 @@ public class MyUsageStatsManagerWrapper {
                 LimitedApps items = new LimitedApps(limitedApps.getPackageName(), limitedApps.getName(), lastTimeUsed, usedTime);
                 List<LimitedApps> list = new ArrayList<>();
                 list.add(items);
-                mIgnoreAppDataSource.update(items);
+                mLimitedAppsDataSource.update(items);
             }
         });
     }

@@ -2,8 +2,6 @@ package com.maximus.productivityappfinalproject.presentation.viewmodels;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,17 +9,10 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.maximus.productivityappfinalproject.data.IgnoreAppDataSource;
 import com.maximus.productivityappfinalproject.presentation.ui.AppsFragment;
 import com.maximus.productivityappfinalproject.utils.IntervalEnum;
-import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
-import com.maximus.productivityappfinalproject.device.MyUsageStatsManagerWrapper;
 import com.maximus.productivityappfinalproject.domain.GetAppIntervalUseCase;
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
-import com.maximus.productivityappfinalproject.framework.IgnoreAppDataSourceImp;
-import com.maximus.productivityappfinalproject.service.NotificationService;
-
-import java.util.List;
 
 public class AppsDetailViewModelJava extends AndroidViewModel {
 

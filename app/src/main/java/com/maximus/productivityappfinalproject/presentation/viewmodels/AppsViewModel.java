@@ -1,47 +1,27 @@
 package com.maximus.productivityappfinalproject.presentation.viewmodels;
 
-import android.app.Application;
-import android.content.Context;
-import android.content.Intent;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.maximus.productivityappfinalproject.R;
-import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl;
-import com.maximus.productivityappfinalproject.data.IgnoreAppDataSource;
-import com.maximus.productivityappfinalproject.data.PhoneUsageDataSource;
 import com.maximus.productivityappfinalproject.device.MyUsageStatsManagerWrapper;
-import com.maximus.productivityappfinalproject.device.PhoneUsageNotificationManager;
 import com.maximus.productivityappfinalproject.domain.GetAppsUseCase;
 import com.maximus.productivityappfinalproject.domain.LimitedListUseCase;
 import com.maximus.productivityappfinalproject.domain.SearchAppUseCase;
-import com.maximus.productivityappfinalproject.domain.ShowAppUsageUseCase;
 import com.maximus.productivityappfinalproject.domain.model.AppsModel;
 import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
-import com.maximus.productivityappfinalproject.framework.IgnoreAppDataSourceImp;
 import com.maximus.productivityappfinalproject.presentation.AppRecyclerViewAdapter;
-import com.maximus.productivityappfinalproject.service.NotificationService;
-import com.maximus.productivityappfinalproject.utils.MyPreferenceManager;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
 
 public class AppsViewModel extends ViewModel {
     private static final String TAG = "AppsViewModel";

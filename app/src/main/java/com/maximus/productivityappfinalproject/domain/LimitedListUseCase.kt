@@ -5,6 +5,7 @@ import com.maximus.productivityappfinalproject.data.AppsRepository
 import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl
 import com.maximus.productivityappfinalproject.domain.model.LimitedApps
 import io.reactivex.Flowable
+import io.reactivex.Observable
 import javax.inject.Inject
 
 class LimitedListUseCase @Inject constructor(private val mAppsRepositoryImpl: AppsRepository) {
@@ -17,7 +18,7 @@ class LimitedListUseCase @Inject constructor(private val mAppsRepositoryImpl: Ap
         mAppsRepositoryImpl.deleteFromIgnoreList(packageName)
     }
 
-    fun getLimitedList(): Flowable<List<LimitedApps>> {
+    fun getLimitedList(): Observable<List<LimitedApps>> {
         return mAppsRepositoryImpl.ignoreItems
     }
 

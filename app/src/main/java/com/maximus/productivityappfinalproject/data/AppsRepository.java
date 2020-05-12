@@ -1,6 +1,6 @@
 package com.maximus.productivityappfinalproject.data;
 
-import androidx.lifecycle.LiveData;
+
 
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
 import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
@@ -9,12 +9,13 @@ import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
 
 import java.util.List;
 
-import io.reactivex.Flowable;
+
+import io.reactivex.Observable;
 
 public interface AppsRepository {
 
 
-    Flowable<List<LimitedApps>> getIgnoreItems();
+    Observable<List<LimitedApps>> getIgnoreItems();
     void insertToIgnoreList(LimitedApps item);
     void deleteFromIgnoreList(String item);
     void deleteAllIgnoreList();

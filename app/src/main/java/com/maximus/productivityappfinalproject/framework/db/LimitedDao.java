@@ -10,13 +10,14 @@ import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Flowable;
 
 @Dao
-public interface IgnoreDao {
+public interface LimitedDao {
 
     @Query("SELECT * FROM ignore_table")
-    Flowable<List<LimitedApps>> getIgnoreItems();
+    List<LimitedApps> getIgnoreItems();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertIgnoreItem(LimitedApps item);

@@ -42,4 +42,8 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
 
+    <style name="ButtonStyle" parent="@style/Widget.AppCompat.Button.Colored">
+
+    </style>
+
 </resources>

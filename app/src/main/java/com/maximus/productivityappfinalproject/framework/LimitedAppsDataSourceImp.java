@@ -1,27 +1,18 @@
 package com.maximus.productivityappfinalproject.framework;
 
-import android.content.Context;
-
-import com.maximus.productivityappfinalproject.data.IgnoreAppDataSource;
+import com.maximus.productivityappfinalproject.data.LimitedAppsDataSource;
 import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 import com.maximus.productivityappfinalproject.framework.db.AppsDatabase;
-
 import java.util.List;
-
 import javax.inject.Inject;
 
-import io.reactivex.Flowable;
+public class LimitedAppsDataSourceImp implements LimitedAppsDataSource {
 
-public class IgnoreAppDataSourceImp implements IgnoreAppDataSource {
-
-    private Context mContext;
     private AppsDatabase mAppsDatabase;
 
     @Inject
-    public IgnoreAppDataSourceImp(Context context, AppsDatabase appsDatabase) {
-        mContext = context;
+    public LimitedAppsDataSourceImp(AppsDatabase appsDatabase) {
         this.mAppsDatabase = appsDatabase;
-//        mAppsDatabase = AppsDatabase.getInstance(mContext);
     }
 
     @Override
@@ -31,7 +22,7 @@ public class IgnoreAppDataSourceImp implements IgnoreAppDataSource {
     }
 
     @Override
-    public Flowable<List<LimitedApps>> getAll() {
+    public List<LimitedApps> getAll() {
         return mAppsDatabase.ignoreDao().getIgnoreItems();
     }
 

@@ -19,40 +19,10 @@ import java.util.concurrent.Executors;
 public abstract class AppsDatabase extends RoomDatabase {
     private static AppsDatabase INSTANCE;
 
-    public abstract IgnoreDao ignoreDao();
+    public abstract LimitedDao ignoreDao();
     public abstract PhoneUsageDao phoneUsageDao();
     public abstract AppLimitDao appLimitDao();
     public static final ExecutorService databaseWriterExecutor
             = Executors.newFixedThreadPool(5);
 
-    private static final Object sLock = new Object();
-
-    public static AppsDatabase getInstance(Context context) {
-        synchronized (sLock) {
-            if (INSTANCE == null) {
-                INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                        AppsDatabase.class, "Apps.db")
-                        .addCallback(sCallback)
-                        .fallbackToDestructiveMigration()
-                        .build();
-            }
-            return INSTANCE;
-        }
-    }
-
-
-    private static RoomDatabase.Callback sCallback = new RoomDatabase.Callback() {
-        @Override
-        public void onCreate(@NonNull SupportSQLiteDatabase db) {
-            super.onCreate(db);
-            databaseWriterExecutor.execute(() -> {
-                LimitedApps settings = new LimitedApps("com.android.settings","Settings");
-                LimitedApps myApp = new LimitedApps("com.maximus.productivityappfinalproject","ProductivityApp");
-//                IgnoreEntity ignoreEntity = new IgnoreEntity(ignoreItems.getPackageName(), ignoreItems.getName());
-                IgnoreDao dao = INSTANCE.ignoreDao();
-                dao.insertIgnoreItem(settings);
-                dao.insertIgnoreItem(myApp);
-            });
-        }
-    };
 }
