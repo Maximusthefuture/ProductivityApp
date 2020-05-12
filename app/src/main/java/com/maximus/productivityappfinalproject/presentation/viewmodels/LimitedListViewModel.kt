@@ -60,12 +60,11 @@ class LimitedListViewModel @Inject constructor(
     }
 
 
-    fun test(packageName: String){
-        var time: Long = 0;
+    fun getRemainTime(packageName: String){
         Observable.
                 zip(appRepositoryImpl.phoneUsage, appRepositoryImpl.limitObservable,
                 BiFunction<List<PhoneUsage>, List<AppUsageLimitModel>, Long> { t1: List<PhoneUsage>, t2: List<AppUsageLimitModel> ->
-                    test2(t1, t2, packageName)
+                    getRemainTimeFromDb(t1, t2, packageName)
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -81,7 +80,7 @@ class LimitedListViewModel @Inject constructor(
 
     }
 
-    private fun test2(phoneUsage: List<PhoneUsage>, appUsageLimitModel: List<AppUsageLimitModel>, packageName: String): Long {
+    private fun getRemainTimeFromDb(phoneUsage: List<PhoneUsage>, appUsageLimitModel: List<AppUsageLimitModel>, packageName: String): Long {
         var phoneUsageTime: Long = 0
         var appUsage: Long = 0
         var result: Long = 0
@@ -102,25 +101,5 @@ class LimitedListViewModel @Inject constructor(
 
         return result
     }
-
-    //
-    fun getRemainingTime(packageName: String): String? {
-        var timeString: String? = null
-        var d = appRepositoryImpl.phoneUsage
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .flatMap { Observable.fromIterable(it) }
-                .filter { it.packageName == packageName }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    timeString = Utils.formatMillisToSeconds(it.timeCompletedInHour)
-//                    _time.value = timeString
-                    Log.d(TAG, timeString)
-                }, {
-                    Log.d(TAG, it.localizedMessage)
-                })
-        return timeString
-    }
-
 
 }

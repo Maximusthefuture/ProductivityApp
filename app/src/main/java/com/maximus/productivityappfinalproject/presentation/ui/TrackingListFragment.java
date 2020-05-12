@@ -304,7 +304,7 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         showLimitedTime();
 
 
-        mModelView.test(mPackageName);
+        mModelView.getRemainTime(mPackageName);
 //        mModelView.getRemainingTime(mPackageName);
         mModelView.getTime().observe(getViewLifecycleOwner(), string -> {
             Log.d(TAG, "onItemClickListener: " + string);
