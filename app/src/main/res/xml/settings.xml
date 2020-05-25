@@ -17,8 +17,8 @@
             />
 
         <SwitchPreferenceCompat
-            android:title="Уведомления"
-            android:summary="Включить уведомление о времени"
+            android:title="Уведомления перед сном"
+            android:summary="12:50"
             />
 
 
@@ -43,12 +43,21 @@
             android:title="Время"
             android:summary="Просмотр оставшегося времени приложений"/>
 
+        <Preference
+            android:key="time_before_bed"
+            android:title="Установить время перед сном"
+            android:summary="Уведомление перед сном, о том что нужно убрать телефон"
+
+            />
+
         <ListPreference
             android:key="@string/notification_before_lock_key"
             android:entryValues="@array/notification_before_end_array_entriesValues"
             android:entries="@array/notification_before_end_array_entries"
             android:title="Напоминание"
             android:summary="Напоминать об завершении времени за "/>
+
+
 
         <Preference
             android:title="Об приложении"/>

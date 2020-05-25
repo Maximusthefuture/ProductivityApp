@@ -7,8 +7,6 @@ import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage
 import io.reactivex.Flowable
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 //можно использовать юз кейсы вместе с другими юз кейсами
@@ -25,7 +23,7 @@ class GetAppWithLimitUseCase @Inject constructor(private var appsRepository: App
     }
 
     fun isLimitSet(packageName: String?): Boolean {
-        var currentPackageName: String?
+        var currentPackageName: String
         val list = appsRepository.limitedItems
         for (appUsageLimitModel in list) {
             currentPackageName = appUsageLimitModel.packageName
@@ -37,8 +35,8 @@ class GetAppWithLimitUseCase @Inject constructor(private var appsRepository: App
     }
 
     @SuppressLint("CheckResult")
-    fun getAppUsageLimit(packageName: String): AppUsageLimitModel {
-        var appUsageLimitModel = AppUsageLimitModel()
+    fun getAppUsageLimit(packageName: String?): AppUsageLimitModel? {
+        var appUsageLimitModel: AppUsageLimitModel? = AppUsageLimitModel()
         appsRepository.limitObservable
 //                .subscribeOn(Schedulers.io())
                 .flatMap { Observable.fromIterable(it) }
@@ -57,7 +55,7 @@ class GetAppWithLimitUseCase @Inject constructor(private var appsRepository: App
     }
 
     @SuppressLint("CheckResult")
-    fun getAppUsageData(appPackageName: String):PhoneUsage {
+    fun getAppUsageData(appPackageName: String?):PhoneUsage? {
         var phoneUsage = PhoneUsage()
         appsRepository.phoneUsageFlowable
                 .flatMap { Flowable.fromIterable(it) }
@@ -73,12 +71,10 @@ class GetAppWithLimitUseCase @Inject constructor(private var appsRepository: App
 
     }
 
-
-
-    private fun updateAppUsage(currentAppForeground: String, timeCompletedThisUse: Long) {
+    private fun updateAppUsage(currentAppForeground: String?, timeCompletedThisUse: Long) {
         var phoneUsage: PhoneUsage = PhoneUsage()
         var isFound = false
-        var currentPackageName: String? = null
+        var currentPackageName: String
         var getTimeDay: Long = 0
         var getTimeHour: Long = 0
         var timeCompletedThisHour: Long = 0
@@ -109,15 +105,15 @@ class GetAppWithLimitUseCase @Inject constructor(private var appsRepository: App
 
     //todo when no app is opened and user in home screen,
     // and then going in limited app, time is adding to prev app
-    fun updateCurrentAppStats(currentAppForeground: String) {
+    fun updateCurrentAppStats(currentAppForeground: String?) {
         var currentTimeForeground = System.currentTimeMillis() - currentTime
-        if (!prevApp.equals(currentAppForeground)) {
-            if (!prevApp.equals(noAPP)) {
+        if (prevApp != currentAppForeground) {
+            if (prevApp != noAPP) {
                 Log.d(TAG, "usageUpdated to $prevApp for $currentTimeForeground")
 //                prevApp?.let { updateAppUsage(it, currentTimeForeground) }
                updateAppUsage(prevApp, currentTimeForeground)
             }
-            prevApp = currentAppForeground
+            prevApp = currentAppForeground.toString()
             currentTime = System.currentTimeMillis()
 
         } else if (currentTimeForeground >= 15000) {

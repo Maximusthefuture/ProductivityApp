@@ -18,6 +18,8 @@ android {
         versionCode 1
         versionName "alpha 1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.debug
+        versionNameSuffix = '1.0'
     }
     buildTypes {
         release {

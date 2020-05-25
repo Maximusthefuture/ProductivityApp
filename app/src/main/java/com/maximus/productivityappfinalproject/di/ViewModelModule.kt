@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.maximus.productivityappfinalproject.ViewModelFactory
 import com.maximus.productivityappfinalproject.data.AppsRepository
+import com.maximus.productivityappfinalproject.data.AppsRepositoryImpl
 import com.maximus.productivityappfinalproject.device.MyUsageStatsManagerWrapper
 import com.maximus.productivityappfinalproject.domain.*
 import com.maximus.productivityappfinalproject.presentation.viewmodels.AppsDetailViewModel
@@ -42,8 +43,8 @@ class ViewModelModule {
     @Provides
     @IntoMap
     @ViewModelKey(UsageLimitViewModel::class)
-    fun getUsageLimitViewModel(setAppWithLimitUseCase: SetAppWithLimitUseCase): ViewModel {
-        return UsageLimitViewModel(setAppWithLimitUseCase)
+    fun getUsageLimitViewModel(setAppWithLimitUseCase: SetAppWithLimitUseCase, appsRepository: AppsRepositoryImpl): ViewModel {
+        return UsageLimitViewModel(setAppWithLimitUseCase, appsRepository)
     }
 
     @Provides

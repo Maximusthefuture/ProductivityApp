@@ -31,6 +31,7 @@ import com.maximus.productivityappfinalproject.domain.SetClosestTimeUseCase;
 import com.maximus.productivityappfinalproject.domain.UpdateClosestTimeUseCase;
 import com.maximus.productivityappfinalproject.domain.model.AppUsageLimitModel;
 import com.maximus.productivityappfinalproject.domain.model.PhoneUsage;
+import com.maximus.productivityappfinalproject.presentation.ui.Reminder;
 import com.maximus.productivityappfinalproject.utils.Utils;
 
 import java.util.Calendar;
@@ -131,7 +132,7 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
     private void resetHour() {
         Disposable d = mAppsRepository.getPhoneUsage()
                 .subscribeOn(Schedulers.single())
-                .flatMap((list) -> Observable.fromIterable(list))
+                .flatMap(Observable::fromIterable)
                 .filter(phoneUsage -> phoneUsage.getTimeCompletedInHour() > 0)
                 .observeOn(Schedulers.single())
                 .subscribe(phoneUsage -> {
@@ -195,12 +196,12 @@ public class CheckAppLaunchService extends Service implements SharedPreferences.
             Log.d(TAG, "updateCurrentAppStats calls");
         }
 
-//        Intent intent = new Intent(this, Reminder.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+        Intent intent = new Intent(this, Reminder.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
 
         if (Utils.isTimeBeforeBad(appUsageLimitModel, 22,
                 30, 8, 40)) {
-//            startActivity(intent);
+            startActivity(intent);
         }
     }
 

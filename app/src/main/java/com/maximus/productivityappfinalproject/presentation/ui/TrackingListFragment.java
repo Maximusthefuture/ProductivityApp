@@ -39,6 +39,7 @@ import com.maximus.productivityappfinalproject.domain.model.LimitedApps;
 import com.maximus.productivityappfinalproject.presentation.AppDetailFragmentRecyclerViewAdapter;
 import com.maximus.productivityappfinalproject.presentation.OnIgnoreItemClickListener;
 import com.maximus.productivityappfinalproject.presentation.OnTrackingItemLongClickListener;
+import com.maximus.productivityappfinalproject.presentation.TestItemDecoration;
 import com.maximus.productivityappfinalproject.presentation.TrackingListAdapter;
 import com.maximus.productivityappfinalproject.presentation.viewmodels.AppsDetailViewModel;
 import com.maximus.productivityappfinalproject.presentation.viewmodels.LimitedListViewModel;
@@ -258,6 +259,9 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
     private void initAppsModelList() {
         mTimeUsedRecyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         mTimeUsedRecyclerView.setAdapter(mDetailFragmentAdapter);
+        LinearLayoutManager l = new LinearLayoutManager(requireContext());
+        DividerItemDecoration d = new DividerItemDecoration(requireContext(), l.getOrientation());
+        mTimeUsedRecyclerView.addItemDecoration(new TestItemDecoration(getResources().getColor(R.color.colorPrimaryDark), 10));
     }
 
     @Override
@@ -298,10 +302,15 @@ public class TrackingListFragment extends Fragment implements OnIgnoreItemClickL
         mLinearLayout.setVisibility(View.VISIBLE);
         mAppname.setText(items.getName());
         mLastUsed.setText(items.getLastTimeUsed());
+
         initChips();
         sortSelectedDays();
         initAppsModelList();
         showLimitedTime();
+        mLimitViewModel.getChipText().observe(getViewLifecycleOwner(), chip -> {
+            mLimitHourlyChip.setText(chip);
+        });
+        mLimitViewModel.getLimitTime(mPackageName);
 
 
         mModelView.getRemainTime(mPackageName);

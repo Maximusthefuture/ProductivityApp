@@ -1,82 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginLeft="8dp"
-    android:layout_marginRight="8dp"
     android:layout_marginTop="8dp"
-    android:id="@+id/card_view"
-    >
-
+    android:layout_marginRight="8dp">
 
     <ImageView
         android:id="@+id/app_icon_image_view"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        tools:src="@mipmap/ic_launcher"/>
-
-
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@mipmap/ic_launcher" />
 
     <TextView
         android:id="@+id/ignore_item_app_name"
         android:layout_width="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toRightOf="@id/app_icon_image_view"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:layout_marginStart="@dimen/padding_small"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintLeft_toRightOf="@id/app_icon_image_view"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="Mine" />
 
     <TextView
-        app:layout_constraintTop_toBottomOf="@id/ignore_item_app_name"
-        app:layout_constraintLeft_toRightOf="@id/app_icon_image_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Использованно: "/>
+        android:layout_marginStart="@dimen/padding_small"
+        android:paddingTop="6dp"
+        android:text="Использовано: "
+        app:layout_constraintLeft_toRightOf="@id/app_icon_image_view"
+        app:layout_constraintTop_toBottomOf="@id/ignore_item_app_name" />
 
     <View
-        app:layout_constraintTop_toBottomOf="@id/app_icon_image_view"
-        app:layout_constraintStart_toEndOf="@id/app_icon_image_view"
-        android:layout_marginTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:layout_marginStart="55dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="20dp"
-        android:background="@android:color/darker_gray"/>
-<!--        android:layout_marginStart="36dp"-->
-
-
-<!--    <TextView-->
-<!--        android:id="@+id/last_used"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="@dimen/padding_small"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/ignore_item_app_name"-->
-<!--        app:layout_constraintLeft_toRightOf="@id/app_icon_image_view"-->
-<!--        android:text="@string/last_used_text"/>-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/time"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/ignore_item_app_name"-->
-<!--        app:layout_constraintLeft_toRightOf="@id/last_used"-->
-<!--        tools:text="fdsfsdf"/>-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/time_used"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintRight_toRightOf="parent"-->
-<!--        tools:text="13m30s"/>-->
-
-
-
+        android:background="@android:color/darker_gray"
+        app:layout_constraintStart_toEndOf="@id/app_icon_image_view"
+        app:layout_constraintTop_toBottomOf="@id/app_icon_image_view" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

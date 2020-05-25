@@ -25,6 +25,8 @@ class LimitedListViewModel @Inject constructor(
         private var myUsageStatsManagerWrapper: MyUsageStatsManagerWrapper)
     : ViewModel() {
 
+    val TAG = "LimitedListViewModel"
+
     @Inject
     lateinit var appRepositoryImpl: AppsRepositoryImpl
     var limitedApps = mutableListOf<LimitedApps>()
@@ -32,11 +34,9 @@ class LimitedListViewModel @Inject constructor(
     val allIgnoreItems: LiveData<List<LimitedApps>>
         get() = mAllIgnoreItems;
 
-    val _time = MutableLiveData<String>()
+    private val _time = MutableLiveData<String>()
     val time: LiveData<String>
         get() = _time;
-
-    val TAG = "LimitedListViewModel"
 
 
     fun deleteAllLimitedItems() {
@@ -59,10 +59,8 @@ class LimitedListViewModel @Inject constructor(
         mAllIgnoreItems.value = limitedApps
     }
 
-
-    fun getRemainTime(packageName: String){
-        Observable.
-                zip(appRepositoryImpl.phoneUsage, appRepositoryImpl.limitObservable,
+    fun getRemainTime(packageName: String) {
+        var d = Observable.zip(appRepositoryImpl.phoneUsage, appRepositoryImpl.limitObservable,
                 BiFunction<List<PhoneUsage>, List<AppUsageLimitModel>, Long> { t1: List<PhoneUsage>, t2: List<AppUsageLimitModel> ->
                     getRemainTimeFromDb(t1, t2, packageName)
                 })
@@ -77,7 +75,6 @@ class LimitedListViewModel @Inject constructor(
                 }, {
                     Log.d(TAG, it.localizedMessage)
                 })
-
     }
 
     private fun getRemainTimeFromDb(phoneUsage: List<PhoneUsage>, appUsageLimitModel: List<AppUsageLimitModel>, packageName: String): Long {
